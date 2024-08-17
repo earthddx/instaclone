@@ -1,17 +1,46 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, FlatList } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import MediaCard from "../../components/MediaCard";
 
-export default function Tab() {
+const testData = [
+  {
+    id: Math.random(),
+    title: "Shane Gillis as Donald Trump",
+    link: "https://www.youtube.com/shorts/CkKUysrLnTk",
+    creator: "Artem",
+    likesCount: "100",
+  },
+  {
+    id: Math.random(),
+    title: "Adam Ray as Joe Biden",
+    link: "https://www.youtube.com/shorts/CkKUysrLnTk",
+    creator: "Enzomenzo",
+    likesCount: "100",
+  },
+  {
+    id: Math.random(),
+    title: "Kill Tony",
+    link: "https://www.youtube.com/shorts/CkKUysrLnTk",
+    creator: "Earthddx",
+    likesCount: "100",
+  }
+];
+
+export default function Home() {
   return (
-    <View style={styles.container}>
-      <Text>Home</Text>
-    </View>
+    <SafeAreaView className="bg-primary-100 h-full">
+      <FlatList
+        data={testData}
+        renderItem={({ item }) => {
+          return <MediaCard {...item} type="video"/>;
+        }}
+        ListHeaderComponent={() => {
+          return <View className="border-2 border-secondary-100 rounded-lg p-5">
+            <Text className="text-secondary">Search Bar goes here</Text>
+          </View>
+        }}
+        stickyHeaderIndices={[0]}
+      />
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

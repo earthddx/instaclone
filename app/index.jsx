@@ -7,9 +7,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function App() {
   return (
     <SafeAreaView className="bg-primary h-full">
-      <StatusBar backgroundColor="#161622" style="light" />
+      {/* <StatusBar backgroundColor="#0d0d0d" style="light" /> */}
       <ScrollView contentContainerStyle={{ height: "100%" }}>
-        <View>
+        <View className="h-full justify-center items-center border-2 border-green-400 rounded-lg">
           <Text className="text-3xl text-white">
             INSTACLONE 🎯
           </Text>
