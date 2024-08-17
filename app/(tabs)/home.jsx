@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MediaCard from "../../components/MediaCard";
+import { HelloWave } from "../../components/HelloWave";
 
 const testData = [
   {
@@ -23,21 +24,29 @@ const testData = [
     link: "https://www.youtube.com/shorts/CkKUysrLnTk",
     creator: "Earthddx",
     likesCount: "100",
-  }
+  },
 ];
 
 export default function Home() {
   return (
-    <SafeAreaView className="bg-primary-100 h-full">
+    <SafeAreaView
+      className="bg-primary-100 h-full"
+      edges={["right", "top", "left"]}
+    >
       <FlatList
         data={testData}
         renderItem={({ item }) => {
-          return <MediaCard {...item} type="video"/>;
+          return <MediaCard {...item} type="video" />;
         }}
         ListHeaderComponent={() => {
-          return <View className="border-2 border-secondary-100 rounded-lg p-5">
-            <Text className="text-secondary">Search Bar goes here</Text>
-          </View>
+          return (
+            <View>
+              <View className="border-2 border-secondary-100 rounded-lg p-5">
+                <Text className="text-secondary">Search Bar goes here</Text>
+              </View>
+              <HelloWave />
+            </View>
+          );
         }}
         stickyHeaderIndices={[0]}
       />

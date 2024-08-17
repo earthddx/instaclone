@@ -1,49 +1,96 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { Tabs } from 'expo-router';
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { Tabs } from "expo-router";
 
+
+//TODO: use constants/Colors instead since nativewind does not work here
 export default function TabLayout() {
   return (
-    <Tabs 
-    screenOptions={{ 
-      tabBarActiveTintColor: 'blue',
-      tabBarStyle:{
-        backgroundColor: "#0d0d0d",
-    }
-      }}>
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: "#e34ba9",
+        tabBarStyle: {
+          backgroundColor: "#0d0d0d",
+          borderTopColor: "#e34ba9",
+        },
+      }}
+    >
       <Tabs.Screen
         name="home"
         options={{
-          title: '',
+          title: "",
           headerShown: false,
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="home" color={color} />,
+
+          tabBarIcon: ({ color }) => (
+            <FontAwesome size={28} name="home" color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="create"
         options={{
-          title: '',
+          title: "",
           headerShown: false,
-          tabBarIcon: ({ color }) => <Ionicons name="create-outline" size={28} color={color} />,
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="create-outline" size={28} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="messages"
         options={{
-          title: '',
+          title: "",
           headerShown: false,
-          tabBarIcon: ({ color }) => <AntDesign name="message1" size={28}  color={color} />,
+          tabBarIcon: ({ color }) => (
+            <AntDesign name="message1" size={28} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-           title: '',
-           headerShown: false,
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="cog" color={color} />,
+          title: "",
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <FontAwesome size={28} name="cog" color={color} />
+          ),
         }}
       />
     </Tabs>
   );
+}
+
+//FIXME: example
+{
+  /* <Tabs
+screenOptions={{
+tabBarActiveTintColor: Colors.orange.default,
+tabBarStyle: {
+height: 70,
+borderWidth: 1,
+borderRadius: 50,
+borderColor: Colors.orange.default,
+borderTopColor: Colors.orange.default,
+backgroundColor: Colors.white.default,
+},
+tabBarLabelStyle: {
+fontSize: 12,
+fontWeight: "bold",
+marginBottom: 10,
+},
+}}
+>
+<Tabs.Screen
+name="(HomeNav)"
+options={{
+title: "Home",
+headerShown: false,
+tabBarIcon: ({color, size}) => (
+<Ionicons name="ios-home" size={size} color={color}/>
+),
+}}
+/>
+
+</Tabs> */
 }
