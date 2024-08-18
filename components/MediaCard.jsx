@@ -19,7 +19,8 @@ export default ({ title, link, creator }) => {
     "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     (player) => {
       player.loop = true;
-      player.play();
+      player.muted = true;
+    //   player.play();
     }
   );
 
@@ -55,7 +56,7 @@ export default ({ title, link, creator }) => {
           }}
         />
       </View>
-      
+
       <Text className="text-white text-base">{title}</Text>
       <Text className="text-highlight">by {creator}</Text>
       <View className="pt-2">

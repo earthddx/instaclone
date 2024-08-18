@@ -36,19 +36,21 @@ export default function Home() {
       <FlatList
         data={testData}
         renderItem={({ item }) => {
-          return <MediaCard {...item} type="video" />;
+          return <View>
+            <Text>Media by outher users</Text>
+          </View>
         }}
         ListHeaderComponent={() => {
           return (
             <View>
               <View className="border-2 border-secondary-100 rounded-lg p-5">
-                <Text className="text-secondary">Stories / trending videos go here || horizontal scroll</Text>
+                <Text className="text-secondary">Search Bar goes here</Text>
               </View>
               <HelloWave />
             </View>
           );
         }}
-        // stickyHeaderIndices={[0]}
+        stickyHeaderIndices={[0]}
       />
     </SafeAreaView>
   );
