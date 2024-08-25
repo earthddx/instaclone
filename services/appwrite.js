@@ -14,21 +14,21 @@ client.setEndpoint(endpoint).setProject(projectId).setPlatform(platform);
 
 const account = new Account(client);
 
-const signin = async (email, password) => {
+export const signIn = async ({ email, password }) => {
   try {
     await account.createEmailPasswordSession(email, password);
   } catch (error) {
     throw new Error(error);
   }
 };
-const signout = async (email, password) => {
+export const signOut = async (email, password) => {
   try {
     await account.deleteSession("current");
   } catch (error) {
     throw new Error(error);
   }
 };
-const register = async (email, password, name) => {
+export const signUp = async (email, password, name) => {
   try {
     await account.create(ID.unique(), email, password, name);
     await signin(email, password);

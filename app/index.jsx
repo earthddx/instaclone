@@ -13,9 +13,9 @@ export default function App() {
           <Text className="text-3xl text-white">
             INSTACLONE 🎯
           </Text>
-          <Pressable onPress={() => router.push("/home")}>
+          <Pressable onPress={() => router.push("/signin")}>
             <Text className="text-3xl text-highlight">
-              Click me to go to home page
+              Click me to go to sign in page
             </Text>
           </Pressable>
         </View>
