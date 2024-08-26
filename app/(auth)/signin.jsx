@@ -10,7 +10,7 @@ import {
 import ComponentButton from "../../components/ComponentButton";
 import ComponentInput from "../../components/ComponentInput";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { signIn, getLoggedInUser } from "../../services/appwrite";
+import { signIn, getLoggedInUser } from "../../lib/appwrite";
 
 export default (props) => {
   const [input, setInput] = React.useState({ email: "", password: "" });

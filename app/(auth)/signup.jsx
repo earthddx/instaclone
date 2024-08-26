@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import React from "react";
 import ComponentButton from "../../components/ComponentButton";
 import ComponentInput from "../../components/ComponentInput";
-import { createUser } from "../../services/appwrite";
+import { createUser } from "../../lib/appwrite";
 
 export default (props) => {
   const [state, setState] = React.useState({
