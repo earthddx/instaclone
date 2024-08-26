@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import React from "react";
 import ComponentButton from "../../components/ComponentButton";
 import ComponentInput from "../../components/ComponentInput";
-import { createUser } from "../../lib/appwrite";
+import { signUp } from "../../lib/appwrite";
 
 export default (props) => {
   const [state, setState] = React.useState({
@@ -16,7 +16,7 @@ export default (props) => {
 
   const onSignUp = async () => {
     try {
-      const newUser = await createUser({
+      const newUser = await signUp({
         email: email,
         password: password,
         username: username,
@@ -24,7 +24,7 @@ export default (props) => {
       //save user to global state
       router.replace("/home");
     } catch (e) {
-      Alert.alert("[signup]: ", e.message);  
+      Alert.alert("[signup]: ", e.message);
     }
   };
 
