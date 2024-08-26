@@ -20,10 +20,11 @@ export default ({ title, link, creator }) => {
     (player) => {
       player.loop = true;
       player.muted = true;
-    //   player.play();
+      //   player.play();
     }
   );
-
+  //TODO: create a dynamic route for the post when its clicked - > posts/:postId
+  //https://egghead.io/lessons/react-create-a-new-react-app-with-degit
   useEffect(() => {
     const subscription = player.addListener("playingChange", (isPlaying) => {
       setIsPlaying(isPlaying);

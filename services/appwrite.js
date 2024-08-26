@@ -1,12 +1,20 @@
-import { Client, Account, ID, Query } from "react-native-appwrite";
+import {
+  Client,
+  Account,
+  ID,
+  Query,
+  Databases,
+  Avatars,
+} from "react-native-appwrite";
 
 export const config = {
-  databaseId: "66c2a94a0026eb9130c9",
-  endpoint: "https://cloud.appwrite.io/v1",
-  projectId: "66c26347001ef06d2c36",
-  platform: "com.earthddx.instaclone",
-  usersCollectionId: "66c2a970000d96eb89ac",
+  databaseId: process.env.EXPO_PUBLIC_DATABASE_ID,
+  endpoint: process.env.EXPO_PUBLIC_ENDPOINT,
+  projectId: process.env.EXPO_PUBLIC_PROJECT_ID,
+  platform: process.env.EXPO_PUBLIC_PLATFORM,
+  usersCollectionId: process.env.EXPO_PUBLIC_USERS_COLLECTION_ID,
 };
+
 
 const { endpoint, projectId, platform } = config;
 
@@ -14,6 +22,8 @@ export const client = new Client();
 client.setEndpoint(endpoint).setProject(projectId).setPlatform(platform);
 
 const account = new Account(client);
+const avatars = new Avatars(client);
+const databases = new Databases(client);
 
 export const signIn = async ({ email, password }) => {
   try {
@@ -39,6 +49,7 @@ export const signUp = async (email, password, name) => {
 };
 
 export const createUser = async ({ email, password, username }) => {
+  console.log(email, password, username);
   try {
     const newAccount = await account.create(
       ID.unique(),
@@ -47,16 +58,17 @@ export const createUser = async ({ email, password, username }) => {
       username
     );
     if (!newAccount) throw Error;
-    await signIn(email, password);
+    const avatarUrl = avatars.getInitials(username);
+    await signIn({ email: email, password: password });
     const newUser = await databases.createDocument(
       config.databaseId,
       config.usersCollectionId,
       ID.unique(),
       {
         accountId: newAccount.$id,
-        email,
-        username,
-        // avatar: avatarUrl,
+        email: email,
+        username: username,
+        avatar: avatarUrl,
       }
     );
     return newUser;
