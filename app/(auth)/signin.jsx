@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import React from "react";
 import {
   View,
@@ -19,8 +19,11 @@ export default (props) => {
 
   const handleSignin = async (props) => {
     await signIn({ email, password });
+    //TODO: create session rather?
     const loggedUser = getLoggedInUser();
+    console.log(loggedUser)
     setUser(loggedUser);
+    router.replace("/home");
   };
 
   return (
