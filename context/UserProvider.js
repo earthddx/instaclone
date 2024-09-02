@@ -3,19 +3,20 @@ import { getLoggedInUser } from "../lib/appwrite";
 import { UserContext } from "./UserContext";
 
 export default ({ children }) => {
-  const [isLogged, setIsLogged] = React.useState(false);
   const [user, setUser] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
+
+  const handleSaveUser = (user) => {
+    setUser(user);
+  };
 
   React.useEffect(() => {
     getLoggedInUser()
       .then((result) => {
         if (result) {
-          setIsLogged(true);
-          setUser(result);
+          handleSaveUser(result);
         } else {
-          setIsLogged(false);
-          setUser(null);
+          handleSaveUser(null);
         }
       })
       .catch((error) => {
@@ -29,10 +30,8 @@ export default ({ children }) => {
   return (
     <UserContext.Provider
       value={{
-        isLogged,
+        handleSaveUser,
         loading,
-        setIsLogged,
-        setUser,
         user,
       }}
     >

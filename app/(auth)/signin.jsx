@@ -15,7 +15,7 @@ import { signIn, getLoggedInUser } from "../../lib/appwrite";
 import { UserContext } from "../../context/UserContext";
 
 export default (props) => {
-  const { setUser, setIsLogged } = React.useContext(UserContext);
+  const { handleSaveUser } = React.useContext(UserContext);
   const [input, setInput] = React.useState({ email: "", password: "" });
   const { email, password } = input;
 
@@ -27,8 +27,7 @@ export default (props) => {
       await signIn({ email, password });
       //TODO: create session rather?
       const loggedUser = getLoggedInUser();
-      setUser(loggedUser);
-      setIsLogged(true);
+      handleSaveUser(loggedUser);
       router.replace("/home");
     } catch (e) {
       Alert.alert("Error", e.message);

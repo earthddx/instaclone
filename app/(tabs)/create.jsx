@@ -1,7 +1,9 @@
+import React from "react";
 import { Image, View, Text, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ComponentButton from "../../components/ComponentButton";
 import ComponentInput from "../../components/ComponentInput";
+import { useVideoPlayer, VideoView } from 'expo-video';
 import * as ImagePicker from "expo-image-picker";
 
 export default function Create() {
@@ -24,10 +26,11 @@ export default function Create() {
     console.log(result);
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setInput(state=>({...state, media: result.assets[0]}));
     }
   };
 
+  console.log("media", media.type)
   return (
     <SafeAreaView
       className="bg-primary-100 h-full"
@@ -54,8 +57,8 @@ export default function Create() {
         />
       </View>
       <View className="flex-1 items-center justify-center">
-        {media.type === "image" ? (
-          <Image source={{ uri: media }} className="w-[200px] h-[200px]" />
+        {media?.type === "image" ? (
+          <Image source={{ uri: media.uri }} className="w-[200px] h-[200px]" />
         ) : (
           <VideoView className="w-full h-64 rounded-2xl" useNativeControls />
         )}
