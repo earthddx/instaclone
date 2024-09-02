@@ -9,7 +9,7 @@ export default ({ title, onPress, textStyles, buttonStyles }) => {
       className={`bg-highlight rounded-xl min-h-[62px] justify-center items-center ${buttonStyles}`}
       //   disabled={isLoading}
     >
-      <Text className={`text-primary font-psemibold text-lg ${textStyles}`}>
+      <Text className={`text-primary text-lg ${textStyles}`}>
         {title}
       </Text>
     </TouchableOpacity>

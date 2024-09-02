@@ -38,7 +38,7 @@ export default (props) => {
   return (
     <SafeAreaView className="bg-primary h-full flex-1">
       <Text>Sign in</Text>
-      <Text className="text-2xl font-semibold text-white mt-10 font-psemibold">
+      <Text className="text-2xl font-semibold text-white mt-10">
         Instaclone 🎯
       </Text>
       <ComponentInput
@@ -58,7 +58,7 @@ export default (props) => {
         <Text className="text-lg text-gray-100 font-pregular">
           Don't have an account?
         </Text>
-        <Link href="/signup" className="text-lg font-psemibold  text-highlight">
+        <Link href="/signup" className="text-lg text-highlight">
           Sign Up
         </Link>
       </View>
