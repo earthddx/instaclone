@@ -6,24 +6,33 @@ import {
   StyleSheet,
   InputAccessoryView,
   TextInput,
+  Alert,
 } from "react-native";
 import ComponentButton from "../../components/ComponentButton";
 import ComponentInput from "../../components/ComponentInput";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { signIn, getLoggedInUser } from "../../lib/appwrite";
+import { UserContext } from "../../context/UserContext";
 
 export default (props) => {
+  const { setUser, setIsLogged } = React.useContext(UserContext);
   const [input, setInput] = React.useState({ email: "", password: "" });
-  const [user, setUser] = React.useState(null);
   const { email, password } = input;
 
   const handleSignin = async (props) => {
-    await signIn({ email, password });
-    //TODO: create session rather?
-    const loggedUser = getLoggedInUser();
-    console.log(loggedUser)
-    setUser(loggedUser);
-    router.replace("/home");
+    if (!email || !password) {
+      Alert.alert("[Sign-in attempt]: ", "Please fill in all of the fields");
+    }
+    try {
+      await signIn({ email, password });
+      //TODO: create session rather?
+      const loggedUser = getLoggedInUser();
+      setUser(loggedUser);
+      setIsLogged(true);
+      router.replace("/home");
+    } catch (e) {
+      Alert.alert("Error", e.message);
+    }
   };
 
   return (
