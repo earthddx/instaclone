@@ -1,11 +1,13 @@
 import React from "react";
-import { Image, View, Text, StyleSheet } from "react-native";
+import { Image, View, Text, StyleSheet, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ComponentButton from "../../components/ComponentButton";
 import ComponentInput from "../../components/ComponentInput";
 import { useVideoPlayer, VideoView } from "expo-video";
 import * as ImagePicker from "expo-image-picker";
 import ComponentVideo from "../../components/ComponentVideo";
+import { uploadFile } from "../../lib/appwrite";
+import { getLoggedInUser } from "../../lib/appwrite";
 
 export default function Create() {
   const [input, setInput] = React.useState({
@@ -18,20 +20,27 @@ export default function Create() {
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: [ImagePicker.MediaTypeOptions.Images, ImagePicker.MediaTypeOptions.Videos],
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-
-    console.log(result);
 
     if (!result.canceled) {
       setInput((state) => ({ ...state, media: result.assets[0] }));
     }
   };
 
-  console.log("media", media?.type);
+  const createPost = async () => {
+    try {
+      await uploadFile({ file: media });
+    } catch (e) {
+      Alert.alert(e);
+    } finally {
+      //create post
+    }
+  };
+
   return (
     <SafeAreaView
       className="bg-primary-100 h-full"
@@ -67,6 +76,9 @@ export default function Create() {
             useNativeControls
           />
         )}
+      </View>
+      <View>
+        <ComponentButton title="Create post" onPress={createPost} />
       </View>
     </SafeAreaView>
   );
