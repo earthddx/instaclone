@@ -27,7 +27,9 @@ export default function Create() {
       // aspect: [4, 3],
       // quality: 0,
     });
-    if (!result.canceled) {
+    if (!result.canceled && result.assets[0]?.fileSize >= 52428800) {
+      Alert.alert("File size cannot exceed 50MB");
+    } else if (!result.canceled) {
       setInput((state) => ({ ...state, media: result.assets[0] }));
     }
   };
