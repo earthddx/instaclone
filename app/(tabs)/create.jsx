@@ -46,6 +46,7 @@ export default function Create() {
     } finally {
       //create post
       Alert.alert("Post successfully created");
+      //FIXME: it doesnt update the input.WTF?
       setInput({ title: "", description: "", media: null });
       router.push("/home");
     }
