@@ -29,11 +29,11 @@ export default (props) => {
     <View className="flex-1 p-10 items-center justify-center ">
       <VideoView
         ref={ref}
-        className={`${className} w-[350px] h-[275px] border-2 border-green-400 rounded-lg`}
+        className={`${className} w-[350px] h-[275px] border-2 border-yellow-400 rounded-lg`}
         player={player}
         {...rest}
       />
-      <View className={"p-10"}>
+      {/* <View className={"p-10"}>
         <Button
           title={isPlaying ? "Pause" : "Play"}
           onPress={() => {
@@ -45,7 +45,7 @@ export default (props) => {
             setIsPlaying(!isPlaying);
           }}
         />
-      </View>
+      </View> */}
     </View>
   );
 };
