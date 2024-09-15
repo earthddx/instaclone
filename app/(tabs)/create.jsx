@@ -7,6 +7,7 @@ import * as ImagePicker from "expo-image-picker";
 import ComponentVideo from "../../components/ComponentVideo";
 import { uploadFile, createPost } from "../../lib/appwrite";
 import { UserContext } from "../../context/UserContext";
+import { router } from "expo-router";
 
 export default function Create() {
   const { user } = React.useContext(UserContext);
@@ -45,6 +46,8 @@ export default function Create() {
     } finally {
       //create post
       Alert.alert("Post successfully created");
+      setInput({ title: "", description: "", media: null });
+      router.push("/home");
     }
   };
 
