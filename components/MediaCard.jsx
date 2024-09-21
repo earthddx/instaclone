@@ -10,14 +10,31 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  Image,
 } from "react-native";
 import ComponentVideo from "./ComponentVideo";
 
 //TODO: should call ComponentImage and ComponentVideo
-export default ({ title, link, creator }) => {
+export default ({ title, type = "image", source, creator }) => {
+  return (
+    <View className="border-2 border-secondary rounded-lg mt-5 mb-5">
+      <Image source={{ uri: source }} className="w-[250px] h-[250px]" />
+      <Text className="text-white text-base">{title}</Text>
+      <Text className="text-highlight">by {creator}</Text>
+      <View className="pt-2">
+        <Text>❤️</Text>
+        {/* <Image source={likeIcon} className="w-5 h-5" resizeMode="contain" /> */}
+      </View>
+      <TextInput placeholder="Leave a comment..." />
+    </View>
+  );
+  if (type === "image") {
+    return <Image source={{ uri: source }} className="w-[100%] h-[100%]" />;
+  }
   return (
     <View className="border-2 border-secondary rounded-lg mt-5 mb-5">
       <ComponentVideo
+        source={source}
         className="w-full h-[500px]"
         allowsFullscreen
         allowsPictureInPicture

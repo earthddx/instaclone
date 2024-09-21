@@ -9,7 +9,7 @@ import { getLoggedInUser } from "../lib/appwrite";
 export default function App() {
   const { user } = React.useContext(UserContext);
 
-  console.log("user", user);
+  // console.log("user", user);
   // console.log("getLoggedInUser", getLoggedInUser());
   if (user) {
     return <Redirect href={"/home"} />;

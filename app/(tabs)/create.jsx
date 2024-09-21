@@ -36,10 +36,11 @@ export default function Create() {
 
   const onSubmit = async () => {
     try {
-      const fileViewUrl = await uploadFile({ file: media });
+      const {fileViewUrl, type} = await uploadFile({ file: media });
       await createPost({
         file: fileViewUrl,
         title,
+        type,
         description,
         userId: user.$id,
       });
