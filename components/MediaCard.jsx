@@ -15,10 +15,21 @@ import {
 import ComponentVideo from "./ComponentVideo";
 
 //TODO: should call ComponentImage and ComponentVideo
-export default ({ title, type = "image", source, creator }) => {
+export default (props) => {
+  const { title, type = "image", source, creator } = props;
   return (
     <View className="border-2 border-secondary rounded-lg mt-5 mb-5">
-      <Image source={{ uri: source }} className="w-[250px] h-[250px]" />
+      {type.includes("image") ? (
+        <Image source={{ uri: source }} className="w-[250px] h-[250px]" />
+      ) : (
+        <ComponentVideo
+          {...props}
+          source={source}
+          className="w-full h-[500px]"
+          allowsFullscreen
+          allowsPictureInPicture
+        />
+      )}
       <Text className="text-white text-base">{title}</Text>
       <Text className="text-highlight">by {creator}</Text>
       <View className="pt-2">

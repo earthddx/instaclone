@@ -55,7 +55,7 @@ export default function Home() {
               description={item.description}
               source={item.source}
               title={item.title}
-              type={item.title}
+              type={item.type}
             />
           );
         }}

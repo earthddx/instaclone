@@ -6,11 +6,11 @@ const videoSourceDefault =
   "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 
 export default (props) => {
-  const { source: link , className, type, ...rest } = props;
+  const { source, className, type, ...rest } = props;
   const ref = React.useRef(null);
   const [isPlaying, setIsPlaying] = React.useState(true);
-  const player = useVideoPlayer(link, (player) => {
-    if(!link) return;
+  const player = useVideoPlayer(source, (player) => {
+    if (!source) return;
     player.loop = true;
     player.play();
   });
@@ -33,7 +33,7 @@ export default (props) => {
         player={player}
         {...rest}
       />
-      {/* <View className={"p-10"}>
+      <View className={"p-10"}>
         <Button
           title={isPlaying ? "Pause" : "Play"}
           onPress={() => {
@@ -45,7 +45,7 @@ export default (props) => {
             setIsPlaying(!isPlaying);
           }}
         />
-      </View> */}
+      </View>
     </View>
   );
 };
