@@ -165,7 +165,7 @@ const ComponentMessage = (props) => {
   const formattedTime = `${hours}:${minutes}${ampm}`;
 
   const handleLongPress = async () => {
-    await Clipboard.setStringAsync(item.body);
+    await Clipboard.setStringAsync(item.text);
     Alert.alert("Copied!");
   };
 
@@ -178,7 +178,7 @@ const ComponentMessage = (props) => {
       )}
       <Pressable onLongPress={handleLongPress}>
         <View className={`flex-row max-w-xs ${bubbleStyle} rounded-lg p-3`}>
-          <Text className="text-base">{item.body}</Text>
+          <Text className="text-base">{item.text}</Text>
         </View>
       </Pressable>
       {timestampAnchor && (
