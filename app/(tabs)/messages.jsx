@@ -23,9 +23,16 @@ import ComponentButton from "../../components/ComponentButton";
 
 const Messages = () => {
   const { user } = React.useContext(UserContext);
-  const data = getMessages();
 
-  const [messages, setMessages] = React.useState(data);
+  const [messages, setMessages] = React.useState([]);
+
+  React.useEffect(() => {
+    const fetchMessages = async () => {
+      const allMessages = await getMessages();
+      setMessages(allMessages);
+    };
+    fetchMessages();   
+  }, []);
 
   React.useEffect(() => {
     const unsubscribe = client.subscribe(
@@ -56,15 +63,15 @@ const Messages = () => {
     };
   }, []);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setMessages(data);
-      console.log("Messages is focused.");
-      return () => {
-        console.log("Messages is now unfocused.");
-      };
-    }, [JSON.stringify(data)])
-  );
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     setMessages(data);
+  //     console.log("Messages is focused.");
+  //     return () => {
+  //       console.log("Messages is now unfocused.");
+  //     };
+  //   }, [JSON.stringify(data)])
+  // );
 
   return (
     <KeyboardAvoidingView
