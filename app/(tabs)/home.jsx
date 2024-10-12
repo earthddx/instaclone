@@ -5,39 +5,27 @@ import { HelloWave } from "../../components/HelloWave";
 import { getAllPosts } from "../../lib/appwrite";
 import React from "react";
 
-const testData = [
-  {
-    id: Math.random(),
-    title: "Shane Gillis as Donald Trump",
-    link: "https://www.youtube.com/shorts/CkKUysrLnTk",
-    creator: "Artem",
-    likesCount: "100",
-  },
-  {
-    id: Math.random(),
-    title: "Adam Ray as Joe Biden",
-    link: "https://www.youtube.com/shorts/CkKUysrLnTk",
-    creator: "Enzomenzo",
-    likesCount: "100",
-  },
-  {
-    id: Math.random(),
-    title: "Kill Tony",
-    link: "https://www.youtube.com/shorts/CkKUysrLnTk",
-    creator: "Earthddx",
-    likesCount: "100",
-  },
-];
-
 export default function Home() {
   const [posts, setPosts] = React.useState([]);
+  const [visibleItems, setVisibleItems] = React.useState([]);
+  // console.log(visibleItems);
+
+  const onViewableItemsChanged = ({changed,  viewableItems }) => {
+    // Update the list of visible items based on their index
+    console.log(viewableItems)
+    setVisibleItems(viewableItems.map((item) => item.item.$id));
+  };
+
+  const viewConfigRef = {
+    viewAreaCoveragePercentThreshold: 90, // How much of the item must be visible in %
+  };
 
   React.useEffect(() => {
     const fetchPosts = async () => {
       const allPosts = await getAllPosts();
       setPosts(allPosts);
     };
-    fetchPosts();   
+    fetchPosts();
   }, []);
 
   return (
@@ -46,7 +34,10 @@ export default function Home() {
       edges={["right", "top", "left"]}
     >
       <FlatList
+        keyExtractor={(item) => item.$id}
         data={posts}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={viewConfigRef}
         renderItem={({ item }) => {
           return (
             <MediaCard
@@ -56,6 +47,7 @@ export default function Home() {
               source={item.source}
               title={item.title}
               type={item.type}
+              isVisible={visibleItems.includes(item.$id)}
             />
           );
         }}
