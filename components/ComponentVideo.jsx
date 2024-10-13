@@ -8,6 +8,7 @@ export default (props) => {
   const [status, setStatus] = React.useState({});
 
   React.useEffect(() => {
+    if(!videoRef) return;
     if (status.isPlaying) {
       triggerAudio(videoRef);
     }
@@ -32,6 +33,7 @@ export default (props) => {
         source={{ uri: source }}
         useNativeControls
       />
+      {/* TODO: position it over the video and hide controls */}
       {/* <View className={"p-5"}>
         <Button
           title={isPlaying ? "Pause" : "Play"}

@@ -26,8 +26,6 @@ export default function Create() {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      // aspect: [4, 3],
-      // quality: 0,
     });
     if (!result.canceled && result.assets[0]?.fileSize >= 52428800) {
       Alert.alert("File size cannot exceed 50MB");
