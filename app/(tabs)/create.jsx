@@ -12,6 +12,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export default function Create() {
   const { user } = React.useContext(UserContext);
+  const [uploading, setUploading] = React.useState(false);
   const [input, setInput] = React.useState({
     title: "",
     description: "",
@@ -36,6 +37,7 @@ export default function Create() {
 
   const onSubmit = async () => {
     try {
+      setUploading(true);
       const {fileViewUrl, type} = await uploadFile({ file: media });
       await createPost({
         file: fileViewUrl,
@@ -47,6 +49,7 @@ export default function Create() {
     } catch (e) {
       Alert.alert(e);
     } finally {
+      setUploading(false);
       Alert.alert("Post successfully created");
       setInput({ title: "", description: "", media: null });
       router.push("/home");
@@ -102,7 +105,7 @@ export default function Create() {
         />
       </View>
       <View>
-        <ComponentButton title="Create post" onPress={onSubmit} />
+        <ComponentButton isLoading={uploading} title="Create post" onPress={onSubmit} />
       </View>
     </SafeAreaView>
   );

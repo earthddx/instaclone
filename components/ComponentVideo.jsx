@@ -1,21 +1,23 @@
 import { ResizeMode, Video } from "expo-av";
 import React from "react";
-import { PixelRatio, Dimensions, View, Button } from "react-native";
+import { View } from "react-native";
 
 export default (props) => {
   const { source, className, type, isVisible, ...rest } = props;
   const [isPlaying, setIsPlaying] = React.useState(true);
 
-
   return (
     <View className="flex-1 p-2 items-center justify-center ">
       <Video
-       source={{ uri: source }}
         className={`${className} w-full h-[675px] border-2 border-yellow-400 rounded-lg`}
-        shouldPlay={isVisible}
-        isLooping
-        useNativeControls
+        // playsInSilentModeIOS
         ignoreSilentSwitch={"ignore"}
+        isLooping
+        resizeMode={ResizeMode.CONTAIN}
+        shouldPlay={isVisible}
+        source={{ uri: source }}
+        useNativeControls
+        
       />
       {/* <View className={"p-5"}>
         <Button

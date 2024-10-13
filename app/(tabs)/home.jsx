@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import { View, Text, StyleSheet, FlatList, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MediaCard from "../../components/MediaCard";
 import { HelloWave } from "../../components/HelloWave";
@@ -7,26 +7,32 @@ import React from "react";
 
 export default function Home() {
   const [posts, setPosts] = React.useState([]);
+  const [refreshing, setRefreshing] = React.useState(false);
   const [visibleItems, setVisibleItems] = React.useState([]);
-  // console.log(visibleItems);
 
-  const onViewableItemsChanged = ({changed,  viewableItems }) => {
-    // Update the list of visible items based on their index
-    console.log(viewableItems)
-    setVisibleItems(viewableItems.map((item) => item.item.$id));
+  const fetchPosts = async () => {
+    const allPosts = await getAllPosts();
+    setPosts(allPosts);
   };
 
+  React.useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const onViewableItemsChanged = ({ changed, viewableItems }) => {
+    // Update the list of visible items based on their index
+    console.log(viewableItems);
+    setVisibleItems(viewableItems.map((item) => item.item.$id));
+  };
   const viewConfigRef = {
     viewAreaCoveragePercentThreshold: 90, // How much of the item must be visible in %
   };
 
-  React.useEffect(() => {
-    const fetchPosts = async () => {
-      const allPosts = await getAllPosts();
-      setPosts(allPosts);
-    };
-    fetchPosts();
-  }, []);
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchPosts();
+    setRefreshing(false);
+  };
 
   return (
     <SafeAreaView
@@ -63,6 +69,9 @@ export default function Home() {
             </View>
           );
         }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         // stickyHeaderIndices={[0]}
       />
     </SafeAreaView>
