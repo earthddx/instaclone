@@ -2,6 +2,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Tabs } from "expo-router";
 
 
@@ -56,6 +57,16 @@ export default function TabLayout() {
           headerShown: false,
           tabBarIcon: ({ color }) => (
             <AntDesign name="message1" size={28} color={color} />
+          ),
+        }}
+      />
+       <Tabs.Screen
+        name="account"
+        options={{
+          title: "",
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="account-circle" size={28} color={color} />
           ),
         }}
       />
