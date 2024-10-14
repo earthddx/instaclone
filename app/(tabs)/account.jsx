@@ -14,9 +14,10 @@ import { UserContext } from "../../context/UserContext";
 import ComponentInfoBox from "../../components/ComponentInfoBox";
 import { TabView, SceneMap } from "react-native-tab-view";
 import MediaCard from "../../components/MediaCard";
+import { signOut } from "../../lib/appwrite";
 
 const Account = () => {
-  const { user } = React.useContext(UserContext);
+  const { user, handleSaveUser } = React.useContext(UserContext);
   const [refreshing, setRefreshing] = React.useState(false);
   const [tab, setTab] = React.useState(0);
 
@@ -24,7 +25,12 @@ const Account = () => {
     setTab(tab);
   };
   const onRefresh = () => {};
-  const logout = async (props) => {};
+
+  const logout = async () => {
+    await signOut();
+    handleSaveUser(null);
+    router.replace("/sign-in");
+  };
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -47,7 +53,7 @@ const Account = () => {
               >
                 <Text className="text-highlight">Logout</Text>
                 <Image
-                //   source={icons.logout}
+                  //   source={icons.logout}
                   resizeMode="contain"
                   className="w-6 h-6"
                 />
@@ -61,7 +67,7 @@ const Account = () => {
               </View>
               <ComponentInfoBox
                 containerStyles="mt-5"
-                subtitle={"@earthddx"}//i think account name and topo should be your real name
+                subtitle={"@earthddx"} //i think account name and topo should be your real name
                 title={user?.username}
                 titleStyles="text-lg"
               />
@@ -78,7 +84,7 @@ const Account = () => {
                   titleStyles="text-xl"
                 /> */}
                 <ComponentInfoBox
-                  subtitle="Hello! I am trying got make this app look better"
+                  subtitle="Hello World!"
                   title="Bio goes here"
                   titleStyles="text-xl"
                 />
