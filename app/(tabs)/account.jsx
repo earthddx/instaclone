@@ -43,7 +43,11 @@ const Account = () => {
         //     {...props}
         //   />
         // )}
-        ListEmptyComponent={() => <Text>No Posts Found</Text>}
+        ListEmptyComponent={() => (
+          <View className="border-2 p-2 border-red-400 rounded-lg items-center mt-10">
+            <Text className="text-white text-lg">No Posts Found</Text>
+          </View>
+        )}
         ListHeaderComponent={() => (
           <>
             <View className="w-full flex justify-center items-center mt-6 mb-12 px-4">
