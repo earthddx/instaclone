@@ -21,7 +21,7 @@ export default function Home() {
 
   const onViewableItemsChanged = ({ changed, viewableItems }) => {
     // Update the list of visible items based on their index
-    console.log(viewableItems);
+    // console.log(viewableItems);
     setVisibleItems(viewableItems.map((item) => item.item.$id));
   };
   const viewConfigRef = {
