@@ -5,6 +5,7 @@ import { Redirect, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { UserContext } from "../context/UserContext";
 import { getLoggedInUser } from "../lib/appwrite";
+import RotatingSquare from "../components/RotatingSquare";
 
 export default function App() {
   const { user } = React.useContext(UserContext);
@@ -14,14 +15,16 @@ export default function App() {
   if (user) {
     return <Redirect href={"/home"} />;
   }
+  return  <RotatingSquare />
   return (
-    <SafeAreaView className="bg-primary h-full">
+    <SafeAreaView className="bg-highlight h-full">
       {/* <StatusBar backgroundColor="#0d0d0d" style="light" /> */}
       <ScrollView contentContainerStyle={{ height: "100%" }}>
         <View className="h-full justify-center items-center border-2 border-green-400 rounded-lg">
-          <Text className="text-3xl text-white">INSTACLONE 🎯</Text>
+        <RotatingSquare />
+          <Text className="text-3xl text-white mt-10">INSTACLONE 🎯</Text>
           <Pressable onPress={() => router.push("/signin")}>
-            <Text className="text-3xl text-highlight">
+            <Text className="text-3xl ">
               Click me to go to sign in page
             </Text>
           </Pressable>
