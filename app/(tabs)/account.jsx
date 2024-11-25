@@ -108,7 +108,7 @@ const LikedVideos = () => {
       renderItem={renderItem}
       keyExtractor={(item) => item.id}
       className="p-2"
-      ListEmptyComponent={<ComponentEmpty />}
+      ListEmptyComponent={<ComponentEmpty classNameText={"text-primary"} message={"No Liked Posts Found"}/>}
     />
   );
 };

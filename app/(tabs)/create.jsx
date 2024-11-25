@@ -24,7 +24,7 @@ export default function Create() {
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaType.All,
       allowsEditing: true,
     });
     if (!result.canceled && result.assets[0]?.fileSize >= 52428800) {
@@ -93,7 +93,9 @@ export default function Create() {
               <ComponentVideo source={media?.uri} />
             )
           ) : (
-            <MaterialIcons name="perm-media" size={82} color="yellow" />
+            <View className="items-center">
+              <MaterialIcons name="perm-media" size={220} color="yellow" />
+            </View>
           )}
         </View>
         <View className="pt-2 pb-1">
