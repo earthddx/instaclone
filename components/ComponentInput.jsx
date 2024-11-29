@@ -8,7 +8,14 @@ import {
 } from "react-native";
 import React from "react";
 
-export default ({ title, value, onChangeText, placeholder }) => {
+export default ({
+  title,
+  value,
+  onChangeText,
+  placeholder,
+  secureTextEntry = false,
+  textContentType = "none",
+}) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -22,6 +29,8 @@ export default ({ title, value, onChangeText, placeholder }) => {
             value={value}
             onChangeText={onChangeText}
             placeholder={placeholder}
+            secureTextEntry={secureTextEntry}
+            textContentType={textContentType}
           />
         </View>
       </View>

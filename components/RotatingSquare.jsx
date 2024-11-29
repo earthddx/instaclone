@@ -21,6 +21,7 @@ import {
 } from "@shopify/react-native-skia";
 import React from "react";
 import { ReactNativeLogo } from "./ReactLogo";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const CanvasSize = {
   width: 500,
@@ -33,7 +34,7 @@ const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 
 const SquareSize = 170;
 
-export default (props) => {
+export default ({ topAdornment, bottomAdornment }) => {
   const deviceRotation = useAnimatedSensor(SensorType.ROTATION, {
     interval: 20,
   });
@@ -107,7 +108,7 @@ export default (props) => {
   }, []);
 
   return (
-    <View style={styles.fill}>
+    <SafeAreaView className="flex-1">
       <Canvas style={StyleSheet.absoluteFill}>
         <Fill>
           <RadialGradient
@@ -118,6 +119,7 @@ export default (props) => {
           <Blur blur={50} />
         </Fill>
       </Canvas>
+      <View className="items-center">{topAdornment}</View>
       <View style={styles.container}>
         <Canvas
           style={{
@@ -143,7 +145,8 @@ export default (props) => {
           </Group>
         </Canvas>
       </View>
-    </View>
+      {bottomAdornment}
+    </SafeAreaView>
   );
 };
 

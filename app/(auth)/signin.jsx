@@ -43,10 +43,13 @@ export default (props) => {
       <ComponentInput
         placeholder={"Email"}
         onChangeText={(ev) => setInput((state) => ({ ...state, email: ev }))}
+        textContentType={"emailAddress"}
       />
       <ComponentInput
         placeholder={"Password"}
         onChangeText={(ev) => setInput((state) => ({ ...state, password: ev }))}
+        secureTextEntry
+        textContentType={"password"}
       />
       <ComponentButton
         title={"Log In"}
