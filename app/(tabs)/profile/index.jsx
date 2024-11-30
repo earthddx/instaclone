@@ -11,11 +11,11 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import React from "react";
-import { UserContext } from "../../context/UserContext";
-import ComponentInfoBox from "../../components/ComponentInfoBox";
-import { getUserPosts, signOut } from "../../lib/appwrite";
+import { UserContext } from "../../../context/UserContext";
+import ComponentInfoBox from "../../../components/ComponentInfoBox";
+import { getUserPosts, signOut } from "../../../lib/appwrite";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import ComponentEmpty from "../../components/ComponentEmpty";
+import ComponentEmpty from "../../../components/ComponentEmpty";
 
 const likedVideosData = [
   { id: "1", title: "Liked Video 1" },
@@ -92,11 +92,11 @@ const Bio = () => {
       </TouchableOpacity>
       <TouchableOpacity onPress={logout} className="flex w-full items-end">
         <Text className="text-highlight">Logout</Text>
-        <Image
+        {/* <Image
           //   source={icons.logout}
           resizeMode="contain"
           className="w-6 h-6"
-        />
+        /> */}
       </TouchableOpacity>
       <View className="w-16 h-16 border border-secondary rounded-lg flex justify-center items-center">
         <Image
@@ -107,24 +107,12 @@ const Bio = () => {
       </View>
       <ComponentInfoBox
         containerStyles="mt-5"
-        // subtitle={"@earthddx"} //i think account name and topo should be your real name
         title={user?.username}
         titleStyles="text-lg"
       />
       <View className="mt-5 flex flex-row">
-        {/* <InfoBox
-        title={posts.length || 0}
-        subtitle="Posts"
-        titleStyles="text-xl"
-        containerStyles="mr-10"
-      />
-      <InfoBox
-        title="1.2k"
-        subtitle="Followers"
-        titleStyles="text-xl"
-      /> */}
         <ComponentInfoBox
-          // subtitle="text"
+          placeholder={"Create your bio..."}
           title={user?.bio}
           titleStyles="text-xl"
         />

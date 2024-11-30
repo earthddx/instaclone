@@ -1,10 +1,9 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Tabs } from "expo-router";
-
 
 //TODO: use constants/Colors instead since nativewind does not work here
 export default function TabLayout() {
@@ -23,7 +22,6 @@ export default function TabLayout() {
         options={{
           title: "",
           headerShown: false,
-
           tabBarIcon: ({ color }) => (
             <FontAwesome size={28} name="home" color={color} />
           ),
@@ -60,16 +58,16 @@ export default function TabLayout() {
           ),
         }}
       />
-       <Tabs.Screen
-        name="account"
-        options={{
-          title: "",
-          headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons name="account-circle" size={28} color={color} />
-          ),
-        }}
-      />
+      <Tabs.Screen
+          name="profile"
+          options={{
+            title: "",
+            headerShown: false,
+            tabBarIcon: ({ color }) => (
+              <MaterialIcons name="account-circle" size={28} color={color} />
+            ),
+          }}
+        />
     </Tabs>
   );
 }
