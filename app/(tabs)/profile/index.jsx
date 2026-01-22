@@ -1,12 +1,6 @@
 import { router, useFocusEffect } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  View,
-  Text,
-  Image,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, Image, FlatList, TouchableOpacity } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
@@ -23,7 +17,6 @@ const likedVideosData = [
   { id: "3", title: "Liked Video 3" },
   { id: "4", title: "Liked Video 4" },
 ];
-
 
 export default (props) => {
   return (
@@ -72,32 +65,11 @@ export default (props) => {
 const Tab = createMaterialTopTabNavigator();
 
 const Bio = () => {
-  const { user, handleSaveUser } = React.useContext(UserContext);
-  console.log(user);
-
-  const logout = async () => {
-    await signOut();
-    handleSaveUser(null);
-    router.replace("/signin");
-  };
-  const openSettingsMenu = () => {};
+  const { user } = React.useContext(UserContext);
+  // console.log(user);
 
   return (
     <SafeAreaView className="w-full flex justify-center items-center px-4">
-      <TouchableOpacity
-        onPress={openSettingsMenu}
-        className="flex w-full items-end mb-10"
-      >
-        <Ionicons name="settings" size={24} color="white" />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={logout} className="flex w-full items-end">
-        <Text className="text-highlight">Logout</Text>
-        {/* <Image
-          //   source={icons.logout}
-          resizeMode="contain"
-          className="w-6 h-6"
-        /> */}
-      </TouchableOpacity>
       <View className="w-16 h-16 border border-secondary rounded-lg flex justify-center items-center">
         <Image
           source={{ uri: user?.avatar }}

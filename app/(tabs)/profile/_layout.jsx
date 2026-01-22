@@ -1,8 +1,36 @@
 import { Drawer } from "expo-router/drawer";
+import {
+  Image,
+  Text,
+  Button,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { UserContext } from "../../../context/UserContext";
+import { router } from "expo-router";
+import React from "react";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function ProfileLayout() {
+  const { user, handleSaveUser } = React.useContext(UserContext);
+
+  const logout = async () => {
+    await signOut();
+    handleSaveUser(null);
+    router.replace("/signin");
+  };
+
+  const handleLogout = () => {
+    // Add your logout logic here
+    console.log("User logged out");
+  };
+
   return (
     <Drawer
+      drawerContent={(props) => (
+        <CustomDrawerContent {...props} onLogout={handleLogout} />
+      )}
       screenOptions={{
         drawerType: "slide", // Slide-in drawer
         drawerStyle: {
@@ -27,7 +55,7 @@ export default function ProfileLayout() {
         },
       }}
     >
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="index"
         options={{
           // headerShown: false,
@@ -47,7 +75,59 @@ export default function ProfileLayout() {
           // headerShown: false,
           title: "About",
         }}
-      />
+      /> */}
     </Drawer>
   );
 }
+
+function CustomDrawerContent({ navigation, onLogout }) {
+  return (
+    <ScrollView style={styles.drawerContainer}>
+      {/* Render Navigation Links */}
+      <View style={styles.navigationLinks}>
+        <TouchableOpacity
+          style={styles.drawerItem}
+          onPress={() => navigation.navigate('index')}
+        >
+          <Text style={styles.drawerText}>Profile</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.drawerItem}
+          onPress={() => navigation.navigate('settings')}
+        >
+          <Text style={styles.drawerText}>Settings</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Add Logout Button */}
+      <View style={styles.logoutContainer}>
+        <Button title="Logout" onPress={onLogout} color="#d32f2f" />
+      </View>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  drawerContainer: {
+    flex: 1,
+    justifyContent: 'space-between',
+    padding: 20,
+    marginTop: 50
+  },
+  navigationLinks: {
+    flex: 1,
+  },
+  drawerItem: {
+    marginBottom: 20,
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: '#e6e6e6',
+  },
+  drawerText: {
+    fontSize: 18,
+    color: '#333',
+  },
+  logoutContainer: {
+    marginBottom: 20,
+  },
+});
