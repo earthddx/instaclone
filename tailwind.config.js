@@ -6,16 +6,18 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#0d0d0d",
-          100: "rgb(30, 30, 30)",
+          DEFAULT: "#050D1A",
+          100: "#0C1929",
+          200: "#132040",
+          300: "#1A3060",
         },
         secondary: {
-          DEFAULT: "#00d5ff",
-          100: "rgba(0, 213, 255, .1)",
-          300: "rgba(0, 213, 255, .3)",
-          700: "rgba(0, 213, 255, .7)",
+          DEFAULT: "#4DA6FF",
+          100: "rgba(77, 166, 255, 0.1)",
+          300: "rgba(77, 166, 255, 0.3)",
+          700: "rgba(77, 166, 255, 0.7)",
         },
-        highlight: "#e34ba9"
+        highlight: "#1A6EEB",
       },
     },
   },
