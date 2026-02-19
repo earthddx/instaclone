@@ -1,62 +1,84 @@
 import React from "react";
-import { Image, View, Text, Alert, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  Alert,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  Pressable,
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import ComponentButton from "../../components/ComponentButton";
-import ComponentInput from "../../components/ComponentInput";
 import * as ImagePicker from "expo-image-picker";
 import ComponentVideo from "../../components/ComponentVideo";
+import ComponentImage from "../../components/ComponentImage";
 import { uploadFile, createPost } from "../../lib/appwrite";
 import { UserContext } from "../../context/UserContext";
 import { router } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import ComponentImage from "../../components/ComponentImage";
+
+const TITLE_MAX = 60;
+const DESC_MAX = 300;
+const MAX_FILE_SIZE = 50 * 1024 * 1024;
 
 export default function Create() {
   const { user } = React.useContext(UserContext);
   const [uploading, setUploading] = React.useState(false);
-  const [input, setInput] = React.useState({
-    title: "",
-    description: "",
-    media: null,
-  });
+  const [input, setInput] = React.useState({ title: "", description: "", media: null });
   const { title, description, media } = input;
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images", "videos"],
-      allowsEditing: true,
-    });
-    if (!result.canceled && result.assets[0]?.fileSize >= 52428800) {
-      Alert.alert("Error", "File size cannot exceed 50MB");
-    } else if (!result.canceled) {
-      setInput((state) => ({ ...state, media: result.assets[0] }));
+  const handleMediaResult = (result) => {
+    if (result.canceled) return;
+    if (result.assets[0]?.fileSize >= MAX_FILE_SIZE) {
+      Alert.alert("File too large", "Please choose a file smaller than 50MB.");
+    } else {
+      setInput((s) => ({ ...s, media: result.assets[0] }));
     }
   };
 
-  const useCamera = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert("Permission required", "Camera access is needed to use this feature.");
-      return;
-    }
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ["images", "videos"],
-      allowsEditing: true,
-    });
-    if (!result.canceled && result.assets[0]?.fileSize >= 52428800) {
-      Alert.alert("Error", "File size cannot exceed 50MB");
-    } else if (!result.canceled) {
-      setInput((state) => ({ ...state, media: result.assets[0] }));
-    }
+  const openMediaPicker = () => {
+    Alert.alert("Add Media", "Choose a source", [
+      {
+        text: "Photo / Video Library",
+        onPress: async () => {
+          const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ["images", "videos"],
+            allowsEditing: true,
+          });
+          handleMediaResult(result);
+        },
+      },
+      {
+        text: "Camera",
+        onPress: async () => {
+          const { status } = await ImagePicker.requestCameraPermissionsAsync();
+          if (status !== "granted") {
+            Alert.alert("Permission required", "Camera access is needed to use this feature.");
+            return;
+          }
+          const result = await ImagePicker.launchCameraAsync({
+            mediaTypes: ["images", "videos"],
+            allowsEditing: true,
+          });
+          handleMediaResult(result);
+        },
+      },
+      { text: "Cancel", style: "cancel" },
+    ]);
   };
+
+  const removeMedia = () => setInput((s) => ({ ...s, media: null }));
 
   const onSubmit = async () => {
-    if (!title) {
-      Alert.alert("Validation", "Please enter a title.");
+    if (!title.trim()) {
+      Alert.alert("Missing title", "Please add a title for your post.");
       return;
     }
     if (!media) {
-      Alert.alert("Validation", "Please select a media file.");
+      Alert.alert("Missing media", "Please add a photo or video to your post.");
       return;
     }
     try {
@@ -64,81 +86,172 @@ export default function Create() {
       const { fileViewUrl, type } = await uploadFile({ file: media });
       await createPost({
         file: fileViewUrl,
-        title,
+        title: title.trim(),
         type,
-        description,
+        description: description.trim(),
         userId: user.$id,
       });
       setInput({ title: "", description: "", media: null });
-      Alert.alert("Success", "Post successfully created");
-      router.push("/home");
+      Alert.alert("Posted!", "Your post is now live.", [
+        { text: "OK", onPress: () => router.push("/home") },
+      ]);
     } catch (e) {
-      Alert.alert("Error", e.message);
+      Alert.alert("Upload failed", e.message);
     } finally {
       setUploading(false);
     }
   };
 
+  const canSubmit = title.trim().length > 0 && !!media && !uploading;
+
   return (
-    <SafeAreaView
-      className="bg-primary-100 h-full"
-      edges={["right", "top", "left"]}
-    >
-      <ScrollView className="px-4 my-6">
-        <View>
-          <Text className="text-highlight p-2">Create post</Text>
-        </View>
-        <View>
-          <ComponentButton title="Select..." onPress={pickImage} />
-        </View>
-        <View>
-          <ComponentInput
-            onChangeText={(ev) =>
-              setInput((state) => ({ ...state, title: ev }))
-            }
-            placeholder="Title"
-            value={title}
-          />
-        </View>
-        <View>
-          <ComponentInput
-            onChangeText={(ev) =>
-              setInput((state) => ({ ...state, description: ev }))
-            }
-            placeholder="Description"
-            value={description}
-          />
-        </View>
-        <View className="border-2 p-2 border-green-400 rounded-lg">
-          {media ? (
-            media?.type === "image" ? (
-              <ComponentImage source={media?.uri} />
-            ) : (
-              <ComponentVideo source={media?.uri} />
-            )
+    <SafeAreaView className="bg-primary-100 flex-1" edges={["right", "top", "left"]}>
+      {/* ── Header ── */}
+      <View className="flex-row items-center justify-between px-4 py-3 border-b border-primary-200">
+        <TouchableOpacity
+          onPress={() => router.push("/home")}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <MaterialIcons name="close" size={24} color="#9ca3af" />
+        </TouchableOpacity>
+
+        <Text className="text-white text-lg font-bold">New Post</Text>
+
+        <TouchableOpacity
+          onPress={onSubmit}
+          disabled={!canSubmit}
+          className={`px-5 py-2 rounded-full ${canSubmit ? "bg-highlight" : "bg-primary-300"}`}
+        >
+          {uploading ? (
+            <ActivityIndicator size="small" color="#fff" />
           ) : (
-            <View className="items-center">
-              <MaterialIcons name="perm-media" size={220} color="yellow" />
-            </View>
+            <Text className={`font-semibold text-sm ${canSubmit ? "text-white" : "text-gray-500"}`}>
+              Post
+            </Text>
           )}
-        </View>
-        <View className="pt-2 pb-1">
-          <Text className="color-white">or use camera</Text>
-          <ComponentButton
-            title="Use Camera"
-            buttonStyles="bg-secondary-700"
-            onPress={useCamera}
-            textStyles="color-white"
-          />
-        </View>
-        <View>
-          <ComponentButton
-            isLoading={uploading}
-            title="Create post"
-            onPress={onSubmit}
-          />
-        </View>
-      </ScrollView>
+        </TouchableOpacity>
+      </View>
+
+      {/* ── Body ── */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
+      >
+        <ScrollView
+          className="flex-1"
+          contentContainerStyle={{ paddingBottom: 40 }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          {/* ── Media zone ── */}
+          {media ? (
+            <View>
+              {media.type === "image" ? (
+                <ComponentImage source={media.uri} />
+              ) : (
+                <ComponentVideo source={media.uri} isVisible />
+              )}
+              {/* Overlay: swap / remove */}
+              <View
+                style={{ position: "absolute", top: 12, right: 12, flexDirection: "row", gap: 8 }}
+              >
+                <TouchableOpacity
+                  onPress={openMediaPicker}
+                  className="bg-black/60 rounded-full p-2"
+                >
+                  <MaterialIcons name="swap-horiz" size={20} color="#fff" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={removeMedia}
+                  className="bg-black/60 rounded-full p-2"
+                >
+                  <MaterialIcons name="close" size={20} color="#fff" />
+                </TouchableOpacity>
+              </View>
+            </View>
+          ) : (
+            <Pressable
+              onPress={openMediaPicker}
+              className="mx-4 mt-5 bg-primary-200 rounded-2xl items-center justify-center py-14"
+              style={{ borderWidth: 2, borderStyle: "dashed", borderColor: "#1A3060" }}
+            >
+              <View className="bg-primary-300 rounded-full p-4 mb-3">
+                <MaterialIcons name="add-photo-alternate" size={40} color="#1A6EEB" />
+              </View>
+              <Text className="text-white font-semibold text-base">Add Photo or Video</Text>
+              <Text className="text-gray-500 text-sm mt-1">
+                Tap to choose from library or camera
+              </Text>
+              <Text className="text-gray-600 text-xs mt-3">Max 50MB · JPEG, PNG, MP4, MOV</Text>
+            </Pressable>
+          )}
+
+          {/* ── Form ── */}
+          <View className="px-4 mt-5">
+            {/* Title */}
+            <View className="mb-4">
+              <View className="flex-row justify-between items-baseline mb-1">
+                <Text className="text-gray-300 text-sm font-medium">
+                  Title <Text className="text-red-400">*</Text>
+                </Text>
+                <Text
+                  className={`text-xs ${title.length > TITLE_MAX * 0.85 ? "text-red-400" : "text-gray-600"}`}
+                >
+                  {title.length}/{TITLE_MAX}
+                </Text>
+              </View>
+              <View className="border border-primary-300 bg-primary-200 rounded-2xl px-4 py-3">
+                <TextInput
+                  className="text-white text-base"
+                  value={title}
+                  onChangeText={(v) => {
+                    if (v.length <= TITLE_MAX) setInput((s) => ({ ...s, title: v }));
+                  }}
+                  placeholder="Give your post a title…"
+                  placeholderTextColor="#4A6080"
+                  returnKeyType="next"
+                />
+              </View>
+            </View>
+
+            {/* Description */}
+            <View>
+              <View className="flex-row justify-between items-baseline mb-1">
+                <Text className="text-gray-300 text-sm font-medium">Description</Text>
+                <Text
+                  className={`text-xs ${description.length > DESC_MAX * 0.85 ? "text-red-400" : "text-gray-600"}`}
+                >
+                  {description.length}/{DESC_MAX}
+                </Text>
+              </View>
+              <View className="border border-primary-300 bg-primary-200 rounded-2xl px-4 py-3">
+                <TextInput
+                  className="text-white text-base"
+                  value={description}
+                  onChangeText={(v) => {
+                    if (v.length <= DESC_MAX) setInput((s) => ({ ...s, description: v }));
+                  }}
+                  placeholder="Write a caption…"
+                  placeholderTextColor="#4A6080"
+                  multiline
+                  textAlignVertical="top"
+                  style={{ minHeight: 100 }}
+                />
+              </View>
+            </View>
+          </View>
+
+          {/* ── Info tip (only when no media yet) ── */}
+          {!media ? (
+            <View className="mx-4 mt-4 bg-primary-200 rounded-xl p-3 flex-row items-start">
+              <MaterialIcons name="info-outline" size={15} color="#4DA6FF" />
+              <Text className="text-gray-400 text-xs ml-2 flex-1">
+                A title and at least one photo or video are required before publishing.
+              </Text>
+            </View>
+          ) : null}
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
