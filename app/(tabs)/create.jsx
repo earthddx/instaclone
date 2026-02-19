@@ -7,8 +7,6 @@ import {
   TextInput,
   TouchableOpacity,
   Pressable,
-  KeyboardAvoidingView,
-  Platform,
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -107,12 +105,18 @@ export default function Create() {
   return (
     <SafeAreaView className="bg-primary-100 flex-1" edges={["right", "top", "left"]}>
       {/* ── Header ── */}
-      <View className="flex-row items-center justify-between px-4 py-3 border-b border-primary-200">
-        <Text className="text-white text-lg font-bold">New Post</Text>
+      <View className="px-4 py-3 border-b border-primary-300 flex-row items-center">
+        <View className="flex-row items-center">
+          <View className="w-8 h-8 rounded-full bg-secondary-100 border border-secondary-300 justify-center items-center mr-3">
+            <MaterialIcons name="post-add" size={16} color="#4DA6FF" />
+          </View>
+          <Text className="text-white text-lg font-bold">New Post</Text>
+        </View>
+        <View className="flex-1" />
         <TouchableOpacity
           onPress={onSubmit}
           disabled={!canSubmit}
-          className={`px-5 py-2 rounded-full ${canSubmit ? "bg-highlight" : "bg-primary-300"}`}
+          className={`px-5 h-8 rounded-full items-center justify-center ${canSubmit ? "bg-highlight" : "bg-primary-300"}`}
         >
           {uploading ? (
             <ActivityIndicator size="small" color="#fff" />
@@ -125,15 +129,12 @@ export default function Create() {
       </View>
 
       {/* ── Body ── */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1"
-      >
         <ScrollView
           className="flex-1"
           contentContainerStyle={{ paddingBottom: 40 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
+          automaticallyAdjustKeyboardInsets={true}
         >
           {/* ── Media zone ── */}
           {media ? (
@@ -243,7 +244,6 @@ export default function Create() {
             </View>
           ) : null}
         </ScrollView>
-      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

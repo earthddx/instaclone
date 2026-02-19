@@ -88,11 +88,17 @@ const Messages = () => {
             const isLastInChainOfMessages =
               !messages[index + 1] ||
               messages[index + 1].userId !== item.userId;
+            const prevMsg = index > 0 ? messages[index - 1] : null;
+            const showGapTimestamp =
+              !isNewChainOfMessages &&
+              prevMsg?.userId === item.userId &&
+              new Date(prevMsg.$createdAt) - new Date(item.$createdAt) >
+                5 * 60 * 1000;
             return (
               <ComponentMessage
                 item={item}
                 isOwner={isOwner}
-                timestampAnchor={isNewChainOfMessages}
+                timestampAnchor={isNewChainOfMessages || showGapTimestamp}
                 usernameAnchor={isLastInChainOfMessages}
               />
             );
@@ -140,7 +146,7 @@ const InputArea = () => {
 
   return (
     <View className="flex-row items-center px-3 py-2 border-t border-primary-300 bg-primary-200 gap-2">
-      <View className="flex-1 flex-row items-center bg-primary-100 border border-primary-300 rounded-full px-4 min-h-[44px]">
+      <View className="flex-1 flex-row items-center bg-primary-100 border border-primary-300 rounded-full px-4 h-[44px]">
         <TextInput
           className="text-base text-white flex-1 py-2"
           onChangeText={setMessage}
@@ -149,6 +155,7 @@ const InputArea = () => {
           value={message}
           multiline
           maxLength={500}
+          scrollEnabled
         />
       </View>
       <TouchableOpacity
@@ -200,7 +207,12 @@ const ComponentMessage = ({
   const minutes = date.getMinutes().toString().padStart(2, "0");
   const ampm = hours >= 12 ? "PM" : "AM";
   hours = hours % 12 || 12;
-  const formattedTime = `${hours}:${minutes} ${ampm}`;
+  const timeStr = `${hours}:${minutes} ${ampm}`;
+  const now = new Date();
+  const isOlderThanOneDay = now - date > 24 * 60 * 60 * 1000;
+  const formattedTime = isOlderThanOneDay
+    ? `${date.toLocaleDateString([], { month: "short", day: "numeric" })} ${timeStr}`
+    : timeStr;
 
   const handleLongPress = async () => {
     await Clipboard.setStringAsync(item.text);
