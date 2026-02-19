@@ -108,15 +108,7 @@ export default function Create() {
     <SafeAreaView className="bg-primary-100 flex-1" edges={["right", "top", "left"]}>
       {/* ── Header ── */}
       <View className="flex-row items-center justify-between px-4 py-3 border-b border-primary-200">
-        <TouchableOpacity
-          onPress={() => router.push("/home")}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <MaterialIcons name="close" size={24} color="#9ca3af" />
-        </TouchableOpacity>
-
         <Text className="text-white text-lg font-bold">New Post</Text>
-
         <TouchableOpacity
           onPress={onSubmit}
           disabled={!canSubmit}
