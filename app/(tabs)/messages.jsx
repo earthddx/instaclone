@@ -53,7 +53,7 @@ const Messages = () => {
         ) {
           console.log("A MESSAGE WAS DELETED!!!");
           setMessages((prev) =>
-            prev.filter((message) => message.$id !== response.payload.$id)
+            prev.filter((message) => message?.$id !== response.payload?.$id)
           );
         }
       }
@@ -82,7 +82,7 @@ const Messages = () => {
           data={messages}
           keyExtractor={(item) => item.$id}
           renderItem={({ item, index }) => {
-            const isOwner = user.$id === item.userId;
+            const isOwner = user?.$id === item.userId;
             //TODO:
             //show old messages separately
             //also, if the time diff is more than ~2min-have it displayed too
