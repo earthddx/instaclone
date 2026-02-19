@@ -1,22 +1,13 @@
 import { router, useFocusEffect } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, Image, FlatList, TouchableOpacity } from "react-native";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import React from "react";
 import { UserContext } from "../../../context/UserContext";
 import ComponentInfoBox from "../../../components/ComponentInfoBox";
-import { getUserPosts, signOut } from "../../../lib/appwrite";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { getUserPosts, getUserLikedPosts } from "../../../lib/appwrite";
 import ComponentEmpty from "../../../components/ComponentEmpty";
-
-const likedVideosData = [
-  { id: "1", title: "Liked Video 1" },
-  { id: "2", title: "Liked Video 2" },
-  { id: "3", title: "Liked Video 3" },
-  { id: "4", title: "Liked Video 4" },
-];
 
 export default (props) => {
   return (
@@ -41,8 +32,8 @@ export default (props) => {
           options={{
             title: "",
             headerShown: false,
-            tabBarIcon: ({ color }) => (
-              <AntDesign name="like" size={24} color={color} />
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons name={focused ? "heart" : "heart-outline"} size={24} color={color} />
             ),
           }}
         />
@@ -52,8 +43,8 @@ export default (props) => {
           options={{
             title: "",
             headerShown: false,
-            tabBarIcon: ({ color }) => (
-              <MaterialIcons name="grid-on" size={24} color={color} />
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons name={focused ? "grid" : "grid-outline"} size={24} color={color} />
             ),
           }}
         />
@@ -99,17 +90,22 @@ const renderItem = ({ item }) => (
 
 const LikedVideos = () => {
   const { user } = React.useContext(UserContext);
-  // const likedPosts = getUserLikedPosts(user.$id);
+  const [likedPosts, setLikedPosts] = React.useState([]);
+
+  React.useEffect(() => {
+    if (user?.$id) {
+      getUserLikedPosts(user.$id).then(setLikedPosts);
+    }
+  }, [user]);
+
   return (
     <View className="bg-primary-100 flex-1">
       <FlatList
-        data={likedVideosData}
+        data={likedPosts}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.$id}
         className="p-2"
-        ListEmptyComponent={
-          <ComponentEmpty message={"No Liked Posts Found"} />
-        }
+        ListEmptyComponent={<ComponentEmpty message={"No Liked Posts Found"} />}
       />
     </View>
   );
