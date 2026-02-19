@@ -125,7 +125,7 @@ const UserPosts = () => {
   };
 
   React.useEffect(() => {
-    if (user) {
+    if (user?.$id) {
       fetchPosts();
     }
   }, [user]);
