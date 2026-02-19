@@ -3,8 +3,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import MediaCard from "../../components/MediaCard";
 import { getAllPosts } from "../../lib/appwrite";
 import React from "react";
+import { UserContext } from "../../context/UserContext";
 
 export default function Home() {
+  const { user } = React.useContext(UserContext);
   const [posts, setPosts] = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
   const [visibleItems, setVisibleItems] = React.useState([]);
@@ -53,6 +55,7 @@ export default function Home() {
               title={item.title}
               type={item.type}
               isVisible={visibleItems.includes(item.$id)}
+              currentUserId={user?.$id}
             />
           );
         }}
