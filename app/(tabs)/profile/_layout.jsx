@@ -1,8 +1,6 @@
 import { Drawer } from "expo-router/drawer";
 import {
-  Image,
   Text,
-  Button,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -22,35 +20,30 @@ export default function ProfileLayout() {
     router.replace("/signin");
   };
 
-  const handleLogout = () => {
-    // Add your logout logic here
-    console.log("User logged out");
-  };
-
   return (
     <Drawer
       drawerContent={(props) => (
         <CustomDrawerContent {...props} onLogout={logout} />
       )}
       screenOptions={{
-        drawerType: "slide", // Slide-in drawer
+        drawerType: "slide",
         drawerStyle: {
           width: "75%",
-          backgroundColor: "#0d0d0d",
+          backgroundColor: "#050D1A",
         },
-        drawerActiveTintColor: "#6200ee", // Color for the active tab text/icon
-        drawerInactiveTintColor: "#333", // Color for inactive tab text/icon
-        drawerActiveBackgroundColor: "#e1bee7", // Background color for the active tab
-        drawerInactiveBackgroundColor: "#fff", // Background color for inactive tabs
+        drawerActiveTintColor: "#4DA6FF",
+        drawerInactiveTintColor: "#4A6080",
+        drawerActiveBackgroundColor: "#132040",
+        drawerInactiveBackgroundColor: "#0C1929",
         drawerLabelStyle: {
-          fontSize: 16, // Text size of drawer items
-          fontWeight: "bold", // Text weight
+          fontSize: 16,
+          fontWeight: "bold",
         },
         headerStyle: {
-          backgroundColor: "black",
+          backgroundColor: "#0C1929",
         },
         headerTitleStyle: {
-          color: "#e34ba9",
+          color: "#4DA6FF",
           fontWeight: "bold",
           fontSize: 18,
         },
@@ -97,9 +90,10 @@ function CustomDrawerContent({ navigation, onLogout }) {
         </TouchableOpacity>
       </View>
 
-      {/* Add Logout Button */}
       <View style={styles.logoutContainer}>
-        <Button title="Logout" onPress={onLogout} color="#d32f2f" />
+        <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
+          <Text style={styles.logoutText}>Log Out</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -109,7 +103,7 @@ const styles = StyleSheet.create({
   drawerContainer: {
     flex: 1,
     padding: 20,
-    marginTop: 50
+    marginTop: 50,
   },
   drawerContentContainer: {
     flex: 1,
@@ -119,16 +113,32 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   drawerItem: {
-    marginBottom: 20,
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: '#e6e6e6',
+    marginBottom: 12,
+    padding: 14,
+    borderRadius: 10,
+    backgroundColor: '#132040',
+    borderWidth: 1,
+    borderColor: '#1A3060',
   },
   drawerText: {
-    fontSize: 18,
-    color: '#333',
+    fontSize: 16,
+    color: '#E2E8F0',
+    fontWeight: '500',
   },
   logoutContainer: {
     marginBottom: 20,
+  },
+  logoutButton: {
+    padding: 14,
+    borderRadius: 10,
+    backgroundColor: '#1A0A0A',
+    borderWidth: 1,
+    borderColor: '#4A1010',
+    alignItems: 'center',
+  },
+  logoutText: {
+    fontSize: 16,
+    color: '#EF4444',
+    fontWeight: '600',
   },
 });
