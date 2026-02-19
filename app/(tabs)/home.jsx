@@ -1,4 +1,4 @@
-import { View, Text, FlatList, RefreshControl } from "react-native";
+import { View, Text, FlatList, RefreshControl, KeyboardAvoidingView, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MediaCard from "../../components/MediaCard";
 import { getAllPosts } from "../../lib/appwrite";
@@ -40,9 +40,14 @@ export default function Home() {
       className="bg-primary-100 h-full"
       edges={["right", "top", "left"]}
     >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
       <FlatList
         keyExtractor={(item) => item.$id}
         data={posts}
+        keyboardShouldPersistTaps="handled"
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={viewConfigRef}
         renderItem={({ item }) => {
@@ -56,6 +61,7 @@ export default function Home() {
               type={item.type}
               isVisible={visibleItems.includes(item.$id)}
               currentUserId={user?.$id}
+              currentUsername={user?.username}
             />
           );
         }}
@@ -80,6 +86,7 @@ export default function Home() {
         }
         // stickyHeaderIndices={[0]}
       />
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
