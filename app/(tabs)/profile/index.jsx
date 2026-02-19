@@ -42,7 +42,7 @@ export default (props) => {
             title: "",
             headerShown: false,
             tabBarIcon: ({ color }) => (
-              <AntDesign name="like2" size={24} color={color} />
+              <AntDesign name="like" size={24} color={color} />
             ),
           }}
         />
@@ -130,8 +130,10 @@ const UserPosts = () => {
   };
 
   React.useEffect(() => {
-    fetchPosts();
-  }, []);
+    if (user) {
+      fetchPosts();
+    }
+  }, [user]);
 
   return (
     <View className="bg-primary-100 flex-1">
