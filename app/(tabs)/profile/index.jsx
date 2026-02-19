@@ -24,14 +24,14 @@ export default (props) => {
       <Bio />
       <Tab.Navigator
         screenOptions={{
-          tabBarActiveTintColor: "#e34ba9",
+          tabBarActiveTintColor: "#4DA6FF",
           tabBarStyle: {
-            backgroundColor: "#0d0d0d",
-            borderTopColor: "#e34ba9",
+            backgroundColor: "#050D1A",
+            borderTopColor: "#1A3060",
           },
           tabBarIndicatorStyle: {
-            backgroundColor: "#e34ba9",
-            height: 4,
+            backgroundColor: "#4DA6FF",
+            height: 3,
           },
         }}
       >
@@ -69,33 +69,31 @@ const Bio = () => {
   // console.log(user);
 
   return (
-    <SafeAreaView className="w-full flex justify-center items-center px-4">
-      <View className="w-16 h-16 border border-secondary rounded-lg flex justify-center items-center">
+    <View className="w-full items-center px-4 py-6 border-b border-primary-300">
+      <View className="w-20 h-20 border-2 border-secondary rounded-full justify-center items-center overflow-hidden mb-3">
         <Image
           source={{ uri: user?.avatar }}
-          className="w-[90%] h-[90%] rounded-lg"
+          className="w-full h-full"
           resizeMode="cover"
         />
       </View>
       <ComponentInfoBox
-        containerStyles="mt-5"
+        containerStyles="mb-1"
         title={user?.username}
-        titleStyles="text-lg"
+        titleStyles="text-xl font-bold"
       />
-      <View className="mt-5 flex flex-row">
-        <ComponentInfoBox
-          placeholder={"Create your bio..."}
-          title={user?.bio}
-          titleStyles="text-xl"
-        />
-      </View>
-    </SafeAreaView>
+      <ComponentInfoBox
+        placeholder={"Add a bio..."}
+        title={user?.bio}
+        titleStyles="text-sm text-gray-400"
+      />
+    </View>
   );
 };
 
 const renderItem = ({ item }) => (
-  <View className="p-2 mb-3 bg-slate-200 rounded-xl">
-    <Text className="text-lg">{item.title}</Text>
+  <View className="p-3 mb-2 bg-primary-200 rounded-xl border border-primary-300">
+    <Text className="text-white text-base">{item.title}</Text>
   </View>
 );
 
@@ -110,10 +108,7 @@ const LikedVideos = () => {
         keyExtractor={(item) => item.id}
         className="p-2"
         ListEmptyComponent={
-          <ComponentEmpty
-            classNameText={"text-primary"}
-            message={"No Liked Posts Found"}
-          />
+          <ComponentEmpty message={"No Liked Posts Found"} />
         }
       />
     </View>
