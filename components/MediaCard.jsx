@@ -50,6 +50,7 @@ export default (props) => {
     currentUserId ? likes.includes(currentUserId) : false
   );
   const [likeCount, setLikeCount] = React.useState(likes.length);
+  const likesRef = React.useRef([...likes]);
   const [comment, setComment] = React.useState("");
   const [commentsVisible, setCommentsVisible] = React.useState(false);
   const [comments, setComments] = React.useState([]);
@@ -115,6 +116,7 @@ export default (props) => {
     }).start(() => {
       setCommentsVisible(false);
       translateY.setValue(SHEET_HEIGHT);
+      setComment("");
       callback?.();
     });
   };
@@ -143,15 +145,19 @@ export default (props) => {
   const handleLike = async () => {
     if (!currentUserId) return;
     const wasLiked = liked;
+    const snapshot = [...likesRef.current];
     setLiked(!wasLiked);
     setLikeCount((prev) => (wasLiked ? prev - 1 : prev + 1));
     try {
       if (wasLiked) {
-        await unlikePost($id, likes, currentUserId);
+        likesRef.current = snapshot.filter((id) => id !== currentUserId);
+        await unlikePost($id, snapshot, currentUserId);
       } else {
-        await likePost($id, likes, currentUserId);
+        likesRef.current = [...snapshot, currentUserId];
+        await likePost($id, snapshot, currentUserId);
       }
     } catch {
+      likesRef.current = snapshot;
       setLiked(wasLiked);
       setLikeCount((prev) => (wasLiked ? prev + 1 : prev - 1));
     }
@@ -319,22 +325,19 @@ export default (props) => {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  justifyContent: "center",
                   paddingHorizontal: 16,
-                  paddingBottom: 12,
+                  paddingVertical: 12,
                   borderBottomWidth: 1,
                   borderBottomColor: "#2a3a4a",
                 }}
               >
+                <View style={{ width: 22 }} />
                 <Text
-                  style={{ color: "white", fontWeight: "bold", fontSize: 15 }}
+                  style={{ flex: 1, textAlign: "center", color: "white", fontWeight: "bold", fontSize: 15 }}
                 >
                   Comments
                 </Text>
-                <TouchableOpacity
-                  style={{ position: "absolute", right: 16 }}
-                  onPress={() => closeSheet()}
-                >
+                <TouchableOpacity onPress={() => closeSheet()}>
                   <Ionicons name="close" size={22} color="#8899AA" />
                 </TouchableOpacity>
               </View>
@@ -456,14 +459,27 @@ export default (props) => {
                     {avatarLetter(currentUsername)}
                   </Text>
                 </View>
-                <TextInput
-                  value={comment}
-                  onChangeText={setComment}
-                  placeholder="Add a comment..."
-                  placeholderTextColor="#4A6080"
-                  style={{ flex: 1, color: "white", fontSize: 14, maxHeight: 100 }}
-                  multiline
-                />
+                <View
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#263545",
+                    borderWidth: 1,
+                    borderColor: "#3a4f63",
+                    borderRadius: 20,
+                    paddingHorizontal: 14,
+                    paddingVertical: 8,
+                    marginRight: comment.trim().length > 0 ? 10 : 0,
+                  }}
+                >
+                  <TextInput
+                    value={comment}
+                    onChangeText={setComment}
+                    placeholder="Add a comment..."
+                    placeholderTextColor="#4A6080"
+                    style={{ color: "white", fontSize: 14, maxHeight: 100 }}
+                    multiline
+                  />
+                </View>
                 {comment.trim().length > 0 && (
                   <TouchableOpacity
                     onPress={handleSubmitComment}
