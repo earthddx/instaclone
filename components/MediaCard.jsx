@@ -18,8 +18,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ComponentVideo from "./ComponentVideo";
 import ComponentImage from "./ComponentImage";
 import { likePost, unlikePost, getComments, addComment, getCommentCount } from "../lib/appwrite";
+import { BlurView } from "expo-blur";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
+const WINDOW_WIDTH = Dimensions.get("window").width;
 const SHEET_HEIGHT = SCREEN_HEIGHT * 0.78;
 const DISMISS_THRESHOLD = 120;
 
@@ -51,6 +53,12 @@ export default (props) => {
   );
   const [likeCount, setLikeCount] = React.useState(likes.length);
   const likesRef = React.useRef([...likes]);
+  const [hidden, setHidden] = React.useState(false);
+  const [menuVisible, setMenuVisible] = React.useState(false);
+  const [menuTop, setMenuTop] = React.useState(0);
+  const [menuRight, setMenuRight] = React.useState(0);
+  const ellipsisRef = React.useRef(null);
+
   const [comment, setComment] = React.useState("");
   const [commentsVisible, setCommentsVisible] = React.useState(false);
   const [comments, setComments] = React.useState([]);
@@ -191,6 +199,14 @@ export default (props) => {
     } catch {}
   };
 
+  const openMenu = () => {
+    ellipsisRef.current?.measureInWindow((x, y, width, height) => {
+      setMenuTop(y + height + 4);
+      setMenuRight(WINDOW_WIDTH - x - width);
+      setMenuVisible(true);
+    });
+  };
+
   const avatarLetter = (name) => name?.[0]?.toUpperCase() ?? "?";
 
   return (
@@ -208,73 +224,155 @@ export default (props) => {
             <Text className="text-gray-500 text-xs">{formattedDate}</Text>
           )}
         </View>
-        <TouchableOpacity hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+        <TouchableOpacity
+          ref={ellipsisRef}
+          onPress={openMenu}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
           <Ionicons name="ellipsis-horizontal" size={18} color="#4A6080" />
         </TouchableOpacity>
       </View>
 
-      {/* Media */}
-      {type.includes("image") ? (
-        <ComponentImage source={source} />
-      ) : (
-        <ComponentVideo
-          source={source}
-          allowsFullscreen
-          allowsPictureInPicture
-          isVisible={isVisible}
-        />
-      )}
-
-      {/* Action bar */}
-      <View className="flex-row items-center px-3 pt-3 pb-1 gap-4">
-        <TouchableOpacity
-          onPress={handleLike}
-          className="flex-row items-center gap-1.5"
-        >
-          <Ionicons
-            name={liked ? "heart" : "heart-outline"}
-            size={24}
-            color={liked ? "#FF4D6D" : "#8899AA"}
+      {/* Media + body — wrapped so the hidden overlay can cover them */}
+      <View style={{ position: "relative" }}>
+        {/* Media */}
+        {type.includes("image") ? (
+          <ComponentImage source={source} />
+        ) : (
+          <ComponentVideo
+            source={source}
+            allowsFullscreen
+            allowsPictureInPicture
+            isVisible={isVisible && !hidden}
           />
-          {likeCount > 0 && (
-            <Text
-              className="text-sm"
-              style={{ color: liked ? "#FF4D6D" : "#8899AA" }}
-            >
-              {likeCount}
-            </Text>
-          )}
-        </TouchableOpacity>
+        )}
+
+        {/* Action bar */}
+        <View className="flex-row items-center px-3 pt-3 pb-1 gap-4">
+          <TouchableOpacity
+            onPress={handleLike}
+            className="flex-row items-center gap-1.5"
+          >
+            <Ionicons
+              name={liked ? "heart" : "heart-outline"}
+              size={24}
+              color={liked ? "#FF4D6D" : "#8899AA"}
+            />
+            {likeCount > 0 && (
+              <Text
+                className="text-sm"
+                style={{ color: liked ? "#FF4D6D" : "#8899AA" }}
+              >
+                {likeCount}
+              </Text>
+            )}
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={openComments}
+            className="flex-row items-center gap-1.5"
+          >
+            <Ionicons name="chatbubble-outline" size={22} color="#8899AA" />
+            {commentCount > 0 && (
+              <Text className="text-sm" style={{ color: "#8899AA" }}>
+                {commentCount}
+              </Text>
+            )}
+          </TouchableOpacity>
+        </View>
+
+        {/* Title + description */}
+        <View className="px-3 pt-1 pb-2">
+          {title ? (
+            <Text className="text-white text-sm font-semibold">{title}</Text>
+          ) : null}
+          {description ? (
+            <Text className="text-gray-400 text-sm mt-0.5">{description}</Text>
+          ) : null}
+        </View>
+
+        {/* Add a comment — tapping opens the modal */}
         <TouchableOpacity
           onPress={openComments}
-          className="flex-row items-center gap-1.5"
+          className="flex-row items-center px-3 py-2.5 border-t border-primary-300"
         >
-          <Ionicons name="chatbubble-outline" size={22} color="#8899AA" />
-          {commentCount > 0 && (
-            <Text className="text-sm" style={{ color: "#8899AA" }}>
-              {commentCount}
-            </Text>
-          )}
+          <Text className="text-gray-500 text-sm flex-1">Add a comment...</Text>
         </TouchableOpacity>
+
+        {/* Hidden overlay */}
+        {hidden && (
+          <BlurView
+            intensity={70}
+            tint="dark"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Ionicons name="eye-off" size={90} color="rgba(255,255,255,0.75)" />
+          </BlurView>
+        )}
       </View>
 
-      {/* Title + description */}
-      <View className="px-3 pt-1 pb-2">
-        {title ? (
-          <Text className="text-white text-sm font-semibold">{title}</Text>
-        ) : null}
-        {description ? (
-          <Text className="text-gray-400 text-sm mt-0.5">{description}</Text>
-        ) : null}
-      </View>
-
-      {/* Add a comment — tapping opens the modal */}
-      <TouchableOpacity
-        onPress={openComments}
-        className="flex-row items-center px-3 py-2.5 border-t border-primary-300"
+      {/* Ellipsis menu */}
+      <Modal
+        visible={menuVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setMenuVisible(false)}
       >
-        <Text className="text-gray-500 text-sm flex-1">Add a comment...</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={{ flex: 1 }}
+          activeOpacity={1}
+          onPress={() => setMenuVisible(false)}
+        >
+          <View
+            style={{
+              position: "absolute",
+              top: menuTop,
+              right: menuRight,
+              backgroundColor: "#1E2D3D",
+              borderRadius: 10,
+              borderWidth: 1,
+              borderColor: "#2a3a4a",
+              minWidth: 152,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.4,
+              shadowRadius: 10,
+              elevation: 10,
+            }}
+          >
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                setHidden((prev) => !prev);
+                setMenuVisible(false);
+              }}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                paddingHorizontal: 14,
+                paddingVertical: 13,
+                gap: 10,
+              }}
+            >
+              <Ionicons
+                name={hidden ? "eye-outline" : "eye-off-outline"}
+                size={18}
+                color="#8899AA"
+              />
+              <Text style={{ color: "white", fontSize: 14 }}>
+                {hidden ? "Show post" : "Hide post"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
 
       {/* Comments modal */}
       <Modal
