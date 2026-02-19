@@ -22,19 +22,43 @@ export default function Create() {
   const { title, description, media } = input;
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaType.All,
+      mediaTypes: ["images", "videos"],
       allowsEditing: true,
     });
     if (!result.canceled && result.assets[0]?.fileSize >= 52428800) {
-      Alert.alert("File size cannot exceed 50MB");
+      Alert.alert("Error", "File size cannot exceed 50MB");
+    } else if (!result.canceled) {
+      setInput((state) => ({ ...state, media: result.assets[0] }));
+    }
+  };
+
+  const useCamera = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Permission required", "Camera access is needed to use this feature.");
+      return;
+    }
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ["images", "videos"],
+      allowsEditing: true,
+    });
+    if (!result.canceled && result.assets[0]?.fileSize >= 52428800) {
+      Alert.alert("Error", "File size cannot exceed 50MB");
     } else if (!result.canceled) {
       setInput((state) => ({ ...state, media: result.assets[0] }));
     }
   };
 
   const onSubmit = async () => {
+    if (!title) {
+      Alert.alert("Validation", "Please enter a title.");
+      return;
+    }
+    if (!media) {
+      Alert.alert("Validation", "Please select a media file.");
+      return;
+    }
     try {
       setUploading(true);
       const { fileViewUrl, type } = await uploadFile({ file: media });
@@ -45,13 +69,13 @@ export default function Create() {
         description,
         userId: user.$id,
       });
+      setInput({ title: "", description: "", media: null });
+      Alert.alert("Success", "Post successfully created");
+      router.push("/home");
     } catch (e) {
-      Alert.alert(e);
+      Alert.alert("Error", e.message);
     } finally {
       setUploading(false);
-      Alert.alert("Post successfully created");
-      setInput({ title: "", description: "", media: null });
-      router.push("/home");
     }
   };
 
@@ -103,8 +127,7 @@ export default function Create() {
           <ComponentButton
             title="Use Camera"
             buttonStyles="bg-secondary-700"
-            onPress={(ev) => console.log("Use Camera clicked")}
-            platitleceholder="Use Camera"
+            onPress={useCamera}
             textStyles="color-white"
           />
         </View>
