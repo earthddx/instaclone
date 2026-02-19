@@ -28,17 +28,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
-        options={{
-          title: "",
-          headerShown: false,
-
-          tabBarIcon: ({ color }) => (
-            <SimpleLineIcons name="magnifier" size={28} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="create"
         options={{
           title: "",
@@ -54,7 +43,7 @@ export default function TabLayout() {
           title: "",
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <AntDesign name="message1" size={28} color={color} />
+            <AntDesign name="message" size={28} color={color} />
           ),
         }}
       />
@@ -70,38 +59,4 @@ export default function TabLayout() {
         />
     </Tabs>
   );
-}
-
-//FIXME: example
-{
-  /* <Tabs
-screenOptions={{
-tabBarActiveTintColor: Colors.orange.default,
-tabBarStyle: {
-height: 70,
-borderWidth: 1,
-borderRadius: 50,
-borderColor: Colors.orange.default,
-borderTopColor: Colors.orange.default,
-backgroundColor: Colors.white.default,
-},
-tabBarLabelStyle: {
-fontSize: 12,
-fontWeight: "bold",
-marginBottom: 10,
-},
-}}
->
-<Tabs.Screen
-name="(HomeNav)"
-options={{
-title: "Home",
-headerShown: false,
-tabBarIcon: ({color, size}) => (
-<Ionicons name="ios-home" size={size} color={color}/>
-),
-}}
-/>
-
-</Tabs> */
 }
