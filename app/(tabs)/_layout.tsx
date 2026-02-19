@@ -1,8 +1,4 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Tabs } from "expo-router";
 
 //TODO: use constants/Colors instead since nativewind does not work here
@@ -25,8 +21,8 @@ export default function TabLayout() {
         options={{
           title: "",
           headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <FontAwesome size={28} name="home" color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons size={28} name={focused ? "home" : "home-outline"} color={color} />
           ),
         }}
       />
@@ -35,8 +31,8 @@ export default function TabLayout() {
         options={{
           title: "",
           headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="create-outline" size={28} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "create" : "create-outline"} size={28} color={color} />
           ),
         }}
       />
@@ -45,21 +41,21 @@ export default function TabLayout() {
         options={{
           title: "",
           headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <AntDesign name="message" size={28} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "chatbubbles" : "chatbubbles-outline"} size={28} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-          name="profile"
-          options={{
-            title: "",
-            headerShown: false,
-            tabBarIcon: ({ color }) => (
-              <MaterialIcons name="account-circle" size={28} color={color} />
-            ),
-          }}
-        />
+        name="profile"
+        options={{
+          title: "",
+          headerShown: false,
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "person-circle" : "person-circle-outline"} size={28} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }
