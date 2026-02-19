@@ -1,5 +1,13 @@
 import { Link, router } from "expo-router";
-import { View, Text, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React from "react";
 import ComponentButton from "../../components/ComponentButton";
@@ -29,44 +37,56 @@ export default (props) => {
   };
 
   return (
-    <SafeAreaView className="bg-primary h-full">
-      <View className="justify-center flex-row ">
-        <Text className="text-md font-semibold text-white mt-10 ">
-          Sign up to see photos and videos from your friends.
-        </Text>
-      </View>
-      <ComponentInput
-        placeholder={"Username"}
-        onChangeText={(ev) => setState((prev) => ({ ...prev, username: ev }))}
-        textContentType={"username"}
-      />
-      <ComponentInput
-        placeholder={"Email"}
-        onChangeText={(ev) => setState((prev) => ({ ...prev, email: ev }))}
-        textContentType={"emailAddress"}
-      />
-      <ComponentInput
-        placeholder={"Password"}
-        onChangeText={(ev) => setState((prev) => ({ ...prev, password: ev }))}
-        textContentType={"newPassword"}
-      />
-      <ComponentButton
-        title={"Sign up"}
-        onPress={onSignUp}
-        buttonStyles={"mt-20"}
-      />
-
-      <Text className="text-2xl font-semibold text-white mt-10 ">
-        Have an account?{" "}
-        <Link href="/signin" className="text-lg text-highlight">
-          Log in
-        </Link>
-      </Text>
-      <View className="justify-center flex-row absolute bottom-20  w-[100%]">
-        <Text className="text-sm text-gray-100 font-pregular">
-          2024 Instaclone 🍑 created with React Native
-        </Text>
-      </View>
+    <SafeAreaView className="bg-primary-100 h-full flex-1">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
+      >
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View className="flex-1 px-6 justify-center">
+            <Text className="text-4xl font-bold text-white mb-2">Create account</Text>
+            <Text className="text-secondary text-base mb-10">Join Instaclone today</Text>
+            <ComponentInput
+              placeholder={"Username"}
+              onChangeText={(ev) => setState((prev) => ({ ...prev, username: ev }))}
+              textContentType={"username"}
+            />
+            <View className="mt-4">
+              <ComponentInput
+                placeholder={"Email"}
+                onChangeText={(ev) => setState((prev) => ({ ...prev, email: ev }))}
+                textContentType={"emailAddress"}
+              />
+            </View>
+            <View className="mt-4">
+              <ComponentInput
+                placeholder={"Password"}
+                onChangeText={(ev) => setState((prev) => ({ ...prev, password: ev }))}
+                textContentType={"newPassword"}
+              />
+            </View>
+            <ComponentButton
+              title={"Sign Up"}
+              onPress={onSignUp}
+              buttonStyles={"mt-8"}
+            />
+            <View className="justify-center pt-6 flex-row gap-2">
+              <Text className="text-base text-gray-400">Already have an account?</Text>
+              <Link href="/signin" className="text-base text-secondary">
+                Log in
+              </Link>
+            </View>
+          </View>
+          <View className="justify-center flex-row pb-8">
+            <Text className="text-xs text-gray-600">
+              2026 Instaclone · React Native
+            </Text>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

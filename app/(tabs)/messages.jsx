@@ -74,10 +74,11 @@ const Messages = () => {
   // );
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <SafeAreaView className="bg-primary h-full">
+    <SafeAreaView className="bg-primary-100 flex-1">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
+      >
         <FlatList
           data={messages}
           keyExtractor={(item) => item.$id}
@@ -104,8 +105,8 @@ const Messages = () => {
         />
         {/* create ComponentInput based on SearchInput */}
         <InputArea />
-      </SafeAreaView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
@@ -133,17 +134,18 @@ const InputArea = (props) => {
   };
 
   return (
-    <View className="border-2 border-black-200  flex-row">
-      <View className="h-16 flex-1 px-4 bg-black-100  focus:border-secondary items-center flex-row space-x-4">
+    <View className="flex-row border-t border-primary-300 bg-primary-200">
+      <View className="h-14 flex-1 px-4 items-center flex-row">
         <TextInput
-          className="text-base mt-0.5 text-white flex-1 font-pregular"
+          className="text-base text-white flex-1"
           onChangeText={setMessage}
-          placeholder="Type your message"
+          placeholder="Message..."
+          placeholderTextColor="#4A6080"
           value={message}
         />
       </View>
       <ComponentButton
-        buttonStyles={"rounded-none w-20 bg-blue-100"}
+        buttonStyles={"rounded-none w-20 min-h-[56px]"}
         onPress={sendMessage}
         title="Send"
       />
@@ -154,12 +156,11 @@ const InputArea = (props) => {
 const ComponentMessage = (props) => {
   const { item, isOwner, timestampAnchor, usernameAnchor } = props;
   const bubbleStyle = isOwner
-    ? "bg-blue-500 text-white self-end "
-    : "bg-gray-300 text-black self-start ";
+    ? "bg-highlight self-end"
+    : "bg-primary-200 self-start border border-primary-300";
   const nameStyle = isOwner
-    ? "text-right text-blue-700"
-    : "text-left text-gray-700";
-  const timestampStyle = "text-xs text-gray-500";
+    ? "text-right text-gray-500 text-xs"
+    : "text-left text-gray-500 text-xs";
 
   const dateString = item.$createdAt;
   const date = new Date(dateString);
@@ -177,20 +178,20 @@ const ComponentMessage = (props) => {
   };
 
   return (
-    <View className="mb-2 mr-2 ml-2">
+    <View className="mb-1 mr-3 ml-3">
       {usernameAnchor && (
-        <Text className={`text-sm ${nameStyle} mb-1`}>
+        <Text className={`${nameStyle} mb-1`}>
           {isOwner ? "You" : item.username}
         </Text>
       )}
       <Pressable onLongPress={handleLongPress}>
-        <View className={`flex-row max-w-xs ${bubbleStyle} rounded-lg p-3`}>
-          <Text className="text-base">{item.text}</Text>
+        <View className={`max-w-xs ${bubbleStyle} rounded-2xl px-4 py-2`}>
+          <Text className="text-white text-base">{item.text}</Text>
         </View>
       </Pressable>
       {timestampAnchor && (
         <Text
-          className={`text-xs ${timestampStyle} mt-1 ${
+          className={`text-xs text-gray-600 mt-1 ${
             isOwner ? "self-end" : "self-start"
           }`}
         >
