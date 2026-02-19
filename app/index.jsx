@@ -16,21 +16,21 @@ export default function App() {
   if (user) {
     return <Redirect href={"/home"} />;
   }
-  return (
-    <RotatingSquare
-      topAdornment={
-        <Text className="text-3xl text-white mt-10">Instaclone</Text>
-      }
-      bottomAdornment={
-        <ComponentButton
-          title="Sign In"
-          onPress={() => router.push("/signin")}
-          textStyles={"text-3xl text-white"}
-          buttonStyles={"mb-10"}
-        />
-      }
-    />
-  );
+  // return (
+  //   <RotatingSquare
+  //     topAdornment={
+  //       <Text className="text-3xl text-white mt-10">Instaclone</Text>
+  //     }
+  //     bottomAdornment={
+  //       <ComponentButton
+  //         title="Sign In"
+  //         onPress={() => router.push("/signin")}
+  //         textStyles={"text-3xl text-white"}
+  //         buttonStyles={"mb-10"}
+  //       />
+  //     }
+  //   />
+  // );
   return (
     <SafeAreaView className="bg-highlight h-full">
       {/* <StatusBar backgroundColor="#0d0d0d" style="light" /> */}
