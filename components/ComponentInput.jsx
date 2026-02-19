@@ -1,11 +1,4 @@
-import {
-  KeyboardAvoidingView,
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  Platform,
-} from "react-native";
+import { View, Text, TextInput } from "react-native";
 import React from "react";
 
 export default ({
@@ -17,23 +10,20 @@ export default ({
   textContentType = "none",
 }) => {
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <View className={`space-y-2`}>
-        {/* FIXME: style title like in MUI? */}
-        <Text className="text-base text-gray-100">{title}</Text>
-        <View className="border-2 border-highlight w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row">
-          <TextInput
-            className="flex-1 text-white text-base"
-            value={value}
-            onChangeText={onChangeText}
-            placeholder={placeholder}
-            secureTextEntry={secureTextEntry}
-            textContentType={textContentType}
-          />
-        </View>
+    <View className={`space-y-2`}>
+      {/* FIXME: style title like in MUI? */}
+      <Text className="text-base text-gray-100">{title}</Text>
+      <View className="border border-primary-300 w-full h-16 px-4 bg-primary-200 rounded-2xl items-center flex-row">
+        <TextInput
+          className="flex-1 text-white text-base"
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          placeholderTextColor="#4A6080"
+          secureTextEntry={secureTextEntry}
+          textContentType={textContentType}
+        />
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 };

@@ -19,11 +19,11 @@ export default (props) => {
   }, [isVisible, player]);
 
   return (
-    <View className="p-2">
+    <View>
       <VideoView
         ref={videoRef}
         player={player}
-        style={{ width: "100%", height: 675, borderRadius: 8, borderWidth: 2, borderColor: "#facc15" }}
+        style={{ width: "100%", aspectRatio: 4 / 5 }}
         contentFit="contain"
         nativeControls
       />

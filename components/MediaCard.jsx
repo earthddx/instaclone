@@ -1,16 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import {
-  PixelRatio,
-  View,
-  Button,
-  Text,
-  TextInput,
-  Platform,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Keyboard,
-  Image,
-} from "react-native";
+import { View, Text, TextInput } from "react-native";
 import ComponentVideo from "./ComponentVideo";
 import ComponentImage from "./ComponentImage";
 
@@ -24,30 +12,30 @@ export default (props) => {
     isVisible,
   } = props;
   return (
-    <View className="border-2 border-secondary rounded-lg mt-5 mb-5">
+    <View className="bg-primary-200 rounded-xl mt-4 mb-2 mx-4 overflow-hidden">
       {type.includes("image") ? (
-        <ComponentImage
-        {...props}
-          // className="w-[250px] h-[250px]"
-          source={source}
-        />
+        <ComponentImage {...props} source={source} />
       ) : (
         <ComponentVideo
           {...props}
-          // className="w-full h-[600px]"
           source={source}
           allowsFullscreen
           allowsPictureInPicture
           isVisible={isVisible}
         />
       )}
-      <Text className="text-white text-base">{title}</Text>
-      <Text className="text-highlight">by {creator}</Text>
-      <View className="pt-2">
-        <Text className="text-white text-sm">{description}</Text>
-        {/* <Image source={likeIcon} className="w-5 h-5" resizeMode="contain" /> */}
+      <View className="px-3 pt-2 pb-1">
+        <Text className="text-white text-base font-semibold">{title}</Text>
+        <Text className="text-secondary text-sm mt-0.5">@{creator}</Text>
+        {description ? (
+          <Text className="text-gray-400 text-sm mt-1">{description}</Text>
+        ) : null}
       </View>
-      <TextInput placeholder="Leave a comment..." />
+      <TextInput
+        placeholder="Add a comment..."
+        placeholderTextColor="#4A6080"
+        className="text-white text-sm px-3 py-3 border-t border-primary-300"
+      />
     </View>
   );
 };

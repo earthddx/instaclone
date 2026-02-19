@@ -7,11 +7,11 @@ export default (props) => {
   const uri = source?.replace("/preview", "/view");
 
   return (
-    <View className="p-2">
+    <View>
       <Image
-        style={{ width: "100%", height: 675, borderRadius: 8, borderWidth: 2, borderColor: "#facc15" }}
+        style={{ width: "100%", aspectRatio: 1 }}
         source={{ uri }}
-        contentFit="contain"
+        contentFit="cover"
       />
     </View>
   );

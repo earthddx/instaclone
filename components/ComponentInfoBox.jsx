@@ -14,7 +14,7 @@ export default ({
       ) : (
         <Text className={`text-white text-center ${titleStyles}`}>{title}</Text>
       )}
-      <Text className="text-sm text-gray-100 text-center font-pregular">
+      <Text className="text-sm text-gray-500 text-center">
         {subtitle}
       </Text>
     </View>

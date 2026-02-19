@@ -11,7 +11,7 @@ export default ({ isLoading, title, onPress, textStyles, buttonStyles }) => {
       }`}
       disabled={isLoading}
     >
-      <Text className={`text-primary text-lg ${textStyles}`}>{title}</Text>
+      <Text className={`text-white text-lg font-semibold ${textStyles}`}>{title}</Text>
     </TouchableOpacity>
   );
 };
