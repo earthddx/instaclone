@@ -1,7 +1,6 @@
-import { View, Text, StyleSheet, FlatList, RefreshControl } from "react-native";
+import { View, Text, FlatList, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MediaCard from "../../components/MediaCard";
-import { HelloWave } from "../../components/HelloWave";
 import { getAllPosts } from "../../lib/appwrite";
 import React from "react";
 
@@ -19,7 +18,7 @@ export default function Home() {
     fetchPosts();
   }, []);
 
-  const onViewableItemsChanged = ({ changed, viewableItems }) => {
+  const onViewableItemsChanged = ({ viewableItems }) => {
     // Update the list of visible items based on their index
     // console.log(viewableItems);
     setVisibleItems(viewableItems.map((item) => item.item.$id));
@@ -59,18 +58,22 @@ export default function Home() {
         }}
         ListHeaderComponent={() => {
           return (
-            <View>
-              <View className="border-2 border-secondary-100 rounded-lg p-5">
-                <Text className="text-secondary">
-                  Stories / trending videos go here || horizontal scroll
-                </Text>
+            <View className="px-4 pt-4 pb-2">
+              <Text className="text-white text-2xl font-bold mb-3">Feed</Text>
+              <View className="bg-primary-200 rounded-xl p-4 mb-2">
+                <Text className="text-secondary text-sm font-semibold">Stories</Text>
+                <Text className="text-gray-500 text-xs mt-1">Coming soon</Text>
               </View>
-              <HelloWave />
             </View>
           );
         }}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#4DA6FF"
+            colors={["#4DA6FF"]}
+          />
         }
         // stickyHeaderIndices={[0]}
       />
