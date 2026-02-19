@@ -10,6 +10,7 @@ import {
 import { UserContext } from "../../../context/UserContext";
 import { router } from "expo-router";
 import React from "react";
+import { signOut } from "../../../lib/appwrite";
 import { ScrollView } from "react-native-gesture-handler";
 
 export default function ProfileLayout() {
@@ -29,7 +30,7 @@ export default function ProfileLayout() {
   return (
     <Drawer
       drawerContent={(props) => (
-        <CustomDrawerContent {...props} onLogout={handleLogout} />
+        <CustomDrawerContent {...props} onLogout={logout} />
       )}
       screenOptions={{
         drawerType: "slide", // Slide-in drawer
@@ -55,34 +56,31 @@ export default function ProfileLayout() {
         },
       }}
     >
-      {/* <Drawer.Screen
+      <Drawer.Screen
         name="index"
         options={{
-          // headerShown: false,
           title: "Profile",
         }}
       />
       <Drawer.Screen
         name="settings"
         options={{
-          // headerShown: false,
           title: "Settings",
         }}
       />
       <Drawer.Screen
         name="about"
         options={{
-          // headerShown: false,
           title: "About",
         }}
-      /> */}
+      />
     </Drawer>
   );
 }
 
 function CustomDrawerContent({ navigation, onLogout }) {
   return (
-    <ScrollView style={styles.drawerContainer}>
+    <ScrollView style={styles.drawerContainer} contentContainerStyle={styles.drawerContentContainer}>
       {/* Render Navigation Links */}
       <View style={styles.navigationLinks}>
         <TouchableOpacity
@@ -110,9 +108,12 @@ function CustomDrawerContent({ navigation, onLogout }) {
 const styles = StyleSheet.create({
   drawerContainer: {
     flex: 1,
-    justifyContent: 'space-between',
     padding: 20,
     marginTop: 50
+  },
+  drawerContentContainer: {
+    flex: 1,
+    justifyContent: 'space-between',
   },
   navigationLinks: {
     flex: 1,
