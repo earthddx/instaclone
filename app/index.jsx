@@ -32,14 +32,23 @@ export default function App() {
   //   />
   // );
   return (
-    <SafeAreaView className="bg-highlight h-full">
-      {/* <StatusBar backgroundColor="#0d0d0d" style="light" /> */}
+    <SafeAreaView className="bg-primary-100 h-full">
+      <StatusBar backgroundColor="#0C1929" style="light" />
       <ScrollView contentContainerStyle={{ height: "100%" }}>
-        <View className="h-full justify-center items-center border-2 border-green-400 rounded-lg">
-          <Text className="text-3xl text-white mt-10">INSTACLONE 🎯</Text>
-          <Pressable onPress={() => router.push("/signin")}>
-            <Text className="text-3xl ">Click me to go to sign in page</Text>
-          </Pressable>
+        <View className="h-full justify-center items-center px-8">
+          <Text className="text-5xl font-bold text-white mb-2">Instaclone</Text>
+          <Text className="text-secondary text-base mb-16">Share your world</Text>
+          <ComponentButton
+            title="Sign In"
+            onPress={() => router.push("/signin")}
+            buttonStyles="w-full"
+          />
+          <View className="flex-row mt-5 items-center gap-1">
+            <Text className="text-gray-400 text-base">New here?</Text>
+            <Pressable onPress={() => router.push("/signup")}>
+              <Text className="text-secondary text-base"> Create an account</Text>
+            </Pressable>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
