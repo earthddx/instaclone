@@ -1,4 +1,3 @@
-import { useVideoPlayer, VideoView } from "expo-video";
 import { useEffect, useRef, useState } from "react";
 import {
   PixelRatio,
