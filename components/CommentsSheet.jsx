@@ -2,6 +2,7 @@ import React from "react";
 import {
   View,
   Text,
+  Image,
   TextInput,
   TouchableOpacity,
   Modal,
@@ -33,11 +34,16 @@ const CommentItem = ({ item }) => (
         justifyContent: "center",
         alignItems: "center",
         marginRight: 10,
+        overflow: "hidden",
       }}
     >
-      <Text style={{ color: "#4DA6FF", fontWeight: "bold", fontSize: 14 }}>
-        {avatarLetter(item.username)}
-      </Text>
+      {item.avatar ? (
+        <Image source={{ uri: item.avatar }} style={{ width: 36, height: 36 }} />
+      ) : (
+        <Text style={{ color: "#4DA6FF", fontWeight: "bold", fontSize: 14 }}>
+          {avatarLetter(item.username)}
+        </Text>
+      )}
     </View>
     <View style={{ flex: 1 }}>
       <Text style={{ color: "white", fontSize: 13, lineHeight: 19 }}>
@@ -59,6 +65,7 @@ export default function CommentsSheet({
   postId,
   currentUserId,
   currentUsername,
+  currentUserAvatar,
   onClose,
   onCommentCountChange,
 }) {
@@ -153,6 +160,7 @@ export default function CommentsSheet({
         postId,
         userId: currentUserId,
         username: currentUsername,
+        avatar: currentUserAvatar,
         text,
       });
       setComments((prev) => {
@@ -280,11 +288,19 @@ export default function CommentsSheet({
                   justifyContent: "center",
                   alignItems: "center",
                   marginRight: 10,
+                  overflow: "hidden",
                 }}
               >
-                <Text style={{ color: "#4DA6FF", fontWeight: "bold", fontSize: 13 }}>
-                  {avatarLetter(currentUsername)}
-                </Text>
+                {currentUserAvatar ? (
+                  <Image
+                    source={{ uri: currentUserAvatar }}
+                    style={{ width: 34, height: 34 }}
+                  />
+                ) : (
+                  <Text style={{ color: "#4DA6FF", fontWeight: "bold", fontSize: 13 }}>
+                    {avatarLetter(currentUsername)}
+                  </Text>
+                )}
               </View>
               <View
                 style={{

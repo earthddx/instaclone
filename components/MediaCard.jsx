@@ -26,6 +26,7 @@ export default (props) => {
     likes = [],
     currentUserId,
     currentUsername,
+    currentUserAvatar,
     onDelete,
   } = props;
 
@@ -193,6 +194,7 @@ export default (props) => {
         postId={$id}
         currentUserId={currentUserId}
         currentUsername={currentUsername}
+        currentUserAvatar={currentUserAvatar}
         onClose={() => setCommentsVisible(false)}
         onCommentCountChange={setCommentCount}
       />

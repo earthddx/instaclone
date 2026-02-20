@@ -117,6 +117,7 @@ export default function PostDetail() {
             isVisible={isFocused}
             currentUserId={user?.$id}
             currentUsername={user?.username}
+            currentUserAvatar={user?.avatar}
             onDelete={isOwner ? handleDelete : undefined}
           />
         </ScrollView>
