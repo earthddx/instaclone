@@ -1,6 +1,5 @@
 import { useVideoPlayer, VideoView } from "expo-video";
 import { File, Paths } from "expo-file-system/next";
-import { createDownloadResumable } from "expo-file-system";
 import React, { useRef, useEffect, useState } from "react";
 import { View } from "react-native";
 
@@ -16,8 +15,9 @@ function hashString(str) {
 export default (props) => {
   const { source, isVisible } = props;
   const videoRef = useRef(null);
-  const [localUri, setLocalUri] = useState(null);
-  const downloadRef = useRef(null);
+  const [playUri, setPlayUri] = useState(null);
+  // Prevents triggering a download more than once per source
+  const downloadAttemptedRef = useRef(false);
 
   const remoteUri = typeof source === "string"
     ? source.replace("/view?", "/download?")
@@ -27,60 +27,52 @@ export default (props) => {
     player.loop = true;
   });
 
-  // Download & cache video locally to avoid iOS byte-range request errors
+  // Try streaming the remote URL first — works on Android always,
+  // and on iOS when the server supports byte-range requests.
   useEffect(() => {
     if (!remoteUri) return;
-
     const uriStr = typeof remoteUri === "string" ? remoteUri : remoteUri.uri;
-    const cacheKey = hashString(uriStr) + ".mp4";
-    const file = new File(Paths.cache, cacheKey);
 
-    let cancelled = false;
+    downloadAttemptedRef.current = false;
 
-    if (file.exists) {
-      setLocalUri(file.uri);
-    } else {
-      const resumable = createDownloadResumable(uriStr, file.uri);
-      downloadRef.current = resumable;
-
-      resumable.downloadAsync()
-        .then((result) => {
-          if (!cancelled && result) setLocalUri(result.uri);
-        })
-        .catch((err) => {
-          if (!cancelled) {
-            console.warn("[ComponentVideo] download failed, falling back to remote:", err);
-            setLocalUri(uriStr);
-          }
-        });
-    }
-
-    return () => {
-      cancelled = true;
-      if (downloadRef.current) {
-        downloadRef.current.cancelAsync().catch(() => {});
-        downloadRef.current = null;
-      }
-    };
+    // Check if already cached from a previous session
+    const file = new File(Paths.cache, hashString(uriStr) + ".mp4");
+    setPlayUri(file.exists ? file.uri : uriStr);
   }, [remoteUri]);
 
   useEffect(() => {
-    if (localUri) {
-      player.replace({ uri: localUri });
+    if (playUri) {
+      player.replaceAsync({ uri: playUri });
     }
-  }, [localUri, player]);
+  }, [playUri, player]);
 
+  // On iOS, AVPlayer errors immediately when the server doesn't support byte-range
+  // requests. Catch that here and fall back to a local cached copy.
   useEffect(() => {
     const sub = player.addListener("statusChange", ({ status, error }) => {
-      if (status === "error") {
-        console.error("[ComponentVideo] error:", error, "| uri:", localUri);
+      if (status !== "error") return;
+
+      const uriStr = typeof remoteUri === "string" ? remoteUri : remoteUri?.uri;
+
+      const isRemote = playUri && !playUri.startsWith("file://");
+      if (!isRemote || downloadAttemptedRef.current || !uriStr) {
+        console.error("[ComponentVideo] playback error:", error, "| uri:", playUri);
+        return;
       }
+
+      // First error on a remote URL — download to cache and retry
+      downloadAttemptedRef.current = true;
+      const file = new File(Paths.cache, hashString(uriStr) + ".mp4");
+
+      File.downloadFileAsync(uriStr, file)
+        .then((downloaded) => setPlayUri(downloaded.uri))
+        .catch((err) => console.warn("[ComponentVideo] cache download failed:", err));
     });
     return () => sub.remove();
-  }, [player]);
+  }, [player, remoteUri, playUri]);
 
   useEffect(() => {
-    if (!localUri) return;
+    if (!playUri) return;
     if (isVisible) {
       player.play();
     } else {
@@ -89,7 +81,7 @@ export default (props) => {
     return () => {
       try { player.pause(); } catch (_) { }
     };
-  }, [isVisible, player, localUri]);
+  }, [isVisible, player, playUri]);
 
   return (
     <View>
