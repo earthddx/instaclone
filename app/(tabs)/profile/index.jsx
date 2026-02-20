@@ -1,4 +1,4 @@
-import { useFocusEffect, useNavigation } from "expo-router";
+import { useFocusEffect, useNavigation, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   View,
@@ -149,7 +149,8 @@ const Bio = () => {
 };
 
 // --- Grid item ---
-const renderGridItem = ({ item, index }) => {
+const GridItem = ({ item, index }) => {
+  const router = useRouter();
   const isVideo = item.type?.includes("video");
   const uri = item.source?.replace("/preview", "/view");
   const marginLeft = index % 3 !== 0 ? 1 : 0;
@@ -158,6 +159,7 @@ const renderGridItem = ({ item, index }) => {
     <TouchableOpacity
       activeOpacity={0.85}
       style={{ width: ITEM_SIZE, height: ITEM_SIZE, marginLeft, marginBottom: 1 }}
+      onPress={() => router.push(`/(tabs)/profile/${item.$id}`)}
     >
       <Image
         source={{ uri }}
@@ -172,6 +174,8 @@ const renderGridItem = ({ item, index }) => {
     </TouchableOpacity>
   );
 };
+
+const renderGridItem = ({ item, index }) => <GridItem item={item} index={index} />;
 
 // --- User Posts tab ---
 const UserPosts = () => {

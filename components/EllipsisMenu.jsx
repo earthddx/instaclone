@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, Modal } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-export default function EllipsisMenu({ visible, top, right, hidden, onToggleHidden, onClose }) {
+export default function EllipsisMenu({ visible, top, right, hidden, onToggleHidden, onClose, onDelete }) {
   return (
     <Modal
       visible={visible}
@@ -48,6 +48,26 @@ export default function EllipsisMenu({ visible, top, right, hidden, onToggleHidd
               {hidden ? "Show post" : "Hide post"}
             </Text>
           </TouchableOpacity>
+
+          {onDelete && (
+            <>
+              <View style={{ height: 0.5, backgroundColor: "#2a3a4a" }} />
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => { onClose(); onDelete(); }}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  paddingHorizontal: 14,
+                  paddingVertical: 13,
+                  gap: 10,
+                }}
+              >
+                <Ionicons name="trash-outline" size={18} color="#FF4D6D" />
+                <Text style={{ color: "#FF4D6D", fontSize: 14 }}>Delete post</Text>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
       </TouchableOpacity>
     </Modal>

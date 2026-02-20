@@ -25,6 +25,7 @@ export default (props) => {
     likes = [],
     currentUserId,
     currentUsername,
+    onDelete,
   } = props;
 
   const formattedDate = $createdAt
@@ -183,6 +184,7 @@ export default (props) => {
         hidden={hidden}
         onToggleHidden={() => setHidden((prev) => !prev)}
         onClose={() => setMenuVisible(false)}
+        onDelete={onDelete}
       />
       <CommentsSheet
         visible={commentsVisible}

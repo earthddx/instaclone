@@ -73,6 +73,14 @@ export default function ProfileLayout() {
           title: "About",
         }}
       />
+      <Drawer.Screen
+        name="[postId]"
+        options={{
+          headerShown: false,
+          swipeEnabled: false,
+          title: "Post",
+        }}
+      />
     </Drawer>
   );
 }
