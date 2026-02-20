@@ -5,32 +5,15 @@ import { Redirect, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { UserContext } from "../context/UserContext";
 import { getLoggedInUser } from "../lib/appwrite";
-import RotatingSquare from "../components/RotatingSquare";
 import ComponentButton from "../components/ComponentButton";
 
 export default function App() {
   const { user } = React.useContext(UserContext);
 
-  // console.log("user", user);
-  // console.log("getLoggedInUser", getLoggedInUser());
   if (user) {
     return <Redirect href={"/home"} />;
   }
-  // return (
-  //   <RotatingSquare
-  //     topAdornment={
-  //       <Text className="text-3xl text-white mt-10">Instaclone</Text>
-  //     }
-  //     bottomAdornment={
-  //       <ComponentButton
-  //         title="Sign In"
-  //         onPress={() => router.push("/signin")}
-  //         textStyles={"text-3xl text-white"}
-  //         buttonStyles={"mb-10"}
-  //       />
-  //     }
-  //   />
-  // );
+ 
   return (
     <SafeAreaView className="bg-primary-100 h-full">
       <StatusBar backgroundColor="#0C1929" style="light" />
