@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
+import * as VideoThumbnails from "expo-video-thumbnails";
 import ComponentVideo from "../../components/ComponentVideo";
 import ComponentImage from "../../components/ComponentImage";
 import { uploadFile, createPost } from "../../lib/appwrite";
@@ -45,6 +46,7 @@ export default function Create() {
           const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ["images", "videos"],
             allowsEditing: true,
+            videoExportPreset: ImagePicker.VideoExportPreset.H264_1920x1080,
           });
           handleMediaResult(result);
         },
@@ -60,6 +62,7 @@ export default function Create() {
           const result = await ImagePicker.launchCameraAsync({
             mediaTypes: ["images", "videos"],
             allowsEditing: true,
+            videoExportPreset: ImagePicker.VideoExportPreset.H264_1920x1080,
           });
           handleMediaResult(result);
         },
@@ -82,12 +85,27 @@ export default function Create() {
     try {
       setUploading(true);
       const { fileViewUrl, type } = await uploadFile({ file: media });
+
+      let thumbnailUrl = null;
+      if (media.type === "video") {
+        try {
+          const { uri: thumbUri } = await VideoThumbnails.getThumbnailAsync(media.uri, { time: 0 });
+          const { fileViewUrl: thumbViewUrl } = await uploadFile({
+            file: { uri: thumbUri, mimeType: "image/jpeg", type: "image", fileName: "thumb.jpg", fileSize: 0 },
+          });
+          thumbnailUrl = thumbViewUrl;
+        } catch (e) {
+          console.warn("Thumbnail generation failed, skipping:", e);
+        }
+      }
+
       await createPost({
         file: fileViewUrl,
         title: title.trim(),
         type,
         description: description.trim(),
         userId: user.$id,
+        thumbnail: thumbnailUrl,
       });
       setInput({ title: "", description: "", media: null });
       Alert.alert("Posted!", "Your post is now live.", [

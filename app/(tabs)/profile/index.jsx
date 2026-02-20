@@ -188,9 +188,17 @@ const GridItem = ({ item, index }) => {
       onPress={() => router.push(`/(tabs)/profile/${item.$id}`)}
     >
       {isVideo ? (
-        <View style={{ width: "100%", height: "100%", backgroundColor: "#0A1628", justifyContent: "center", alignItems: "center" }}>
-          <Ionicons name="play-circle" size={40} color="rgba(77,166,255,0.85)" />
-        </View>
+        item.thumbnail ? (
+          <Image
+            source={{ uri: item.thumbnail }}
+            style={{ width: "100%", height: "100%" }}
+            resizeMode="cover"
+          />
+        ) : (
+          <View style={{ width: "100%", height: "100%", backgroundColor: "#0A1628", justifyContent: "center", alignItems: "center" }}>
+            <Ionicons name="play-circle" size={40} color="rgba(77,166,255,0.85)" />
+          </View>
+        )
       ) : (
         <Image
           source={{ uri }}
