@@ -42,10 +42,10 @@ export default (props) => {
 
   const formattedDate = $createdAt
     ? new Date($createdAt).toLocaleDateString(undefined, {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      })
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })
     : null;
 
   const [liked, setLiked] = React.useState(
@@ -179,7 +179,7 @@ export default (props) => {
       const fetched = await getComments($id);
       setComments(fetched);
       setCommentCount(fetched.length);
-    } catch {}
+    } catch { }
     setLoadingComments(false);
   };
 
@@ -196,7 +196,7 @@ export default (props) => {
       });
       setComments((prev) => [...prev, newComment]);
       setCommentCount((prev) => prev + 1);
-    } catch {}
+    } catch { }
   };
 
   const openMenu = () => {
@@ -382,16 +382,20 @@ export default (props) => {
         onRequestClose={() => closeSheet()}
       >
         <View style={{ flex: 1 }}>
-          {/* Backdrop */}
+          {/* Backdrop — absolute so it covers the full modal, including behind the sheet */}
           <TouchableOpacity
-            style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)" }}
+            style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.5)" }}
             activeOpacity={1}
             onPress={() => closeSheet()}
           />
 
-          {/* Animated sheet */}
+          {/* Animated sheet — anchored to the bottom */}
           <Animated.View
             style={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
               height: SHEET_HEIGHT,
               backgroundColor: "#1E2D3D",
               borderTopLeftRadius: 20,
@@ -429,15 +433,11 @@ export default (props) => {
                   borderBottomColor: "#2a3a4a",
                 }}
               >
-                <View style={{ width: 22 }} />
                 <Text
                   style={{ flex: 1, textAlign: "center", color: "white", fontWeight: "bold", fontSize: 15 }}
                 >
                   Comments
                 </Text>
-                <TouchableOpacity onPress={() => closeSheet()}>
-                  <Ionicons name="close" size={22} color="#8899AA" />
-                </TouchableOpacity>
               </View>
 
               {/* Comment list */}
