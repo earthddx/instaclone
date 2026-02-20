@@ -5,6 +5,7 @@ import { getAllPosts } from "../../lib/appwrite";
 import React from "react";
 import { UserContext } from "../../context/UserContext";
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "expo-router";
 
 export default function Home() {
   const { user } = React.useContext(UserContext);
@@ -12,6 +13,14 @@ export default function Home() {
   const [posts, setPosts] = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
   const [visibleItems, setVisibleItems] = React.useState([]);
+  const [isFocused, setIsFocused] = React.useState(true);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsFocused(true);
+      return () => setIsFocused(false);
+    }, [])
+  );
 
   const fetchPosts = async () => {
     const allPosts = await getAllPosts();
@@ -70,11 +79,12 @@ export default function Home() {
               <MediaCard
                 {...item}
                 creator={item.creator.username}
+                creatorAvatar={item.creator?.avatar}
                 description={item.description}
                 source={item.source}
                 title={item.title}
                 type={item.type}
-                isVisible={visibleItems.includes(item.$id)}
+                isVisible={isFocused && visibleItems.includes(item.$id)}
                 currentUserId={user?.$id}
                 currentUsername={user?.username}
               />
