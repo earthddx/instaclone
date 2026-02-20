@@ -74,6 +74,14 @@ export default function ProfileLayout() {
         }}
       />
       <Drawer.Screen
+        name="edit"
+        options={{
+          headerShown: false,
+          swipeEnabled: false,
+          title: "Edit Profile",
+        }}
+      />
+      <Drawer.Screen
         name="[postId]"
         options={{
           headerShown: false,
