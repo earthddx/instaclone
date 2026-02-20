@@ -8,7 +8,7 @@ import {
   Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter, useFocusEffect } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { UserContext } from "../../../context/UserContext";
 import { getPost, deletePost } from "../../../lib/appwrite";
@@ -21,6 +21,14 @@ export default function PostDetail() {
 
   const [post, setPost] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
+  const [isFocused, setIsFocused] = React.useState(true);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsFocused(true);
+      return () => setIsFocused(false);
+    }, [])
+  );
 
   React.useEffect(() => {
     if (!postId) return;
@@ -105,7 +113,8 @@ export default function PostDetail() {
           <MediaCard
             {...post}
             creator={post.creator?.username ?? post.creator}
-            isVisible={true}
+            creatorAvatar={post.creator?.avatar}
+            isVisible={isFocused}
             currentUserId={user?.$id}
             currentUsername={user?.username}
             onDelete={isOwner ? handleDelete : undefined}
