@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Dimensions } from "react-native";
+import { View, Text, Image, TouchableOpacity, Dimensions } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { BlurView } from "expo-blur";
 import ComponentVideo from "./ComponentVideo";
@@ -20,6 +20,7 @@ export default (props) => {
     type = "image",
     source,
     creator,
+    creatorAvatar,
     isVisible,
     $createdAt,
     likes = [],
@@ -90,6 +91,7 @@ export default (props) => {
       <ComponentHeader
         formattedDate={formattedDate}
         creator={creator}
+        creatorAvatar={creatorAvatar}
         ellipsisRef={ellipsisRef}
         openMenu={openMenu}
       />
@@ -198,12 +200,16 @@ export default (props) => {
   );
 };
 
-const ComponentHeader = ({ formattedDate, creator, ellipsisRef, openMenu }) => {
+const ComponentHeader = ({ formattedDate, creator, creatorAvatar, ellipsisRef, openMenu }) => {
   return <View className="flex-row items-center px-3 py-2.5">
-    <View className="w-9 h-9 rounded-full bg-secondary-100 border border-secondary-300 justify-center items-center mr-2.5">
-      <Text className="text-secondary font-bold text-sm">
-        {avatarLetter(creator)}
-      </Text>
+    <View className="w-9 h-9 rounded-full bg-secondary-100 border border-secondary-300 justify-center items-center mr-2.5 overflow-hidden">
+      {creatorAvatar ? (
+        <Image source={{ uri: creatorAvatar }} style={{ width: "100%", height: "100%" }} />
+      ) : (
+        <Text className="text-secondary font-bold text-sm">
+          {avatarLetter(creator)}
+        </Text>
+      )}
     </View>
     <View className="flex-1">
       <Text className="text-white font-semibold text-sm">@{creator}</Text>
