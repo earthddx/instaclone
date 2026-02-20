@@ -7,81 +7,105 @@ import {
   FlatList,
   TouchableOpacity,
   RefreshControl,
+  ScrollView,
   Dimensions,
   StyleSheet,
+  Share,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import React from "react";
 import { UserContext } from "../../../context/UserContext";
 import { getUserPosts, getUserLikedPosts } from "../../../lib/appwrite";
 import ComponentEmpty from "../../../components/ComponentEmpty";
 
-const Tab = createMaterialTopTabNavigator();
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const ITEM_SIZE = (SCREEN_WIDTH - 2) / 3; // 2px total for 2 gaps between 3 columns
+
+const ProfileContext = React.createContext(null);
 
 export default function Profile() {
   const navigation = useNavigation();
   const { user } = React.useContext(UserContext);
+  const [userPosts, setUserPosts] = React.useState([]);
+  const [likedPosts, setLikedPosts] = React.useState([]);
+  const [refreshing, setRefreshing] = React.useState(false);
+  const [activeTab, setActiveTab] = React.useState(0);
+
+  const fetchAll = React.useCallback(async () => {
+    if (!user?.$id) return;
+    setRefreshing(true);
+    try {
+      const [posts, liked] = await Promise.all([
+        getUserPosts(user.$id),
+        getUserLikedPosts(user.$id),
+      ]);
+      setUserPosts(posts);
+      setLikedPosts(liked);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [user?.$id]);
+
+  useFocusEffect(React.useCallback(() => { fetchAll(); }, [fetchAll]));
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top"]}>
-      {/* Header — matches messages screen style */}
-      <View className="px-4 py-3 border-b border-primary-300 flex-row items-center">
-        <View className="w-8 h-8 rounded-full bg-secondary-100 border border-secondary-300 justify-center items-center mr-3">
-          <Ionicons name="person" size={16} color="#4DA6FF" />
+    <ProfileContext.Provider value={{ userPosts, likedPosts }}>
+      <SafeAreaView style={styles.safeArea} edges={["top"]}>
+        {/* Header */}
+        <View className="px-4 py-3 border-b border-primary-300 flex-row items-center">
+          <View className="w-8 h-8 rounded-full bg-secondary-100 border border-secondary-300 justify-center items-center mr-3">
+            <Ionicons name="person" size={16} color="#4DA6FF" />
+          </View>
+          <Text className="text-white text-lg font-bold">Profile</Text>
+          <View className="flex-1" />
+          <TouchableOpacity onPress={() => navigation.openDrawer()} activeOpacity={0.7}>
+            <Ionicons name="menu" size={24} color="#4DA6FF" />
+          </TouchableOpacity>
         </View>
-        <Text className="text-white text-lg font-bold">
-          {"Profile"}
-        </Text>
-        <View className="flex-1" />
-        <TouchableOpacity onPress={() => navigation.openDrawer()} activeOpacity={0.7}>
-          <Ionicons name="menu" size={24} color="#4DA6FF" />
-        </TouchableOpacity>
-      </View>
 
-      <Bio />
-      <Tab.Navigator
-        screenOptions={{
-          tabBarActiveTintColor: "#fff",
-          tabBarInactiveTintColor: "#555",
-          tabBarShowLabel: false,
-          tabBarStyle: {
-            backgroundColor: "#0C1929",
-            borderTopWidth: 0.5,
-            borderTopColor: "#1A3060",
-            elevation: 0,
-            shadowOpacity: 0,
-            height: 44,
-          },
-          tabBarIndicatorStyle: {
-            backgroundColor: "#4DA6FF",
-            height: 2,
-            bottom: 0,
-          },
-        }}
-      >
-        <Tab.Screen
-          name="User Posts"
-          component={UserPosts}
-          options={{
-            tabBarIcon: ({ color, focused }) => (
-              <Ionicons name={focused ? "grid" : "grid-outline"} size={22} color={color} />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Liked Videos"
-          component={LikedVideos}
-          options={{
-            tabBarIcon: ({ color, focused }) => (
-              <Ionicons name={focused ? "heart" : "heart-outline"} size={22} color={color} />
-            ),
-          }}
-        />
-      </Tab.Navigator>
-    </SafeAreaView>
+        <ScrollView
+          style={{ flex: 1 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={fetchAll}
+              tintColor="#4DA6FF"
+              colors={["#4DA6FF"]}
+            />
+          }
+        >
+          <Bio postsCount={userPosts.length} />
+
+          {/* Tab Bar */}
+          <View style={styles.tabBar}>
+            <TouchableOpacity
+              style={[styles.tabBtn, activeTab === 0 && styles.tabBtnActive]}
+              onPress={() => setActiveTab(0)}
+              activeOpacity={0.7}
+            >
+              <Ionicons
+                name={activeTab === 0 ? "grid" : "grid-outline"}
+                size={22}
+                color={activeTab === 0 ? "#fff" : "#555"}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.tabBtn, activeTab === 1 && styles.tabBtnActive]}
+              onPress={() => setActiveTab(1)}
+              activeOpacity={0.7}
+            >
+              <Ionicons
+                name={activeTab === 1 ? "heart" : "heart-outline"}
+                size={22}
+                color={activeTab === 1 ? "#fff" : "#555"}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {activeTab === 0 ? <UserPosts /> : <LikedVideos />}
+        </ScrollView>
+      </SafeAreaView>
+    </ProfileContext.Provider>
   );
 }
 
@@ -94,15 +118,9 @@ const StatItem = ({ value, label }) => (
 );
 
 // --- Profile header (Bio) ---
-const Bio = () => {
+const Bio = ({ postsCount }) => {
   const { user } = React.useContext(UserContext);
-  const [postsCount, setPostsCount] = React.useState(null);
-
-  React.useEffect(() => {
-    if (user?.$id) {
-      getUserPosts(user.$id).then((posts) => setPostsCount(posts.length));
-    }
-  }, [user?.$id]);
+  const router = useRouter();
 
   return (
     <View style={styles.bioContainer}>
@@ -137,10 +155,18 @@ const Bio = () => {
 
       {/* Action buttons */}
       <View style={styles.buttonsRow}>
-        <TouchableOpacity style={styles.actionBtn}>
+        <TouchableOpacity style={styles.actionBtn} onPress={() => router.push("/(tabs)/profile/edit")}>
           <Text style={styles.actionBtnText}>Edit profile</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionBtn}>
+        <TouchableOpacity
+          style={styles.actionBtn}
+          onPress={() => {
+            const message = user?.bio
+              ? `Check out @${user.username} on InstaClone!\n\n"${user.bio}"`
+              : `Check out @${user.username} on InstaClone!`;
+            Share.share({ message });
+          }}
+        >
           <Text style={styles.actionBtnText}>Share profile</Text>
         </TouchableOpacity>
       </View>
@@ -161,11 +187,17 @@ const GridItem = ({ item, index }) => {
       style={{ width: ITEM_SIZE, height: ITEM_SIZE, marginLeft, marginBottom: 1 }}
       onPress={() => router.push(`/(tabs)/profile/${item.$id}`)}
     >
-      <Image
-        source={{ uri }}
-        style={{ width: "100%", height: "100%" }}
-        resizeMode="cover"
-      />
+      {isVideo ? (
+        <View style={{ width: "100%", height: "100%", backgroundColor: "#0A1628", justifyContent: "center", alignItems: "center" }}>
+          <Ionicons name="play-circle" size={40} color="rgba(77,166,255,0.85)" />
+        </View>
+      ) : (
+        <Image
+          source={{ uri }}
+          style={{ width: "100%", height: "100%" }}
+          resizeMode="cover"
+        />
+      )}
       {isVideo && (
         <View style={{ position: "absolute", top: 6, right: 6 }}>
           <Ionicons name="play-circle" size={18} color="rgba(255,255,255,0.85)" />
@@ -179,89 +211,31 @@ const renderGridItem = ({ item, index }) => <GridItem item={item} index={index} 
 
 // --- User Posts tab ---
 const UserPosts = () => {
-  const { user } = React.useContext(UserContext);
-  const [userPosts, setUserPosts] = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
-
-  const fetchPosts = React.useCallback(async () => {
-    if (!user?.$id) return;
-    setRefreshing(true);
-    try {
-      const posts = await getUserPosts(user.$id);
-      setUserPosts(posts);
-    } finally {
-      setRefreshing(false);
-    }
-  }, [user?.$id]);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchPosts();
-    }, [fetchPosts])
-  );
-
+  const { userPosts } = React.useContext(ProfileContext);
   return (
-    <View style={styles.tabContent}>
-      <FlatList
-        data={userPosts}
-        renderItem={renderGridItem}
-        keyExtractor={(item) => item.$id}
-        numColumns={3}
-        ListEmptyComponent={<ComponentEmpty />}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={fetchPosts}
-            tintColor="#4DA6FF"
-            colors={["#4DA6FF"]}
-          />
-        }
-      />
-    </View>
+    <FlatList
+      data={userPosts}
+      renderItem={renderGridItem}
+      keyExtractor={(item) => item.$id}
+      numColumns={3}
+      scrollEnabled={false}
+      ListEmptyComponent={<ComponentEmpty />}
+    />
   );
 };
 
 // --- Liked Videos tab ---
 const LikedVideos = () => {
-  const { user } = React.useContext(UserContext);
-  const [likedPosts, setLikedPosts] = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
-
-  const fetchLikedPosts = React.useCallback(async () => {
-    if (!user?.$id) return;
-    setRefreshing(true);
-    try {
-      const posts = await getUserLikedPosts(user.$id);
-      setLikedPosts(posts);
-    } finally {
-      setRefreshing(false);
-    }
-  }, [user?.$id]);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchLikedPosts();
-    }, [fetchLikedPosts])
-  );
-
+  const { likedPosts } = React.useContext(ProfileContext);
   return (
-    <View style={styles.tabContent}>
-      <FlatList
-        data={likedPosts}
-        renderItem={renderGridItem}
-        keyExtractor={(item) => item.$id}
-        numColumns={3}
-        ListEmptyComponent={<ComponentEmpty message="No Liked Posts Found" />}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={fetchLikedPosts}
-            tintColor="#4DA6FF"
-            colors={["#4DA6FF"]}
-          />
-        }
-      />
-    </View>
+    <FlatList
+      data={likedPosts}
+      renderItem={renderGridItem}
+      keyExtractor={(item) => item.$id}
+      numColumns={3}
+      scrollEnabled={false}
+      ListEmptyComponent={<ComponentEmpty message="No Liked Posts Found" />}
+    />
   );
 };
 
@@ -352,9 +326,21 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 
-  // --- Tabs / grid ---
-  tabContent: {
-    flex: 1,
+  // --- Tab bar ---
+  tabBar: {
+    flexDirection: "row",
     backgroundColor: "#0C1929",
+    borderTopWidth: 0.5,
+    borderTopColor: "#1A3060",
+    height: 44,
+  },
+  tabBtn: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  tabBtnActive: {
+    borderBottomWidth: 2,
+    borderBottomColor: "#4DA6FF",
   },
 });
