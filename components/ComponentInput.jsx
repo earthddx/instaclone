@@ -11,7 +11,6 @@ export default ({
 }) => {
   return (
     <View className={`space-y-2`}>
-      {/* FIXME: style title like in MUI? */}
       <Text className="text-base text-gray-100">{title}</Text>
       <View className="border border-primary-300 w-full h-16 px-4 bg-primary-200 rounded-2xl items-center flex-row">
         <TextInput
