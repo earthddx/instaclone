@@ -62,12 +62,14 @@ export default function ProfileLayout() {
       <Drawer.Screen
         name="settings"
         options={{
+          headerShown: false,
           title: "Settings",
         }}
       />
       <Drawer.Screen
         name="about"
         options={{
+          headerShown: false,
           title: "About",
         }}
       />
