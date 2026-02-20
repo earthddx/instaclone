@@ -16,6 +16,9 @@ export default (props) => {
     } else {
       player.pause();
     }
+    return () => {
+      try { player.pause(); } catch (_) { }
+    };
   }, [isVisible, player]);
 
   return (
