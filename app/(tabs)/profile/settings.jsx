@@ -6,9 +6,6 @@ export default function Tab() {
       <Text style={styles.heading}>Settings</Text>
       <View style={styles.section}>
         <TouchableOpacity style={styles.item}>
-          <Text style={styles.itemText}>Edit Profile</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.item}>
           <Text style={styles.itemText}>Notifications</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.item}>
