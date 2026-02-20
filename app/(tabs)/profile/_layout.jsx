@@ -140,7 +140,6 @@ function CustomDrawerContent({ navigation, state, onLogout }) {
                 <Text style={[styles.drawerText, isActive && styles.drawerTextActive]}>
                   {label}
                 </Text>
-                {isActive && <View style={styles.activeIndicator} />}
               </View>
             </Pressable>
           );
@@ -251,13 +250,6 @@ const styles = StyleSheet.create({
     color: "#4DA6FF",
     fontWeight: "600",
   },
-  activeIndicator: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: "#4DA6FF",
-  },
-
   /* Logout */
   logoutContainer: {
     paddingHorizontal: 12,
