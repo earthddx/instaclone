@@ -3,6 +3,8 @@
 Instaclone is a React Native project built with Expo, replicating some of the core Instagram features.  
 ⚠️ **Work in Progress:** The project is currently being revived. To test it, clone the repo, run it on your own server, and use **Expo Go**.
 
+Soon enough I will post expo build(apk)/link, and demo video...
+
 ## Features
 - **User Authentication**: Sign up, log in, and manage profiles.  
 - **Photo & Video Sharing**: Upload media, add captions, and share with followers.  
