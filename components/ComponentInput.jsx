@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
+import { View, Text, TextInput, Pressable } from "react-native";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -24,8 +24,7 @@ export default ({
         <Text className="text-sm text-gray-400 mb-2 ml-1">{title}</Text>
       ) : null}
       <View
-        className="w-full h-14 px-4 bg-primary-200 rounded-2xl items-center flex-row"
-        style={isFocused ? styles.focusedBorder : styles.defaultBorder}
+        className={`w-full h-14 px-4 bg-primary-200 rounded-2xl items-center flex-row border ${isFocused ? 'border-secondary' : 'border-primary-300'}`}
       >
         {leftIcon && (
           <Ionicons
@@ -61,8 +60,3 @@ export default ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  defaultBorder: { borderWidth: 1, borderColor: "#1A3060" },
-  focusedBorder: { borderWidth: 1, borderColor: "#4DA6FF" },
-});

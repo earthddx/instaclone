@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   RefreshControl,
   ScrollView,
-  StyleSheet,
   Share,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -48,7 +47,7 @@ export default function Profile() {
 
   return (
     <ProfileContext.Provider value={{ userPosts, likedPosts }}>
-      <SafeAreaView style={styles.safeArea} edges={["top"]}>
+      <SafeAreaView className="flex-1 bg-primary-100" edges={["top"]}>
         {/* Header */}
         <View className="px-4 py-3 border-b border-primary-300 flex-row items-center">
           <View className="w-8 h-8 rounded-full bg-secondary-100 border border-secondary-300 justify-center items-center mr-3">
@@ -62,7 +61,7 @@ export default function Profile() {
         </View>
 
         <ScrollView
-          style={{ flex: 1 }}
+          className="flex-1"
           automaticallyAdjustContentInsets={false}
           refreshControl={
             <RefreshControl
@@ -74,15 +73,15 @@ export default function Profile() {
           }
         >
           <ProfileBioSection profile={user} postsCount={userPosts.length}>
-            <View style={styles.buttonsRow}>
+            <View className="flex-row gap-2 mt-[10px]">
               <TouchableOpacity
-                style={styles.actionBtn}
+                className="flex-1 bg-primary-200 rounded-lg py-[7px] items-center border-[0.5px] border-[#2A4080]"
                 onPress={() => router.push("/(tabs)/profile/edit")}
               >
-                <Text style={styles.actionBtnText}>Edit profile</Text>
+                <Text className="text-white text-[13px] font-semibold">Edit profile</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.actionBtn}
+                className="flex-1 bg-primary-200 rounded-lg py-[7px] items-center border-[0.5px] border-[#2A4080]"
                 onPress={() => {
                   const message = user?.bio
                     ? `Check out @${user.username} on InstaClone!\n\n"${user.bio}"`
@@ -90,15 +89,15 @@ export default function Profile() {
                   Share.share({ message });
                 }}
               >
-                <Text style={styles.actionBtnText}>Share profile</Text>
+                <Text className="text-white text-[13px] font-semibold">Share profile</Text>
               </TouchableOpacity>
             </View>
           </ProfileBioSection>
 
           {/* Tab Bar */}
-          <View style={styles.tabBar}>
+          <View className="flex-row bg-primary-100 border-t-[0.5px] border-primary-300 h-11">
             <TouchableOpacity
-              style={[styles.tabBtn, activeTab === 0 && styles.tabBtnActive]}
+              className={`flex-1 items-center justify-center ${activeTab === 0 ? 'border-b-2 border-secondary' : ''}`}
               onPress={() => setActiveTab(0)}
               activeOpacity={0.7}
             >
@@ -109,7 +108,7 @@ export default function Profile() {
               />
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.tabBtn, activeTab === 1 && styles.tabBtnActive]}
+              className={`flex-1 items-center justify-center ${activeTab === 1 ? 'border-b-2 border-secondary' : ''}`}
               onPress={() => setActiveTab(1)}
               activeOpacity={0.7}
             >
@@ -181,45 +180,3 @@ const LikedVideos = () => {
     />
   );
 };
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#0C1929",
-  },
-  buttonsRow: {
-    flexDirection: "row",
-    gap: 8,
-    marginTop: 10,
-  },
-  actionBtn: {
-    flex: 1,
-    backgroundColor: "#132040",
-    borderRadius: 8,
-    paddingVertical: 7,
-    alignItems: "center",
-    borderWidth: 0.5,
-    borderColor: "#2A4080",
-  },
-  actionBtnText: {
-    color: "#fff",
-    fontSize: 13,
-    fontWeight: "600",
-  },
-  tabBar: {
-    flexDirection: "row",
-    backgroundColor: "#0C1929",
-    borderTopWidth: 0.5,
-    borderTopColor: "#1A3060",
-    height: 44,
-  },
-  tabBtn: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  tabBtnActive: {
-    borderBottomWidth: 2,
-    borderBottomColor: "#4DA6FF",
-  },
-});

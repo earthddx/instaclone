@@ -3,7 +3,6 @@ import React from "react";
 import {
   View,
   Text,
-  StyleSheet,
   Alert,
   KeyboardAvoidingView,
   Platform,
@@ -42,10 +41,10 @@ export default () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView className="flex-1 bg-primary-100">
       {/* Decorative background orbs */}
-      <View style={styles.orbTopLeft} />
-      <View style={styles.orbBottomRight} />
+      <View className="absolute top-[-70px] left-[-80px] w-[240px] h-[240px] rounded-full bg-[rgba(26,110,235,0.08)]" />
+      <View className="absolute bottom-[60px] right-[-80px] w-[210px] h-[210px] rounded-full bg-[rgba(77,166,255,0.07)]" />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -59,10 +58,10 @@ export default () => {
           <View className="flex-1 px-6 justify-center">
             {/* Logo */}
             <View className="items-center mb-10">
-              <View style={styles.logoRing}>
+              <View className="w-[76px] h-[76px] rounded-full bg-[rgba(77,166,255,0.12)] border-[1.5px] border-[rgba(77,166,255,0.35)] items-center justify-center mb-3">
                 <Ionicons name="camera" size={34} color="#4DA6FF" />
               </View>
-              <Text style={styles.appName}>INSTACLONE</Text>
+              <Text className="text-white text-[15px] font-bold tracking-[4px]">INSTACLONE</Text>
             </View>
 
             {/* Heading */}
@@ -103,7 +102,7 @@ export default () => {
             </View>
 
             {/* Password hint */}
-            <Text style={styles.hint}>
+            <Text className="text-[#4A6080] text-xs mt-[6px] ml-1">
               Use 8+ characters with letters and numbers
             </Text>
 
@@ -116,10 +115,10 @@ export default () => {
             />
 
             {/* Divider */}
-            <View style={styles.dividerRow}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>or</Text>
-              <View style={styles.dividerLine} />
+            <View className="flex-row items-center mt-6 mb-2 gap-[10px]">
+              <View className="flex-1 h-px bg-primary-300" />
+              <Text className="text-[#4A6080] text-[13px]">or</Text>
+              <View className="flex-1 h-px bg-primary-300" />
             </View>
 
             {/* Sign in link */}
@@ -145,67 +144,3 @@ export default () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#0C1929",
-  },
-  orbTopLeft: {
-    position: "absolute",
-    top: -70,
-    left: -80,
-    width: 240,
-    height: 240,
-    borderRadius: 120,
-    backgroundColor: "rgba(26, 110, 235, 0.08)",
-  },
-  orbBottomRight: {
-    position: "absolute",
-    bottom: 60,
-    right: -80,
-    width: 210,
-    height: 210,
-    borderRadius: 105,
-    backgroundColor: "rgba(77, 166, 255, 0.07)",
-  },
-  logoRing: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-    backgroundColor: "rgba(77, 166, 255, 0.12)",
-    borderWidth: 1.5,
-    borderColor: "rgba(77, 166, 255, 0.35)",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 12,
-  },
-  appName: {
-    color: "#ffffff",
-    fontSize: 15,
-    fontWeight: "700",
-    letterSpacing: 4,
-  },
-  hint: {
-    color: "#4A6080",
-    fontSize: 12,
-    marginTop: 6,
-    marginLeft: 4,
-  },
-  dividerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 24,
-    marginBottom: 8,
-    gap: 10,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: "#1A3060",
-  },
-  dividerText: {
-    color: "#4A6080",
-    fontSize: 13,
-  },
-});

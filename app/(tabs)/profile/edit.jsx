@@ -5,7 +5,6 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
@@ -78,47 +77,54 @@ export default function EditProfile() {
   const avatarUri = avatarAsset ? avatarAsset.uri : user?.avatar;
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-primary-100" edges={["top"]}>
       {/* Header */}
-      <View style={styles.header}>
+      <View className="flex-row items-center justify-between px-4 py-3 border-b-[0.5px] border-primary-300">
         <TouchableOpacity onPress={() => router.back()} hitSlop={8}>
           <Ionicons name="arrow-back" size={24} color="#4DA6FF" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Edit Profile</Text>
+        <Text className="text-white text-[17px] font-bold">Edit Profile</Text>
         <TouchableOpacity onPress={handleSave} disabled={saving} hitSlop={8}>
           {saving ? (
             <ActivityIndicator size="small" color="#4DA6FF" />
           ) : (
-            <Text style={styles.saveText}>Save</Text>
+            <Text className="text-secondary text-[15px] font-bold">Save</Text>
           )}
         </TouchableOpacity>
       </View>
 
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          contentContainerClassName="items-center pt-8 px-6 pb-10"
+          keyboardShouldPersistTaps="handled"
+        >
           {/* Avatar picker */}
-          <TouchableOpacity style={styles.avatarWrapper} onPress={pickAvatar} activeOpacity={0.8}>
+          <TouchableOpacity
+            className="w-[100px] h-[100px] rounded-full border-2 border-secondary overflow-visible"
+            onPress={pickAvatar}
+            activeOpacity={0.8}
+          >
             {avatarUri ? (
-              <Image source={{ uri: avatarUri }} style={styles.avatar} />
+              <Image source={{ uri: avatarUri }} className="w-[100px] h-[100px] rounded-full" />
             ) : (
-              <View style={styles.avatarFallback}>
+              <View className="w-[100px] h-[100px] rounded-full bg-primary-200 items-center justify-center">
                 <Ionicons name="person" size={40} color="#4DA6FF" />
               </View>
             )}
-            <View style={styles.cameraOverlay}>
+            <View className="absolute bottom-0 right-0 bg-secondary rounded-xl w-7 h-7 items-center justify-center border-2 border-primary-100">
               <Ionicons name="camera" size={16} color="#fff" />
             </View>
           </TouchableOpacity>
-          <Text style={styles.changePhotoLabel}>Change photo</Text>
+          <Text className="text-secondary text-[13px] mt-2.5 mb-8">Change photo</Text>
 
           {/* Bio input */}
-          <View style={styles.field}>
-            <Text style={styles.label}>Bio</Text>
+          <View className="w-full">
+            <Text className="text-[#8AAAC8] text-[13px] font-semibold mb-2 uppercase tracking-[0.5px]">Bio</Text>
             <TextInput
-              style={styles.bioInput}
+              className="bg-primary-200 border border-[#2A4080] rounded-[10px] text-white text-sm p-3 min-h-[100px] leading-5"
               value={bio}
               onChangeText={setBio}
               placeholder="Write something about yourself…"
@@ -127,110 +133,10 @@ export default function EditProfile() {
               maxLength={250}
               textAlignVertical="top"
             />
-            <Text style={styles.charCount}>{bio.length}/250</Text>
+            <Text className="text-[#4A6080] text-xs text-right mt-1">{bio.length}/250</Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#0C1929",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 0.5,
-    borderBottomColor: "#1A3060",
-  },
-  headerTitle: {
-    color: "#fff",
-    fontSize: 17,
-    fontWeight: "700",
-  },
-  saveText: {
-    color: "#4DA6FF",
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  body: {
-    alignItems: "center",
-    paddingTop: 32,
-    paddingHorizontal: 24,
-    paddingBottom: 40,
-  },
-  avatarWrapper: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 2,
-    borderColor: "#4DA6FF",
-    overflow: "visible",
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-  },
-  avatarFallback: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: "#132040",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  cameraOverlay: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    backgroundColor: "#4DA6FF",
-    borderRadius: 12,
-    width: 28,
-    height: 28,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 2,
-    borderColor: "#0C1929",
-  },
-  changePhotoLabel: {
-    color: "#4DA6FF",
-    fontSize: 13,
-    marginTop: 10,
-    marginBottom: 32,
-  },
-  field: {
-    width: "100%",
-  },
-  label: {
-    color: "#8AAAC8",
-    fontSize: 13,
-    fontWeight: "600",
-    marginBottom: 8,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  bioInput: {
-    backgroundColor: "#132040",
-    borderWidth: 1,
-    borderColor: "#2A4080",
-    borderRadius: 10,
-    color: "#fff",
-    fontSize: 14,
-    padding: 12,
-    minHeight: 100,
-    lineHeight: 20,
-  },
-  charCount: {
-    color: "#4A6080",
-    fontSize: 12,
-    textAlign: "right",
-    marginTop: 4,
-  },
-});

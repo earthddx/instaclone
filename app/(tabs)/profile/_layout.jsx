@@ -1,7 +1,6 @@
 import { Drawer } from "expo-router/drawer";
 import {
   Text,
-  StyleSheet,
   Pressable,
   View,
   Image,
@@ -105,47 +104,47 @@ function CustomDrawerContent({ navigation, state, onLogout }) {
 
   return (
     <ScrollView
-      style={styles.drawerContainer}
-      contentContainerStyle={styles.drawerContentContainer}
+      className="flex-1"
+      contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}
     >
       {/* User profile at top of drawer */}
-      <View style={styles.userHeader}>
-        <View style={styles.avatarWrapper}>
+      <View className="px-5 pt-14 pb-5 items-center">
+        <View className="w-[72px] h-[72px] rounded-full border-2 border-secondary overflow-hidden mb-3">
           {user?.avatar ? (
-            <Image source={{ uri: user.avatar }} style={styles.avatar} />
+            <Image source={{ uri: user.avatar }} className="w-full h-full" />
           ) : (
-            <View style={styles.avatarFallback}>
+            <View className="flex-1 bg-primary-200 items-center justify-center">
               <Ionicons name="person" size={28} color="#4DA6FF" />
             </View>
           )}
         </View>
-        <Text style={styles.username} numberOfLines={1}>
+        <Text className="text-[17px] font-bold text-slate-200 mb-1" numberOfLines={1}>
           {user?.username ?? ""}
         </Text>
         {!!user?.bio && (
-          <Text style={styles.bio} numberOfLines={2}>
+          <Text className="text-[13px] text-[#6B8CAE] text-center leading-[18px]" numberOfLines={2}>
             {user.bio}
           </Text>
         )}
       </View>
 
-      <View style={styles.divider} />
+      <View className="h-px bg-primary-300 mx-5 my-3" />
 
       {/* Nav items */}
-      <View style={styles.navigationLinks}>
+      <View className="px-3">
         {NAV_ITEMS.map(({ name, label, icon, iconActive }) => {
           const isActive = activeRouteName === name;
           return (
             <Pressable key={name} onPress={() => navigation.navigate(name)}>
-              <View style={[styles.drawerItem, isActive && styles.drawerItemActive]}>
-                <View style={styles.iconContainer}>
+              <View className={`flex-row items-center p-3.5 rounded-[10px] border mb-2 ${isActive ? 'bg-primary-200 border-secondary' : 'bg-primary-100 border-primary-300'}`}>
+                <View className="w-6 items-center mr-3">
                   <Ionicons
                     name={isActive ? iconActive : icon}
                     size={20}
                     color={isActive ? "#4DA6FF" : "#8AAAC8"}
                   />
                 </View>
-                <Text style={[styles.drawerText, isActive && styles.drawerTextActive]}>
+                <Text className={`flex-1 text-[15px] font-medium ${isActive ? 'text-secondary font-semibold' : 'text-[#8AAAC8]'}`}>
                   {label}
                 </Text>
               </View>
@@ -155,126 +154,17 @@ function CustomDrawerContent({ navigation, state, onLogout }) {
       </View>
 
       {/* Logout */}
-      <View style={styles.logoutContainer}>
-        <View style={styles.divider} />
+      <View className="px-3 mt-auto">
+        <View className="h-px bg-primary-300 mx-5 my-3" />
         <Pressable onPress={onLogout}>
-          <View style={styles.logoutButton}>
-            <View style={styles.iconContainer}>
+          <View className="flex-row items-center p-3.5 rounded-[10px] bg-[#1A0A0A] border border-[#4A1010]">
+            <View className="w-6 items-center mr-3">
               <Ionicons name="log-out-outline" size={20} color="#EF4444" />
             </View>
-            <Text style={styles.logoutText}>Log Out</Text>
+            <Text className="text-[15px] text-red-500 font-semibold">Log Out</Text>
           </View>
         </Pressable>
       </View>
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  drawerContainer: {
-    flex: 1,
-  },
-  drawerContentContainer: {
-    flexGrow: 1,
-    paddingBottom: 24,
-  },
-
-  /* User header */
-  userHeader: {
-    paddingHorizontal: 20,
-    paddingTop: 56,
-    paddingBottom: 20,
-    alignItems: "center",
-  },
-  avatarWrapper: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    borderWidth: 2,
-    borderColor: "#4DA6FF",
-    overflow: "hidden",
-    marginBottom: 12,
-  },
-  avatar: {
-    width: "100%",
-    height: "100%",
-  },
-  avatarFallback: {
-    flex: 1,
-    backgroundColor: "#132040",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  username: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: "#E2E8F0",
-    marginBottom: 4,
-  },
-  bio: {
-    fontSize: 13,
-    color: "#6B8CAE",
-    textAlign: "center",
-    lineHeight: 18,
-  },
-
-  divider: {
-    height: 1,
-    backgroundColor: "#1A3060",
-    marginHorizontal: 20,
-    marginVertical: 12,
-  },
-
-  /* Nav items */
-  navigationLinks: {
-    paddingHorizontal: 12,
-  },
-  drawerItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 14,
-    borderRadius: 10,
-    backgroundColor: "#0C1929",
-    borderWidth: 1,
-    borderColor: "#1A3060",
-    marginBottom: 8,
-  },
-  drawerItemActive: {
-    backgroundColor: "#132040",
-    borderColor: "#4DA6FF",
-  },
-  iconContainer: {
-    width: 24,
-    alignItems: "center",
-    marginRight: 12,
-  },
-  drawerText: {
-    flex: 1,
-    fontSize: 15,
-    color: "#8AAAC8",
-    fontWeight: "500",
-  },
-  drawerTextActive: {
-    color: "#4DA6FF",
-    fontWeight: "600",
-  },
-  /* Logout */
-  logoutContainer: {
-    paddingHorizontal: 12,
-    marginTop: "auto",
-  },
-  logoutButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 14,
-    borderRadius: 10,
-    backgroundColor: "#1A0A0A",
-    borderWidth: 1,
-    borderColor: "#4A1010",
-  },
-  logoutText: {
-    fontSize: 15,
-    color: "#EF4444",
-    fontWeight: "600",
-  },
-});

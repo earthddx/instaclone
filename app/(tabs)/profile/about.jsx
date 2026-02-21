@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -26,18 +26,18 @@ export default function About() {
   const navigation = useNavigation();
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-primary-100" edges={["top"]}>
       {/* Background orbs */}
-      <View style={styles.orbTopRight} />
-      <View style={styles.orbBottomLeft} />
+      <View className="absolute top-[-80px] right-[-70px] w-[240px] h-[240px] rounded-full bg-[rgba(77,166,255,0.07)]" />
+      <View className="absolute bottom-[60px] left-[-90px] w-[210px] h-[210px] rounded-full bg-[rgba(26,110,235,0.06)]" />
 
       {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerIcon}>
+      <View className="flex-row items-center px-4 py-3 border-b border-primary-300">
+        <View className="w-8 h-8 rounded-full bg-secondary-100 border border-secondary-300 justify-center items-center mr-3">
           <Ionicons name="information-circle" size={16} color="#4DA6FF" />
         </View>
-        <Text style={styles.headerTitle}>About</Text>
-        <View style={{ flex: 1 }} />
+        <Text className="text-lg font-bold text-white">About</Text>
+        <View className="flex-1" />
         <TouchableOpacity onPress={() => navigation.openDrawer()} activeOpacity={0.7}>
           <Ionicons name="menu" size={24} color="#4DA6FF" />
         </TouchableOpacity>
@@ -49,73 +49,73 @@ export default function About() {
       >
         {/* Hero */}
         <View className="items-center mt-6 mb-8">
-          <View style={styles.logoRing}>
+          <View className="w-[76px] h-[76px] rounded-full bg-[rgba(77,166,255,0.12)] border-[1.5px] border-[rgba(77,166,255,0.35)] items-center justify-center mb-3">
             <Ionicons name="camera" size={34} color="#4DA6FF" />
           </View>
-          <Text style={styles.appName}>INSTACLONE</Text>
-          <View style={styles.versionBadge}>
-            <Text style={styles.versionText}>v1.0.0</Text>
+          <Text className="text-white text-[15px] font-bold tracking-[4px] mb-2">INSTACLONE</Text>
+          <View className="bg-[rgba(77,166,255,0.12)] border border-[rgba(77,166,255,0.25)] rounded-[20px] px-[10px] py-[3px] mb-[14px]">
+            <Text className="text-secondary text-xs font-semibold">v1.0.0</Text>
           </View>
-          <Text style={styles.tagline}>
+          <Text className="text-slate-400 text-sm text-center italic">
             A full-stack social media app, built from scratch.
           </Text>
         </View>
 
         {/* About card */}
-        <View style={styles.card}>
+        <View className="bg-[rgba(26,48,96,0.18)] border border-primary-300 rounded-2xl p-4">
           <SectionHeading icon="information-circle-outline" title="What is Instaclone?" />
-          <Text style={styles.body}>
+          <Text className="text-slate-400 text-sm leading-[22px]">
             Instaclone is a personal project that replicates the core experience of a modern
             social media platform — photo & video sharing, a scrollable feed, real-time
             messaging, and interactive profiles.
           </Text>
-          <Text style={[styles.body, { marginTop: 10 }]}>
+          <Text className="text-slate-400 text-sm leading-[22px] mt-[10px]">
             The goal was to go beyond tutorial-level apps and build something that feels
             production-quality: real authentication, persistent cloud storage, live data
             subscriptions, and polished UI transitions — all on a single codebase that runs
             on both iOS and Android.
           </Text>
-          <Text style={[styles.body, { marginTop: 10 }]}>
+          <Text className="text-slate-400 text-sm leading-[22px] mt-[10px]">
             Every screen was designed and implemented from scratch, with attention to detail
             in layout, animation, and user experience.
           </Text>
         </View>
 
         {/* Tech stack */}
-        <View style={[styles.card, { marginTop: 14 }]}>
+        <View className="bg-[rgba(26,48,96,0.18)] border border-primary-300 rounded-2xl p-4 mt-[14px]">
           <SectionHeading icon="code-slash-outline" title="Built with" />
-          <View style={styles.techGrid}>
+          <View className="flex-row flex-wrap gap-2">
             {TECH.map((t) => (
-              <View key={t.label} style={styles.techChip}>
+              <View key={t.label} className="w-[47%] bg-[rgba(77,166,255,0.06)] border border-primary-300 rounded-[10px] px-3 py-[10px] gap-[3px]">
                 <Ionicons name={t.icon} size={20} color="#4DA6FF" />
-                <Text style={styles.techLabel}>{t.label}</Text>
-                <Text style={styles.techSub}>{t.sub}</Text>
+                <Text className="text-white text-[13px] font-semibold mt-0.5">{t.label}</Text>
+                <Text className="text-[#4A6080] text-[11px]">{t.sub}</Text>
               </View>
             ))}
           </View>
-          <Text style={[styles.body, { marginTop: 12 }]}>
+          <Text className="text-slate-400 text-sm leading-[22px] mt-[10px]">
             The backend is entirely serverless — Appwrite handles auth, database, file
             storage, and real-time event subscriptions. No custom server required.
           </Text>
         </View>
 
         {/* Features */}
-        <View style={[styles.card, { marginTop: 14 }]}>
+        <View className="bg-[rgba(26,48,96,0.18)] border border-primary-300 rounded-2xl p-4 mt-[14px]">
           <SectionHeading icon="sparkles-outline" title="Features" />
           {FEATURES.map((f) => (
-            <View key={f.text} style={styles.featureRow}>
-              <View style={styles.featureIconWrap}>
+            <View key={f.text} className="flex-row items-start gap-[10px] mb-[10px]">
+              <View className="w-7 h-7 rounded-lg bg-[rgba(77,166,255,0.08)] border border-primary-300 justify-center items-center mt-px">
                 <Ionicons name={f.icon} size={16} color="#4DA6FF" />
               </View>
-              <Text style={styles.featureText}>{f.text}</Text>
+              <Text className="text-slate-400 text-sm leading-[22px] flex-1">{f.text}</Text>
             </View>
           ))}
         </View>
 
         {/* Footer */}
         <View className="items-center mt-8 gap-1">
-          <Text style={styles.footerName}>earthddx</Text>
-          <Text style={styles.footerYear}>© 2026 · Open source · Made with React Native</Text>
+          <Text className="text-secondary text-sm font-semibold">earthddx</Text>
+          <Text className="text-[#3A5070] text-xs">© 2026 · Open source · Made with React Native</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -124,177 +124,9 @@ export default function About() {
 
 function SectionHeading({ icon, title }) {
   return (
-    <View style={styles.sectionHeadingRow}>
+    <View className="flex-row items-center gap-[6px] mb-3">
       <Ionicons name={icon} size={15} color="#4DA6FF" />
-      <Text style={styles.sectionHeadingText}>{title}</Text>
+      <Text className="text-white text-sm font-bold tracking-[0.4px]">{title}</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#0C1929",
-  },
-  orbTopRight: {
-    position: "absolute",
-    top: -80,
-    right: -70,
-    width: 240,
-    height: 240,
-    borderRadius: 120,
-    backgroundColor: "rgba(77, 166, 255, 0.07)",
-  },
-  orbBottomLeft: {
-    position: "absolute",
-    bottom: 60,
-    left: -90,
-    width: 210,
-    height: 210,
-    borderRadius: 105,
-    backgroundColor: "rgba(26, 110, 235, 0.06)",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#1A3060",
-  },
-  headerIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: "rgba(77,166,255,0.1)",
-    borderWidth: 1,
-    borderColor: "rgba(77,166,255,0.3)",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-  },
-  logoRing: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-    backgroundColor: "rgba(77, 166, 255, 0.12)",
-    borderWidth: 1.5,
-    borderColor: "rgba(77, 166, 255, 0.35)",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 12,
-  },
-  appName: {
-    color: "#ffffff",
-    fontSize: 15,
-    fontWeight: "700",
-    letterSpacing: 4,
-    marginBottom: 8,
-  },
-  versionBadge: {
-    backgroundColor: "rgba(77,166,255,0.12)",
-    borderWidth: 1,
-    borderColor: "rgba(77,166,255,0.25)",
-    borderRadius: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    marginBottom: 14,
-  },
-  versionText: {
-    color: "#4DA6FF",
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  tagline: {
-    color: "#94A3B8",
-    fontSize: 14,
-    textAlign: "center",
-    fontStyle: "italic",
-  },
-  card: {
-    backgroundColor: "rgba(26, 48, 96, 0.18)",
-    borderWidth: 1,
-    borderColor: "#1A3060",
-    borderRadius: 16,
-    padding: 16,
-  },
-  sectionHeadingRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    marginBottom: 12,
-  },
-  sectionHeadingText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "700",
-    letterSpacing: 0.4,
-  },
-  body: {
-    color: "#94A3B8",
-    fontSize: 14,
-    lineHeight: 22,
-  },
-  techGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  techChip: {
-    width: "47%",
-    backgroundColor: "rgba(77,166,255,0.06)",
-    borderWidth: 1,
-    borderColor: "#1A3060",
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    gap: 3,
-  },
-  techLabel: {
-    color: "#FFFFFF",
-    fontSize: 13,
-    fontWeight: "600",
-    marginTop: 2,
-  },
-  techSub: {
-    color: "#4A6080",
-    fontSize: 11,
-  },
-  featureRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 10,
-    marginBottom: 10,
-  },
-  featureIconWrap: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
-    backgroundColor: "rgba(77,166,255,0.08)",
-    borderWidth: 1,
-    borderColor: "#1A3060",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 1,
-  },
-  featureText: {
-    color: "#94A3B8",
-    fontSize: 14,
-    lineHeight: 22,
-    flex: 1,
-  },
-  footerName: {
-    color: "#4DA6FF",
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  footerYear: {
-    color: "#3A5070",
-    fontSize: 12,
-  },
-});

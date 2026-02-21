@@ -1,6 +1,6 @@
 import React from "react";
 import { StatusBar } from "expo-status-bar";
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { Redirect, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -13,179 +13,61 @@ export default function App() {
   if (user) return <Redirect href="/home" />;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView className="flex-1 bg-primary-100">
       <StatusBar backgroundColor="#0C1929" style="light" />
 
       {/* Decorative orbs */}
-      <View style={styles.orbTopRight} />
-      <View style={styles.orbBottomLeft} />
-      <View style={styles.orbCenter} />
+      <View className="absolute top-[-100px] right-[-70px] w-[290px] h-[290px] rounded-[145px] bg-[rgba(77,166,255,0.07)]" />
+      <View className="absolute bottom-[-70px] left-[-90px] w-[250px] h-[250px] rounded-[125px] bg-[rgba(26,110,235,0.07)]" />
+      <View className="absolute top-[30%] self-center w-[220px] h-[220px] rounded-[110px] bg-[rgba(77,166,255,0.04)]" />
 
-      <View style={styles.container}>
+      <View className="flex-1 px-7 justify-center gap-10">
         {/* Hero */}
-        <View style={styles.hero}>
-          <View style={styles.logoRing}>
+        <View className="items-center">
+          <View className="w-[100px] h-[100px] rounded-full bg-[rgba(77,166,255,0.12)] border-[1.5px] border-[rgba(77,166,255,0.35)] items-center justify-center mb-[22px]">
             <Ionicons name="camera" size={46} color="#4DA6FF" />
           </View>
-          <Text style={styles.appName}>INSTACLONE</Text>
-          <Text style={styles.tagline}>Share your world</Text>
+          <Text className="text-white text-[30px] font-extrabold tracking-[7px] mb-[10px]">INSTACLONE</Text>
+          <Text className="text-secondary text-[15px] tracking-[0.4px]">Share your world</Text>
         </View>
 
         {/* Feature pills */}
-        <View style={styles.featuresRow}>
-          <View style={styles.featurePill}>
+        <View className="flex-row justify-center items-center gap-[10px]">
+          <View className="flex-row items-center gap-[5px] py-[7px] px-[13px] bg-[rgba(77,166,255,0.08)] rounded-[20px] border border-[rgba(77,166,255,0.15)]">
             <Ionicons name="image-outline" size={15} color="#4DA6FF" />
-            <Text style={styles.featureText}>Photos</Text>
+            <Text className="text-secondary text-xs font-medium">Photos</Text>
           </View>
-          <View style={styles.featureDot} />
-          <View style={styles.featurePill}>
+          <View className="w-[3px] h-[3px] rounded-[2px] bg-primary-300" />
+          <View className="flex-row items-center gap-[5px] py-[7px] px-[13px] bg-[rgba(77,166,255,0.08)] rounded-[20px] border border-[rgba(77,166,255,0.15)]">
             <Ionicons name="videocam-outline" size={15} color="#4DA6FF" />
-            <Text style={styles.featureText}>Videos</Text>
+            <Text className="text-secondary text-xs font-medium">Videos</Text>
           </View>
-          <View style={styles.featureDot} />
-          <View style={styles.featurePill}>
+          <View className="w-[3px] h-[3px] rounded-[2px] bg-primary-300" />
+          <View className="flex-row items-center gap-[5px] py-[7px] px-[13px] bg-[rgba(77,166,255,0.08)] rounded-[20px] border border-[rgba(77,166,255,0.15)]">
             <Ionicons name="people-outline" size={15} color="#4DA6FF" />
-            <Text style={styles.featureText}>Connect</Text>
+            <Text className="text-secondary text-xs font-medium">Connect</Text>
           </View>
         </View>
 
         {/* CTA buttons */}
-        <View style={styles.buttons}>
+        <View className="gap-3">
           <ComponentButton
             title="Sign In"
             onPress={() => router.push("/signin")}
             buttonStyles="w-full"
           />
           <Pressable
-            style={({ pressed }) => [
-              styles.outlineBtn,
-              pressed && { opacity: 0.65 },
-            ]}
+            className="border-[1.5px] border-highlight rounded-2xl min-h-[54px] justify-center items-center"
+            style={({ pressed }) => pressed && { opacity: 0.65 }}
             onPress={() => router.push("/signup")}
           >
-            <Text style={styles.outlineBtnText}>Create an account</Text>
+            <Text className="text-secondary text-[15px] font-semibold tracking-[0.3px]">Create an account</Text>
           </Pressable>
         </View>
 
         {/* Footer */}
-        <Text style={styles.footer}>© 2026 Instaclone</Text>
+        <Text className="text-[#2A4060] text-[11px] text-center">© 2026 Instaclone</Text>
       </View>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#0C1929",
-  },
-  orbTopRight: {
-    position: "absolute",
-    top: -100,
-    right: -70,
-    width: 290,
-    height: 290,
-    borderRadius: 145,
-    backgroundColor: "rgba(77, 166, 255, 0.07)",
-  },
-  orbBottomLeft: {
-    position: "absolute",
-    bottom: -70,
-    left: -90,
-    width: 250,
-    height: 250,
-    borderRadius: 125,
-    backgroundColor: "rgba(26, 110, 235, 0.07)",
-  },
-  orbCenter: {
-    position: "absolute",
-    top: "30%",
-    alignSelf: "center",
-    width: 220,
-    height: 220,
-    borderRadius: 110,
-    backgroundColor: "rgba(77, 166, 255, 0.04)",
-  },
-  container: {
-    flex: 1,
-    paddingHorizontal: 28,
-    justifyContent: "center",
-    gap: 40,
-  },
-  hero: {
-    alignItems: "center",
-  },
-  logoRing: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: "rgba(77, 166, 255, 0.12)",
-    borderWidth: 1.5,
-    borderColor: "rgba(77, 166, 255, 0.35)",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 22,
-  },
-  appName: {
-    color: "#ffffff",
-    fontSize: 30,
-    fontWeight: "800",
-    letterSpacing: 7,
-    marginBottom: 10,
-  },
-  tagline: {
-    color: "#4DA6FF",
-    fontSize: 15,
-    letterSpacing: 0.4,
-  },
-  featuresRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 10,
-  },
-  featurePill: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-    paddingVertical: 7,
-    paddingHorizontal: 13,
-    backgroundColor: "rgba(77, 166, 255, 0.08)",
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "rgba(77, 166, 255, 0.15)",
-  },
-  featureText: {
-    color: "#4DA6FF",
-    fontSize: 12,
-    fontWeight: "500",
-  },
-  featureDot: {
-    width: 3,
-    height: 3,
-    borderRadius: 2,
-    backgroundColor: "#1A3060",
-  },
-  buttons: {
-    gap: 12,
-  },
-  outlineBtn: {
-    borderWidth: 1.5,
-    borderColor: "#1A6EEB",
-    borderRadius: 16,
-    minHeight: 54,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  outlineBtnText: {
-    color: "#4DA6FF",
-    fontSize: 15,
-    fontWeight: "600",
-    letterSpacing: 0.3,
-  },
-  footer: {
-    color: "#2A4060",
-    fontSize: 11,
-    textAlign: "center",
-  },
-});

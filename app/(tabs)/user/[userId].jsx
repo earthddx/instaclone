@@ -5,7 +5,6 @@ import {
   FlatList,
   ScrollView,
   TouchableOpacity,
-  StyleSheet,
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -49,9 +48,9 @@ export default function UserProfile() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.safeArea} edges={["top"]}>
+      <SafeAreaView className="flex-1 bg-primary-100" edges={["top"]}>
         <Header onBack={() => router.back()} username="" />
-        <View style={styles.centered}>
+        <View className="flex-1 justify-center items-center gap-3">
           <ActivityIndicator color="#4DA6FF" size="large" />
         </View>
       </SafeAreaView>
@@ -60,23 +59,23 @@ export default function UserProfile() {
 
   if (error || !profile) {
     return (
-      <SafeAreaView style={styles.safeArea} edges={["top"]}>
+      <SafeAreaView className="flex-1 bg-primary-100" edges={["top"]}>
         <Header onBack={() => router.back()} username="" />
-        <View style={styles.centered}>
+        <View className="flex-1 justify-center items-center gap-3">
           <Ionicons name="alert-circle-outline" size={48} color="#4A6080" />
-          <Text style={styles.errorText}>{error ?? "User not found."}</Text>
+          <Text className="text-[#4A6080] text-[15px]">{error ?? "User not found."}</Text>
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-primary-100" edges={["top"]}>
       <Header onBack={() => router.back()} username={profile.username} />
 
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView className="flex-1">
         <ProfileBioSection profile={profile} postsCount={posts.length}>
-          <View style={styles.divider} />
+          <View className="h-px bg-primary-300 mt-3 -mx-4" />
         </ProfileBioSection>
 
         <FlatList
@@ -97,9 +96,9 @@ export default function UserProfile() {
             />
           )}
           ListEmptyComponent={
-            <View style={styles.emptyWrap}>
+            <View className="items-center pt-[60px] gap-3">
               <Ionicons name="images-outline" size={48} color="#1A3060" />
-              <Text style={styles.emptyText}>No posts yet</Text>
+              <Text className="text-[#4A6080] text-[15px]">No posts yet</Text>
             </View>
           }
         />
@@ -112,7 +111,7 @@ export default function UserProfile() {
 
 function Header({ onBack, username }) {
   return (
-    <View style={styles.header}>
+    <View className="flex-row items-center justify-between px-4 py-3 border-b border-primary-300">
       <TouchableOpacity
         onPress={onBack}
         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -120,61 +119,10 @@ function Header({ onBack, username }) {
       >
         <Ionicons name="chevron-back" size={24} color="#4DA6FF" />
       </TouchableOpacity>
-      <Text style={styles.headerUsername} numberOfLines={1}>
+      <Text className="text-white text-base font-bold flex-1 text-center mx-2" numberOfLines={1}>
         {username ? `@${username}` : ""}
       </Text>
-      <View style={{ width: 24 }} />
+      <View className="w-6" />
     </View>
   );
 }
-
-// ─── Styles ────────────────────────────────────────────────────────
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#0C1929",
-  },
-  centered: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 12,
-  },
-  errorText: {
-    color: "#4A6080",
-    fontSize: 15,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#1A3060",
-  },
-  headerUsername: {
-    color: "#ffffff",
-    fontSize: 16,
-    fontWeight: "700",
-    flex: 1,
-    textAlign: "center",
-    marginHorizontal: 8,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "#1A3060",
-    marginTop: 12,
-    marginHorizontal: -16,
-  },
-  emptyWrap: {
-    alignItems: "center",
-    paddingTop: 60,
-    gap: 12,
-  },
-  emptyText: {
-    color: "#4A6080",
-    fontSize: 15,
-  },
-});

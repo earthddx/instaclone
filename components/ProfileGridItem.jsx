@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Image, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import { View, Image, TouchableOpacity, Dimensions } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -28,34 +28,22 @@ export default function ProfileGridItem({ item, index, onPress }) {
         item.thumbnail ? (
           <Image
             source={{ uri: item.thumbnail }}
-            style={styles.fill}
+            className="w-full h-full"
             resizeMode="cover"
           />
         ) : (
-          <View style={styles.videoPlaceholder}>
+          <View className="w-full h-full bg-[#0A1628] justify-center items-center">
             <Ionicons name="play-circle" size={40} color="rgba(77,166,255,0.85)" />
           </View>
         )
       ) : (
-        <Image source={{ uri }} style={styles.fill} resizeMode="cover" />
+        <Image source={{ uri }} className="w-full h-full" resizeMode="cover" />
       )}
       {isVideo && (
-        <View style={styles.videoIcon}>
+        <View className="absolute top-[6px] right-[6px]">
           <Ionicons name="play-circle" size={18} color="rgba(255,255,255,0.85)" />
         </View>
       )}
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  fill: { width: "100%", height: "100%" },
-  videoPlaceholder: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "#0A1628",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  videoIcon: { position: "absolute", top: 6, right: 6 },
-});
