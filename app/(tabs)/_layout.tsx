@@ -5,6 +5,7 @@ import { Tabs } from "expo-router";
 export default function TabLayout() {
   return (
     <Tabs
+      backBehavior="history"
       screenOptions={{
         tabBarActiveTintColor: "#4DA6FF",
         tabBarInactiveTintColor: "#3A5070",
@@ -54,6 +55,14 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? "person-circle" : "person-circle-outline"} size={28} color={color} />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="user"
+        options={{
+          headerShown: false,
+          tabBarButton: () => null,
+          tabBarItemStyle: { display: "none", width: 0 },
         }}
       />
     </Tabs>
