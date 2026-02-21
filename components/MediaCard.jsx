@@ -152,15 +152,6 @@ export default (props) => {
             <Text className="text-gray-400 text-sm mt-0.5">{description}</Text>
           ) : null}
         </View>
-
-        {/* Add a comment — tapping opens the sheet */}
-        <TouchableOpacity
-          onPress={() => setCommentsVisible(true)}
-          className="flex-row items-center px-3 py-2.5 border-t border-primary-300"
-        >
-          <Text className="text-gray-500 text-sm flex-1">Add a comment...</Text>
-        </TouchableOpacity>
-
         {/* Hidden overlay */}
         {hidden && (
           <BlurView
