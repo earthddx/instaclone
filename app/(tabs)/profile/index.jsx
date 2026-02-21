@@ -31,9 +31,9 @@ export default function Profile() {
   const [refreshing, setRefreshing] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState(0);
 
-  const fetchAll = React.useCallback(async () => {
+  const fetchAll = React.useCallback(async (isPullRefresh = false) => {
     if (!user?.$id) return;
-    setRefreshing(true);
+    if (isPullRefresh) setRefreshing(true);
     try {
       const [posts, liked] = await Promise.all([
         getUserPosts(user.$id),
@@ -42,11 +42,11 @@ export default function Profile() {
       setUserPosts(posts);
       setLikedPosts(liked);
     } finally {
-      setRefreshing(false);
+      if (isPullRefresh) setRefreshing(false);
     }
   }, [user?.$id]);
 
-  useFocusEffect(React.useCallback(() => { fetchAll(); }, [fetchAll]));
+  useFocusEffect(React.useCallback(() => { fetchAll(false); }, [fetchAll]));
 
   return (
     <ProfileContext.Provider value={{ userPosts, likedPosts }}>
@@ -65,10 +65,11 @@ export default function Profile() {
 
         <ScrollView
           style={{ flex: 1 }}
+          automaticallyAdjustContentInsets={false}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
-              onRefresh={fetchAll}
+              onRefresh={() => fetchAll(true)}
               tintColor="#4DA6FF"
               colors={["#4DA6FF"]}
             />
@@ -185,7 +186,7 @@ const GridItem = ({ item, index }) => {
     <TouchableOpacity
       activeOpacity={0.85}
       style={{ width: ITEM_SIZE, height: ITEM_SIZE, marginLeft, marginBottom: 1 }}
-      onPress={() => router.push(`/(tabs)/profile/${item.$id}`)}
+      onPress={() => router.push({ pathname: `/(tabs)/profile/${item.$id}`, params: { creatorId: item.creator?.$id ?? item.creator } })}
     >
       {isVideo ? (
         item.thumbnail ? (
