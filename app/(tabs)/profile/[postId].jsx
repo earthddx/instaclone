@@ -15,7 +15,7 @@ import { getPost, deletePost } from "../../../lib/appwrite";
 import MediaCard from "../../../components/MediaCard";
 
 export default function PostDetail() {
-  const { postId } = useLocalSearchParams();
+  const { postId, creatorId: paramCreatorId } = useLocalSearchParams();
   const { user } = React.useContext(UserContext);
   const router = useRouter();
 
@@ -114,6 +114,7 @@ export default function PostDetail() {
             {...post}
             creator={post.creator?.username ?? post.creator}
             creatorAvatar={post.creator?.avatar}
+            creatorId={post.creator?.$id ?? post.creator ?? paramCreatorId}
             isVisible={isFocused}
             currentUserId={user?.$id}
             currentUsername={user?.username}
