@@ -15,6 +15,7 @@ import {
   Dimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 import { getComments, addComment } from "../lib/appwrite";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -23,9 +24,12 @@ const DISMISS_THRESHOLD = 120;
 
 const avatarLetter = (name) => name?.[0]?.toUpperCase() ?? "?";
 
-const CommentItem = ({ item }) => (
+const CommentItem = ({ item, onAvatarPress }) => {
+  return (
   <View style={{ flexDirection: "row", marginBottom: 18, alignItems: "flex-start" }}>
-    <View
+    <TouchableOpacity
+      onPress={() => onAvatarPress(item.userId)}
+      activeOpacity={0.7}
       style={{
         width: 36,
         height: 36,
@@ -44,7 +48,7 @@ const CommentItem = ({ item }) => (
           {avatarLetter(item.username)}
         </Text>
       )}
-    </View>
+    </TouchableOpacity>
     <View style={{ flex: 1 }}>
       <Text style={{ color: "white", fontSize: 13, lineHeight: 19 }}>
         <Text style={{ fontWeight: "700" }}>@{item.username}{" "}</Text>
@@ -58,7 +62,8 @@ const CommentItem = ({ item }) => (
       </Text>
     </View>
   </View>
-);
+  );
+};
 
 export default function CommentsSheet({
   visible,
@@ -70,6 +75,7 @@ export default function CommentsSheet({
   onCommentCountChange,
 }) {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const [comment, setComment] = React.useState("");
   const [comments, setComments] = React.useState([]);
   const [loadingComments, setLoadingComments] = React.useState(false);
@@ -119,6 +125,17 @@ export default function CommentsSheet({
       setComment("");
       onCloseRef.current();
       callback?.();
+    });
+  };
+
+  const handleNavigateToUser = (userId) => {
+    if (!userId) return;
+    closeSheet(() => {
+      if (userId === currentUserId) {
+        router.push("/(tabs)/profile");
+      } else {
+        router.push(`/user/${userId}`);
+      }
     });
   };
 
@@ -264,7 +281,7 @@ export default function CommentsSheet({
                     No comments yet. Be the first!
                   </Text>
                 }
-                renderItem={({ item }) => <CommentItem item={item} />}
+                renderItem={({ item }) => <CommentItem item={item} onAvatarPress={handleNavigateToUser} />}
               />
             )}
 
