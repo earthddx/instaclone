@@ -1,5 +1,20 @@
 import React from "react";
-import { View, Text, Image, TouchableOpacity, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+  StyleSheet,
+} from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withSequence,
+  withTiming,
+  withDelay,
+} from "react-native-reanimated";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { BlurView } from "expo-blur";
@@ -10,7 +25,6 @@ import EllipsisMenu from "./EllipsisMenu";
 import { likePost, unlikePost, getCommentCount } from "../lib/appwrite";
 
 const WINDOW_WIDTH = Dimensions.get("window").width;
-
 const avatarLetter = (name) => name?.[0]?.toUpperCase() ?? "?";
 
 export default (props) => {
@@ -34,10 +48,10 @@ export default (props) => {
 
   const formattedDate = $createdAt
     ? new Date($createdAt).toLocaleDateString(undefined, {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    })
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
     : null;
 
   const [liked, setLiked] = React.useState(
@@ -47,7 +61,6 @@ export default (props) => {
   const likesRef = React.useRef([...likes]);
 
   const [hidden, setHidden] = React.useState(false);
-
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [menuTop, setMenuTop] = React.useState(0);
   const [menuRight, setMenuRight] = React.useState(0);
@@ -56,11 +69,47 @@ export default (props) => {
   const [commentsVisible, setCommentsVisible] = React.useState(false);
   const [commentCount, setCommentCount] = React.useState(0);
 
+  // ── Animations ────────────────────────────────────────────────────
+  const likeScale = useSharedValue(1);
+  const heartScale = useSharedValue(0);
+  const heartOpacity = useSharedValue(0);
+  const lastTapRef = React.useRef(null);
+
+  const likeAnimStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: likeScale.value }],
+  }));
+
+  const heartAnimStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: heartScale.value }],
+    opacity: heartOpacity.value,
+  }));
+
+  const animateLikeButton = () => {
+    likeScale.value = withSequence(
+      withSpring(1.4, { damping: 7, stiffness: 400 }),
+      withSpring(1, { damping: 10, stiffness: 300 })
+    );
+  };
+
+  const showHeartBurst = () => {
+    heartScale.value = 0;
+    heartOpacity.value = 0;
+    heartScale.value = withSequence(
+      withSpring(1, { damping: 12, stiffness: 180 }),
+      withDelay(450, withTiming(1.12, { duration: 200 }))
+    );
+    heartOpacity.value = withSequence(
+      withTiming(1, { duration: 80 }),
+      withDelay(450, withTiming(0, { duration: 350 }))
+    );
+  };
+
+  // ── Like logic ─────────────────────────────────────────────────────
   React.useEffect(() => {
     getCommentCount($id).then(setCommentCount);
   }, [$id]);
 
-  const handleLike = async () => {
+  const performLike = async () => {
     if (!currentUserId) return;
     const wasLiked = liked;
     const snapshot = [...likesRef.current];
@@ -81,6 +130,28 @@ export default (props) => {
     }
   };
 
+  const handleLike = () => {
+    if (!currentUserId) return;
+    animateLikeButton();
+    performLike();
+  };
+
+  // ── Double-tap on media ────────────────────────────────────────────
+  const handleMediaTap = () => {
+    const now = Date.now();
+    if (lastTapRef.current && now - lastTapRef.current < 300) {
+      lastTapRef.current = null;
+      showHeartBurst();
+      if (!liked && currentUserId) {
+        animateLikeButton();
+        performLike();
+      }
+    } else {
+      lastTapRef.current = now;
+    }
+  };
+
+  // ── Ellipsis menu ──────────────────────────────────────────────────
   const openMenu = () => {
     ellipsisRef.current?.measureInWindow((x, y, width, height) => {
       setMenuTop(y + height + 4);
@@ -101,18 +172,35 @@ export default (props) => {
         openMenu={openMenu}
       />
 
-      {/* Media + body — wrapped so the hidden overlay can cover them */}
+      {/* Media + body */}
       <View style={{ position: "relative" }}>
-        {type.includes("image") ? (
-          <ComponentImage source={source} />
-        ) : (
-          <ComponentVideo
-            source={source}
-            allowsFullscreen
-            allowsPictureInPicture
-            isVisible={isVisible && !hidden}
-          />
-        )}
+        {/* Media wrapped in double-tap detector */}
+        <View>
+          <TouchableOpacity activeOpacity={1} onPress={handleMediaTap}>
+            {type.includes("image") ? (
+              <ComponentImage source={source} />
+            ) : (
+              <ComponentVideo
+                source={source}
+                allowsFullscreen
+                allowsPictureInPicture
+                isVisible={isVisible && !hidden}
+              />
+            )}
+          </TouchableOpacity>
+
+          {/* Heart burst overlay — scoped to media area */}
+          <Animated.View
+            pointerEvents="none"
+            style={[
+              StyleSheet.absoluteFillObject,
+              { justifyContent: "center", alignItems: "center" },
+              heartAnimStyle,
+            ]}
+          >
+            <Ionicons name="heart" size={96} color="rgba(255,255,255,0.92)" />
+          </Animated.View>
+        </View>
 
         {/* Action bar */}
         <View className="flex-row items-center px-3 pt-3 pb-1 gap-4">
@@ -120,11 +208,13 @@ export default (props) => {
             onPress={handleLike}
             className="flex-row items-center gap-1.5"
           >
-            <Ionicons
-              name={liked ? "heart" : "heart-outline"}
-              size={24}
-              color={liked ? "#FF4D6D" : "#8899AA"}
-            />
+            <Animated.View style={likeAnimStyle}>
+              <Ionicons
+                name={liked ? "heart" : "heart-outline"}
+                size={24}
+                color={liked ? "#FF4D6D" : "#8899AA"}
+              />
+            </Animated.View>
             {likeCount > 0 && (
               <Text
                 className="text-sm"
@@ -156,6 +246,7 @@ export default (props) => {
             <Text className="text-gray-400 text-sm mt-0.5">{description}</Text>
           ) : null}
         </View>
+
         {/* Hidden overlay */}
         {hidden && (
           <BlurView
@@ -175,6 +266,7 @@ export default (props) => {
           </BlurView>
         )}
       </View>
+
       <EllipsisMenu
         visible={menuVisible}
         top={menuTop}
@@ -197,7 +289,15 @@ export default (props) => {
   );
 };
 
-const ComponentHeader = ({ formattedDate, creator, creatorAvatar, creatorId, currentUserId, ellipsisRef, openMenu }) => {
+const ComponentHeader = ({
+  formattedDate,
+  creator,
+  creatorAvatar,
+  creatorId,
+  currentUserId,
+  ellipsisRef,
+  openMenu,
+}) => {
   const router = useRouter();
 
   const handleCreatorPress = () => {
@@ -209,34 +309,39 @@ const ComponentHeader = ({ formattedDate, creator, creatorAvatar, creatorId, cur
     }
   };
 
-  return <View className="flex-row items-center px-3 py-2.5">
-    <TouchableOpacity
-      className="flex-row items-center flex-1 mr-2"
-      onPress={handleCreatorPress}
-      activeOpacity={creatorId ? 0.7 : 1}
-    >
-      <View className="w-9 h-9 rounded-full bg-secondary-100 border border-secondary-300 justify-center items-center mr-2.5 overflow-hidden">
-        {creatorAvatar ? (
-          <Image source={{ uri: creatorAvatar }} style={{ width: "100%", height: "100%" }} />
-        ) : (
-          <Text className="text-secondary font-bold text-sm">
-            {avatarLetter(creator)}
-          </Text>
-        )}
-      </View>
-      <View className="flex-1">
-        <Text className="text-white font-semibold text-sm">@{creator}</Text>
-        {formattedDate && (
-          <Text className="text-gray-500 text-xs">{formattedDate}</Text>
-        )}
-      </View>
-    </TouchableOpacity>
-    <TouchableOpacity
-      ref={ellipsisRef}
-      onPress={openMenu}
-      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-    >
-      <Ionicons name="ellipsis-horizontal" size={18} color="#4A6080" />
-    </TouchableOpacity>
-  </View>
-}
+  return (
+    <View className="flex-row items-center px-3 py-2.5">
+      <TouchableOpacity
+        className="flex-row items-center flex-1 mr-2"
+        onPress={handleCreatorPress}
+        activeOpacity={creatorId ? 0.7 : 1}
+      >
+        <View className="w-9 h-9 rounded-full bg-secondary-100 border border-secondary-300 justify-center items-center mr-2.5 overflow-hidden">
+          {creatorAvatar ? (
+            <Image
+              source={{ uri: creatorAvatar }}
+              style={{ width: "100%", height: "100%" }}
+            />
+          ) : (
+            <Text className="text-secondary font-bold text-sm">
+              {avatarLetter(creator)}
+            </Text>
+          )}
+        </View>
+        <View className="flex-1">
+          <Text className="text-white font-semibold text-sm">@{creator}</Text>
+          {formattedDate && (
+            <Text className="text-gray-500 text-xs">{formattedDate}</Text>
+          )}
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity
+        ref={ellipsisRef}
+        onPress={openMenu}
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+      >
+        <Ionicons name="ellipsis-horizontal" size={18} color="#4A6080" />
+      </TouchableOpacity>
+    </View>
+  );
+};

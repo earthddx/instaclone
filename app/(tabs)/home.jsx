@@ -1,6 +1,7 @@
-import { View, Text, FlatList, RefreshControl, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
+import { View, Text, FlatList, RefreshControl, KeyboardAvoidingView, Platform, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MediaCard from "../../components/MediaCard";
+import { SkeletonMediaCard } from "../../components/Skeleton";
 import { getAllPosts } from "../../lib/appwrite";
 import React from "react";
 import { UserContext } from "../../context/UserContext";
@@ -13,6 +14,7 @@ export default function Home() {
   const flatListRef = React.useRef(null);
   useScrollToTop(flatListRef);
   const [posts, setPosts] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
   const [refreshing, setRefreshing] = React.useState(false);
   const [visibleItems, setVisibleItems] = React.useState([]);
   const [isFocused, setIsFocused] = React.useState(true);
@@ -27,6 +29,7 @@ export default function Home() {
   const fetchPosts = async () => {
     const allPosts = await getAllPosts();
     setPosts(allPosts);
+    setLoading(false);
   };
 
   React.useEffect(() => {
@@ -65,46 +68,53 @@ export default function Home() {
         <Text className="text-white text-lg font-bold">Feed</Text>
         <View className="flex-1" />
       </TouchableOpacity>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
-      >
-        <FlatList
-          ref={flatListRef}
-          keyExtractor={(item) => item.$id}
-          data={posts}
-          keyboardShouldPersistTaps="handled"
-          onViewableItemsChanged={onViewableItemsChanged}
-          viewabilityConfig={viewConfigRef}
-          renderItem={({ item }) => {
-            return (
-              <MediaCard
-                {...item}
-                creator={item.creator.username}
-                creatorAvatar={item.creator?.avatar}
-                creatorId={item.creator?.$id}
-                description={item.description}
-                source={item.source}
-                title={item.title}
-                type={item.type}
-                isVisible={isFocused && visibleItems.includes(item.$id)}
-                currentUserId={user?.$id}
-                currentUsername={user?.username}
-                currentUserAvatar={user?.avatar}
+      {loading ? (
+        <ScrollView>
+          <SkeletonMediaCard />
+          <SkeletonMediaCard />
+          <SkeletonMediaCard />
+        </ScrollView>
+      ) : (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
+          <FlatList
+            ref={flatListRef}
+            keyExtractor={(item) => item.$id}
+            data={posts}
+            keyboardShouldPersistTaps="handled"
+            onViewableItemsChanged={onViewableItemsChanged}
+            viewabilityConfig={viewConfigRef}
+            renderItem={({ item }) => {
+              return (
+                <MediaCard
+                  {...item}
+                  creator={item.creator.username}
+                  creatorAvatar={item.creator?.avatar}
+                  creatorId={item.creator?.$id}
+                  description={item.description}
+                  source={item.source}
+                  title={item.title}
+                  type={item.type}
+                  isVisible={isFocused && visibleItems.includes(item.$id)}
+                  currentUserId={user?.$id}
+                  currentUsername={user?.username}
+                  currentUserAvatar={user?.avatar}
+                />
+              );
+            }}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                tintColor="#4DA6FF"
+                colors={["#4DA6FF"]}
               />
-            );
-          }}
-
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor="#4DA6FF"
-              colors={["#4DA6FF"]}
-            />
-          }
-        />
-      </KeyboardAvoidingView>
+            }
+          />
+        </KeyboardAvoidingView>
+      )}
     </SafeAreaView>
   );
 }

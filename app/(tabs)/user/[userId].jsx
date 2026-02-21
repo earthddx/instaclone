@@ -5,7 +5,6 @@ import {
   FlatList,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -14,6 +13,7 @@ import { getUserById, getUserPosts } from "../../../lib/appwrite";
 import { UserContext } from "../../../context/UserContext";
 import ProfileBioSection from "../../../components/ProfileBioSection";
 import ProfileGridItem from "../../../components/ProfileGridItem";
+import { SkeletonProfileBio, SkeletonGrid } from "../../../components/Skeleton";
 
 export default function UserProfile() {
   const { userId } = useLocalSearchParams();
@@ -50,9 +50,11 @@ export default function UserProfile() {
     return (
       <SafeAreaView className="flex-1 bg-primary-100" edges={["top"]}>
         <Header onBack={() => router.back()} username="" />
-        <View className="flex-1 justify-center items-center gap-3">
-          <ActivityIndicator color="#4DA6FF" size="large" />
-        </View>
+        <ScrollView>
+          <SkeletonProfileBio />
+          <View className="h-px bg-primary-300 mx-0" />
+          <SkeletonGrid count={9} />
+        </ScrollView>
       </SafeAreaView>
     );
   }

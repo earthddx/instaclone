@@ -16,6 +16,7 @@ import { getUserPosts, getUserLikedPosts } from "../../../lib/appwrite";
 import ComponentEmpty from "../../../components/ComponentEmpty";
 import ProfileBioSection from "../../../components/ProfileBioSection";
 import ProfileGridItem from "../../../components/ProfileGridItem";
+import { SkeletonGrid } from "../../../components/Skeleton";
 
 const ProfileContext = React.createContext(null);
 
@@ -26,6 +27,7 @@ export default function Profile() {
   const [userPosts, setUserPosts] = React.useState([]);
   const [likedPosts, setLikedPosts] = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
+  const [postsLoading, setPostsLoading] = React.useState(true);
   const [activeTab, setActiveTab] = React.useState(0);
 
   const fetchAll = React.useCallback(async (isPullRefresh = false) => {
@@ -40,13 +42,14 @@ export default function Profile() {
       setLikedPosts(liked);
     } finally {
       if (isPullRefresh) setRefreshing(false);
+      setPostsLoading(false);
     }
   }, [user?.$id]);
 
   useFocusEffect(React.useCallback(() => { fetchAll(false); }, [fetchAll]));
 
   return (
-    <ProfileContext.Provider value={{ userPosts, likedPosts }}>
+    <ProfileContext.Provider value={{ userPosts, likedPosts, postsLoading }}>
       <SafeAreaView className="flex-1 bg-primary-100" edges={["top"]}>
         {/* Header */}
         <View className="px-4 py-3 border-b border-primary-300 flex-row items-center">
@@ -129,8 +132,9 @@ export default function Profile() {
 
 // --- Posts grid tab ---
 const PostsGrid = () => {
-  const { userPosts } = React.useContext(ProfileContext);
+  const { userPosts, postsLoading } = React.useContext(ProfileContext);
   const router = useRouter();
+  if (postsLoading) return <SkeletonGrid count={9} />;
   return (
     <FlatList
       data={userPosts}
@@ -156,8 +160,9 @@ const PostsGrid = () => {
 
 // --- Liked videos tab ---
 const LikedVideos = () => {
-  const { likedPosts } = React.useContext(ProfileContext);
+  const { likedPosts, postsLoading } = React.useContext(ProfileContext);
   const router = useRouter();
+  if (postsLoading) return <SkeletonGrid count={9} />;
   return (
     <FlatList
       data={likedPosts}
