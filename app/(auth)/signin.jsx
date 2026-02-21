@@ -31,7 +31,7 @@ export default () => {
     setIsLoading(true);
     try {
       await signIn({ email, password });
-      const loggedUser = getLoggedInUser();
+      const loggedUser = await getLoggedInUser();
       handleSaveUser(loggedUser);
       router.replace("/home");
     } catch (e) {
