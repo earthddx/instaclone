@@ -144,19 +144,30 @@ const InputArea = () => {
     }
   };
 
+  const charsLeft = 250 - message.length;
+  const isNearLimit = charsLeft <= 30;
+
   return (
     <View className="flex-row items-center px-3 py-2 border-t border-primary-300 bg-primary-200 gap-2">
-      <View className="flex-1 flex-row items-center bg-primary-100 border border-primary-300 rounded-full px-4 h-[44px]">
+      <View className="flex-1 bg-primary-100 border border-primary-300 rounded-2xl px-4 pt-2 pb-1">
         <TextInput
-          className="text-base text-white flex-1 py-2"
-          onChangeText={setMessage}
+          className="text-base text-white flex-1 py-0"
+          onChangeText={(text) => setMessage(text.slice(0, 250))}
           placeholder="Message..."
           placeholderTextColor="#4A6080"
           value={message}
           multiline
-          maxLength={500}
+          maxLength={250}
           scrollEnabled
         />
+        {isNearLimit && (
+          <Text
+            className="text-xs text-right mt-0.5"
+            style={{ color: charsLeft <= 10 ? "#FF4444" : "#4A6080" }}
+          >
+            {charsLeft}
+          </Text>
+        )}
       </View>
       <TouchableOpacity
         onPress={sendMessage}
