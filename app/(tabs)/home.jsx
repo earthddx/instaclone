@@ -80,6 +80,7 @@ export default function Home() {
                 {...item}
                 creator={item.creator.username}
                 creatorAvatar={item.creator?.avatar}
+                creatorId={item.creator?.$id}
                 description={item.description}
                 source={item.source}
                 title={item.title}
@@ -91,17 +92,7 @@ export default function Home() {
               />
             );
           }}
-          // ListHeaderComponent={() => {
-          //   return (
-          //     <View className="px-4 pt-4 pb-2">
-          //       <Text className="text-white text-2xl font-bold mb-3">Feed</Text>
-          //       <View className="bg-primary-200 rounded-xl p-4 mb-2">
-          //         <Text className="text-secondary text-sm font-semibold">Stories</Text>
-          //         <Text className="text-gray-500 text-xs mt-1">Coming soon</Text>
-          //       </View>
-          //     </View>
-          //   );
-          // }}
+
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -110,7 +101,6 @@ export default function Home() {
               colors={["#4DA6FF"]}
             />
           }
-        // stickyHeaderIndices={[0]}
         />
       </KeyboardAvoidingView>
     </SafeAreaView>
