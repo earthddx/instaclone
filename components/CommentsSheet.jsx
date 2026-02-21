@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { getComments, addComment } from "../lib/appwrite";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -79,6 +80,15 @@ export default function CommentsSheet({
   const [comment, setComment] = React.useState("");
   const [comments, setComments] = React.useState([]);
   const [loadingComments, setLoadingComments] = React.useState(false);
+  const commentToastOpacity = React.useRef(new Animated.Value(0)).current;
+
+  const showCommentToast = () => {
+    Animated.sequence([
+      Animated.timing(commentToastOpacity, { toValue: 1, duration: 180, useNativeDriver: true }),
+      Animated.delay(1600),
+      Animated.timing(commentToastOpacity, { toValue: 0, duration: 250, useNativeDriver: true }),
+    ]).start();
+  };
 
   // Keep onClose in a ref so the panResponder closure always calls the latest version
   const onCloseRef = React.useRef(onClose);
@@ -185,6 +195,7 @@ export default function CommentsSheet({
         onCommentCountChange?.(next.length);
         return next;
       });
+      showCommentToast();
     } catch {}
   };
 
@@ -284,6 +295,30 @@ export default function CommentsSheet({
                 renderItem={({ item }) => <CommentItem item={item} onAvatarPress={handleNavigateToUser} />}
               />
             )}
+
+            {/* Comment-added toast (inside modal, above input bar) */}
+            <Animated.View
+              pointerEvents="none"
+              style={{
+                opacity: commentToastOpacity,
+                position: "absolute",
+                bottom: 70,
+                left: 16,
+                right: 16,
+                backgroundColor: "#152030",
+                borderRadius: 10,
+                paddingHorizontal: 14,
+                paddingVertical: 10,
+                flexDirection: "row",
+                alignItems: "center",
+                borderLeftWidth: 3,
+                borderLeftColor: "#22C55E",
+                zIndex: 10,
+              }}
+            >
+              <Ionicons name="checkmark-circle" size={18} color="#22C55E" style={{ marginRight: 8 }} />
+              <Text style={{ color: "#fff", fontSize: 13 }}>Comment added</Text>
+            </Animated.View>
 
             {/* Input bar */}
             <View
