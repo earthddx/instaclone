@@ -6,10 +6,12 @@ import React from "react";
 import { UserContext } from "../../context/UserContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
+import { useScrollToTop } from "@react-navigation/native";
 
 export default function Home() {
   const { user } = React.useContext(UserContext);
   const flatListRef = React.useRef(null);
+  useScrollToTop(flatListRef);
   const [posts, setPosts] = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
   const [visibleItems, setVisibleItems] = React.useState([]);
