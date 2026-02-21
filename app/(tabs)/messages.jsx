@@ -13,6 +13,7 @@ import * as Clipboard from "expo-clipboard";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useRouter } from "expo-router";
 import { UserContext } from "../../context/UserContext";
 import {
   client,
@@ -98,6 +99,7 @@ const Messages = () => {
               <ComponentMessage
                 item={item}
                 isOwner={isOwner}
+                currentUserId={user?.$id}
                 timestampAnchor={isNewChainOfMessages || showGapTimestamp}
                 usernameAnchor={isLastInChainOfMessages}
               />
@@ -190,9 +192,11 @@ const InputArea = () => {
 const ComponentMessage = ({
   item,
   isOwner,
+  currentUserId,
   timestampAnchor,
   usernameAnchor,
 }) => {
+  const router = useRouter();
   // With an inverted FlatList:
   //   usernameAnchor = isLastInChain  → topmost bubble of the group visually
   //   timestampAnchor = isNewChain    → bottommost bubble of the group visually
@@ -236,7 +240,16 @@ const ComponentMessage = ({
       style={{ alignItems: isOwner ? "flex-end" : "flex-start" }}
     >
       {usernameAnchor && !isOwner && (
-        <Text className="text-gray-500 text-xs mb-1 ml-1">{item.username}</Text>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() =>
+            item.userId === currentUserId
+              ? router.push("/(tabs)/profile")
+              : router.push(`/user/${item.userId}`)
+          }
+        >
+          <Text className="text-gray-500 text-xs mb-1 ml-1">{item.username}</Text>
+        </TouchableOpacity>
       )}
       <Pressable onLongPress={handleLongPress}>
         <View
