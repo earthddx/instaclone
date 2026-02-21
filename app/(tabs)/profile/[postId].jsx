@@ -13,11 +13,13 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { UserContext } from "../../../context/UserContext";
 import { getPost, deletePost } from "../../../lib/appwrite";
 import MediaCard from "../../../components/MediaCard";
+import { useToast } from "../../../context/ToastContext";
 
 export default function PostDetail() {
   const { postId, creatorId: paramCreatorId } = useLocalSearchParams();
   const { user } = React.useContext(UserContext);
   const router = useRouter();
+  const showToast = useToast();
 
   const [post, setPost] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
@@ -55,10 +57,11 @@ export default function PostDetail() {
           onPress: async () => {
             try {
               await deletePost(postId);
+              showToast("Post deleted", "success");
               router.back();
             } catch (e) {
               console.error(e);
-              Alert.alert("Error", "Failed to delete post. Please try again.");
+              showToast("Failed to delete post", "error");
             }
           },
         },
