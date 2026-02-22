@@ -2,6 +2,7 @@ import { View, Text, FlatList, RefreshControl, KeyboardAvoidingView, Platform, T
 import { SafeAreaView } from "react-native-safe-area-context";
 import MediaCard from "../../components/MediaCard";
 import { SkeletonMediaCard } from "../../components/Skeleton";
+import ErrorBoundary, { CardErrorFallback } from "../../components/ErrorBoundary";
 import { getAllPosts } from "../../lib/appwrite";
 import React from "react";
 import { UserContext } from "../../context/UserContext";
@@ -86,8 +87,8 @@ export default function Home() {
             keyboardShouldPersistTaps="handled"
             onViewableItemsChanged={onViewableItemsChanged}
             viewabilityConfig={viewConfigRef}
-            renderItem={({ item }) => {
-              return (
+            renderItem={({ item }) => (
+              <ErrorBoundary key={item.$id} fallback={<CardErrorFallback />}>
                 <MediaCard
                   {...item}
                   creator={item.creator.username}
@@ -102,8 +103,8 @@ export default function Home() {
                   currentUsername={user?.username}
                   currentUserAvatar={user?.avatar}
                 />
-              );
-            }}
+              </ErrorBoundary>
+            )}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
