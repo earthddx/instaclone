@@ -8,6 +8,8 @@ import {
   Alert,
   Pressable,
   TouchableOpacity,
+  ActivityIndicator,
+  Image,
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import React from "react";
@@ -25,14 +27,52 @@ import {
 const Messages = () => {
   const { user } = React.useContext(UserContext);
   const [messages, setMessages] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [fetchError, setFetchError] = React.useState(null);
+  const [showScrollBtn, setShowScrollBtn] = React.useState(false);
+  const [hasMore, setHasMore] = React.useState(true);
+  const [loadingMore, setLoadingMore] = React.useState(false);
+  const flatListRef = React.useRef(null);
+  const cursorRef = React.useRef(null);
+
+  const handleScroll = React.useCallback((event) => {
+    setShowScrollBtn(event.nativeEvent.contentOffset.y > 150);
+  }, []);
 
   React.useEffect(() => {
     const fetchMessages = async () => {
-      const allMessages = await getMessages();
-      setMessages(allMessages);
+      try {
+        const { documents, hasMore: more } = await getMessages();
+        setMessages(documents);
+        setHasMore(more);
+        if (documents.length > 0) {
+          cursorRef.current = documents[documents.length - 1].$id;
+        }
+      } catch (error) {
+        setFetchError(error.message ?? "Failed to load messages.");
+      } finally {
+        setLoading(false);
+      }
     };
     fetchMessages();
   }, []);
+
+  const loadMoreMessages = React.useCallback(async () => {
+    if (!hasMore || loadingMore || !cursorRef.current) return;
+    setLoadingMore(true);
+    try {
+      const { documents, hasMore: more } = await getMessages(cursorRef.current);
+      setMessages((prev) => [...prev, ...documents]);
+      setHasMore(more);
+      if (documents.length > 0) {
+        cursorRef.current = documents[documents.length - 1].$id;
+      }
+    } catch {
+      // silently ignore — user can keep scrolling to retry
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [hasMore, loadingMore]);
 
   React.useEffect(() => {
     const unsubscribe = client.subscribe(
@@ -78,10 +118,38 @@ const Messages = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
       >
+        {loading ? (
+          <View className="flex-1 items-center justify-center">
+            <ActivityIndicator size="large" color="#4DA6FF" />
+          </View>
+        ) : fetchError ? (
+          <View className="flex-1 items-center justify-center px-8">
+            <Ionicons name="alert-circle-outline" size={48} color="#FF4444" />
+            <Text className="text-red-400 text-base font-semibold mt-4 text-center">
+              Could not load messages
+            </Text>
+            <Text className="text-gray-600 text-sm mt-1 text-center">
+              {fetchError}
+            </Text>
+          </View>
+        ) : (
+        <View style={{ flex: 1 }}>
         <FlatList
+          ref={flatListRef}
           data={messages}
           keyExtractor={(item) => item.$id}
           contentContainerStyle={{ paddingVertical: 12 }}
+          onScroll={handleScroll}
+          scrollEventThrottle={100}
+          onEndReached={loadMoreMessages}
+          onEndReachedThreshold={0.3}
+          ListFooterComponent={
+            loadingMore ? (
+              <View style={{ paddingVertical: 12, alignItems: "center" }}>
+                <ActivityIndicator size="small" color="#4DA6FF" />
+              </View>
+            ) : null
+          }
           renderItem={({ item, index }) => {
             const isOwner = user?.$id === item.userId;
             const isNewChainOfMessages =
@@ -118,6 +186,29 @@ const Messages = () => {
           }
           inverted
         />
+        {showScrollBtn && (
+          <TouchableOpacity
+            onPress={() => flatListRef.current?.scrollToOffset({ offset: 0, animated: true })}
+            activeOpacity={0.8}
+            style={{
+              position: "absolute",
+              bottom: 12,
+              right: 12,
+              width: 36,
+              height: 36,
+              borderRadius: 18,
+              backgroundColor: "#0D1F3C",
+              borderWidth: 1,
+              borderColor: "#1A3060",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Ionicons name="chevron-down" size={20} color="#4DA6FF" />
+          </TouchableOpacity>
+        )}
+        </View>
+        )}
         <InputArea />
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -140,6 +231,7 @@ const InputArea = () => {
         message: text,
         userId: user.$id,
         username: user.username,
+        avatar: user.avatar ?? null,
       });
     } catch (error) {
       Alert.alert("Error", error.message);
@@ -224,59 +316,108 @@ const ComponentMessage = ({
   hours = hours % 12 || 12;
   const timeStr = `${hours}:${minutes} ${ampm}`;
   const now = new Date();
-  const isOlderThanOneDay = now - date > 24 * 60 * 60 * 1000;
-  const formattedTime = isOlderThanOneDay
-    ? `${date.toLocaleDateString([], { month: "short", day: "numeric" })} ${timeStr}`
-    : timeStr;
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterdayStart = new Date(todayStart);
+  yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+  const msgDayStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const formattedTime =
+    msgDayStart.getTime() === todayStart.getTime()
+      ? timeStr
+      : msgDayStart.getTime() === yesterdayStart.getTime()
+      ? `Yesterday ${timeStr}`
+      : `${date.toLocaleDateString([], { month: "short", day: "numeric" })} ${timeStr}`;
 
   const handleLongPress = async () => {
     await Clipboard.setStringAsync(item.text);
     Alert.alert("Copied to clipboard");
   };
 
+  const profileRoute =
+    item.userId === currentUserId
+      ? "/(tabs)/profile"
+      : `/user/${item.userId}`;
+
   return (
     <View
       className={`mx-3 ${isBottom ? "mb-3" : "mb-0.5"}`}
-      style={{ alignItems: isOwner ? "flex-end" : "flex-start" }}
+      style={{
+        flexDirection: "row",
+        alignItems: "flex-start",
+        justifyContent: isOwner ? "flex-end" : "flex-start",
+      }}
     >
-      {usernameAnchor && !isOwner && (
-        <TouchableOpacity
-          activeOpacity={0.7}
-          onPress={() =>
-            item.userId === currentUserId
-              ? router.push("/(tabs)/profile")
-              : router.push(`/user/${item.userId}`)
-          }
-        >
-          <Text className="text-gray-500 text-xs mb-1 ml-1">{item.username}</Text>
-        </TouchableOpacity>
+      {/* Avatar column — non-owner only */}
+      {!isOwner && (
+        isTop ? (
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => router.push(profileRoute)}
+            style={{ marginRight: 6, marginTop: 2 }}
+          >
+            {item.avatar ? (
+              <Image
+                source={{ uri: item.avatar }}
+                style={{ width: 30, height: 30, borderRadius: 15 }}
+              />
+            ) : (
+              <View
+                style={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: 15,
+                  backgroundColor: "#1A3060",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: "#4DA6FF", fontSize: 12, fontWeight: "bold" }}>
+                  {item.username?.[0]?.toUpperCase() ?? "?"}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        ) : (
+          <View style={{ width: 36 }} />
+        )
       )}
-      <Pressable onLongPress={handleLongPress}>
-        <View
-          style={[
-            bubbleRadius,
-            {
-              maxWidth: 280,
-              paddingHorizontal: 14,
-              paddingVertical: 9,
-              backgroundColor: isOwner ? "#1A6EEB" : "#132040",
-              borderWidth: isOwner ? 0 : 1,
-              borderColor: "#1A3060",
-            },
-          ]}
-        >
-          <Text className="text-white text-base">{item.text}</Text>
-        </View>
-      </Pressable>
-      {timestampAnchor && (
-        <Text
-          className={`text-xs text-gray-600 mt-1 ${
-            isOwner ? "mr-1" : "ml-1"
-          }`}
-        >
-          {formattedTime}
-        </Text>
-      )}
+
+      {/* Bubble + username + timestamp */}
+      <View style={{ alignItems: isOwner ? "flex-end" : "flex-start" }}>
+        {usernameAnchor && !isOwner && (
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => router.push(profileRoute)}
+          >
+            <Text className="text-gray-500 text-xs mb-1 ml-1">{item.username}</Text>
+          </TouchableOpacity>
+        )}
+        <Pressable onLongPress={handleLongPress}>
+          <View
+            style={[
+              bubbleRadius,
+              {
+                maxWidth: 280,
+                paddingHorizontal: 14,
+                paddingVertical: 9,
+                backgroundColor: isOwner ? "#1A6EEB" : "#132040",
+                borderWidth: isOwner ? 0 : 1,
+                borderColor: "#1A3060",
+              },
+            ]}
+          >
+            <Text className="text-white text-base">{item.text}</Text>
+          </View>
+        </Pressable>
+        {timestampAnchor && (
+          <Text
+            className={`text-xs text-gray-600 mt-1 ${
+              isOwner ? "mr-1" : "ml-1"
+            }`}
+          >
+            {formattedTime}
+          </Text>
+        )}
+      </View>
     </View>
   );
 };
