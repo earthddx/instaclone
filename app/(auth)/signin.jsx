@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import ComponentButton from "../../components/ComponentButton";
@@ -45,6 +46,15 @@ export default () => {
       {/* Decorative background orbs */}
       <View className="absolute top-[-90px] right-[-70px] w-[260px] h-[260px] rounded-full bg-[rgba(77,166,255,0.08)]" />
       <View className="absolute bottom-[80px] left-[-90px] w-[220px] h-[220px] rounded-full bg-[rgba(26,110,235,0.07)]" />
+
+      {/* Back button */}
+      <TouchableOpacity
+        onPress={() => router.back()}
+        activeOpacity={0.7}
+        className="absolute top-14 left-5 z-10 w-9 h-9 rounded-full bg-[rgba(77,166,255,0.08)] border border-primary-300 items-center justify-center"
+      >
+        <Ionicons name="arrow-back" size={18} color="#4DA6FF" />
+      </TouchableOpacity>
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
