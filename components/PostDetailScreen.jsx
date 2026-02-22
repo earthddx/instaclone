@@ -7,14 +7,13 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useLocalSearchParams, useRouter, useFocusEffect } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { UserContext } from "../../../../context/UserContext";
-import { getPost } from "../../../../lib/appwrite";
-import MediaCard from "../../../../components/MediaCard";
+import { UserContext } from "../context/UserContext";
+import { getPost } from "../lib/appwrite";
+import MediaCard from "./MediaCard";
 
-export default function UserPostDetail() {
-  const { postId, creatorId: paramCreatorId } = useLocalSearchParams();
+export default function PostDetailScreen({ postId, creatorId: paramCreatorId, onDelete }) {
   const { user } = React.useContext(UserContext);
   const router = useRouter();
 
@@ -40,11 +39,7 @@ export default function UserPostDetail() {
   }, [postId]);
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: "#0C1929" }}
-      edges={["top"]}
-    >
-      {/* Back header */}
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#0C1929" }} edges={["top"]}>
       <View
         style={{
           flexDirection: "row",
@@ -59,16 +54,9 @@ export default function UserPostDetail() {
           onPress={() => router.back()}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Ionicons name="arrow-back" size={24} color="#4DA6FF" />
+          <Ionicons name="chevron-back" size={24} color="#4DA6FF" />
         </TouchableOpacity>
-        <Text
-          style={{
-            color: "#fff",
-            fontSize: 17,
-            fontWeight: "700",
-            marginLeft: 12,
-          }}
-        >
+        <Text style={{ color: "#fff", fontSize: 17, fontWeight: "700", marginLeft: 12 }}>
           Post
         </Text>
       </View>
@@ -92,6 +80,12 @@ export default function UserPostDetail() {
             currentUserId={user?.$id}
             currentUsername={user?.username}
             currentUserAvatar={user?.avatar}
+            onDelete={
+              onDelete &&
+              (post.creator?.$id === user?.$id || post.creator === user?.$id)
+                ? onDelete
+                : undefined
+            }
           />
         </ScrollView>
       )}
