@@ -18,7 +18,7 @@ export default function ProfileLayout() {
   const logout = async () => {
     await signOut();
     handleSaveUser(null);
-    router.replace("/signin");
+    router.replace("/");
   };
 
   return (
