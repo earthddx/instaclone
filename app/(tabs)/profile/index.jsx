@@ -148,7 +148,7 @@ const PostsGrid = () => {
           index={index}
           onPress={(p) =>
             router.push({
-              pathname: `/(tabs)/profile/${p.$id}`,
+              pathname: `/post/${p.$id}`,
               params: { creatorId: p.creator?.$id ?? p.creator },
             })
           }
@@ -176,7 +176,7 @@ const LikedVideos = () => {
           index={index}
           onPress={(p) =>
             router.push({
-              pathname: `/(tabs)/profile/${p.$id}`,
+              pathname: `/post/${p.$id}`,
               params: { creatorId: p.creator?.$id ?? p.creator },
             })
           }
