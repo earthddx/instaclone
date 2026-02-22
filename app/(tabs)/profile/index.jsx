@@ -8,6 +8,7 @@ import {
   RefreshControl,
   ScrollView,
   Share,
+  useWindowDimensions,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
@@ -29,6 +30,18 @@ export default function Profile() {
   const [refreshing, setRefreshing] = React.useState(false);
   const [postsLoading, setPostsLoading] = React.useState(true);
   const [activeTab, setActiveTab] = React.useState(0);
+  const { width } = useWindowDimensions();
+  const pagerRef = React.useRef(null);
+
+  const goToTab = React.useCallback((index) => {
+    setActiveTab(index);
+    pagerRef.current?.scrollTo({ x: index * width, animated: true });
+  }, [width]);
+
+  const onScrollEnd = React.useCallback((e) => {
+    const index = Math.round(e.nativeEvent.contentOffset.x / width);
+    setActiveTab(index);
+  }, [width]);
 
   const fetchAll = React.useCallback(async (isPullRefresh = false) => {
     if (!user?.$id) return;
@@ -101,7 +114,7 @@ export default function Profile() {
           <View className="flex-row bg-primary-100 border-t-[0.5px] border-primary-300 h-11">
             <TouchableOpacity
               className={`flex-1 items-center justify-center ${activeTab === 0 ? 'border-b-2 border-secondary' : ''}`}
-              onPress={() => setActiveTab(0)}
+              onPress={() => goToTab(0)}
               activeOpacity={0.7}
             >
               <Ionicons
@@ -112,7 +125,7 @@ export default function Profile() {
             </TouchableOpacity>
             <TouchableOpacity
               className={`flex-1 items-center justify-center ${activeTab === 1 ? 'border-b-2 border-secondary' : ''}`}
-              onPress={() => setActiveTab(1)}
+              onPress={() => goToTab(1)}
               activeOpacity={0.7}
             >
               <Ionicons
@@ -123,7 +136,18 @@ export default function Profile() {
             </TouchableOpacity>
           </View>
 
-          {activeTab === 0 ? <PostsGrid /> : <LikedVideos />}
+          <ScrollView
+            ref={pagerRef}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            bounces={false}
+            onMomentumScrollEnd={onScrollEnd}
+            scrollEventThrottle={16}
+          >
+            <View style={{ width }}><PostsGrid /></View>
+            <View style={{ width }}><LikedVideos /></View>
+          </ScrollView>
         </ScrollView>
       </SafeAreaView>
     </ProfileContext.Provider>
