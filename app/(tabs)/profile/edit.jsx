@@ -81,7 +81,7 @@ export default function EditProfile() {
       {/* Header */}
       <View className="flex-row items-center justify-between px-4 py-3 border-b-[0.5px] border-primary-300">
         <TouchableOpacity onPress={() => router.back()} hitSlop={8}>
-          <Ionicons name="arrow-back" size={24} color="#4DA6FF" />
+          <Ionicons name="chevron-back" size={24} color="#4DA6FF" />
         </TouchableOpacity>
         <Text className="text-white text-[17px] font-bold">Edit Profile</Text>
         <TouchableOpacity onPress={handleSave} disabled={saving} hitSlop={8}>
