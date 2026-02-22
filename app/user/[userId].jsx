@@ -9,11 +9,11 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { getUserById, getUserPosts } from "../../../lib/appwrite";
-import { UserContext } from "../../../context/UserContext";
-import ProfileBioSection from "../../../components/ProfileBioSection";
-import ProfileGridItem from "../../../components/ProfileGridItem";
-import { SkeletonProfileBio, SkeletonGrid } from "../../../components/Skeleton";
+import { getUserById, getUserPosts } from "../../lib/appwrite";
+import { UserContext } from "../../context/UserContext";
+import ProfileBioSection from "../../components/ProfileBioSection";
+import ProfileGridItem from "../../components/ProfileGridItem";
+import { SkeletonProfileBio, SkeletonGrid } from "../../components/Skeleton";
 
 export default function UserProfile() {
   const { userId } = useLocalSearchParams();
