@@ -80,14 +80,6 @@ export default function ProfileLayout() {
           title: "Edit Profile",
         }}
       />
-      <Drawer.Screen
-        name="[postId]"
-        options={{
-          headerShown: false,
-          swipeEnabled: false,
-          title: "Post",
-        }}
-      />
     </Drawer>
   );
 }

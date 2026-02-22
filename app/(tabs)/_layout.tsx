@@ -57,14 +57,6 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="user"
-        options={{
-          headerShown: false,
-          tabBarButton: () => null,
-          tabBarItemStyle: { display: "none", width: 0 },
-        }}
-      />
     </Tabs>
   );
 }
