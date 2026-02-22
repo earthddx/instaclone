@@ -65,6 +65,15 @@ export default function App() {
           </Pressable>
         </View>
 
+        {/* About link */}
+        <Pressable
+          style={({ pressed }) => pressed && { opacity: 0.55 }}
+          onPress={() => router.push("/about")}
+          className="items-center"
+        >
+          <Text className="text-[#4A6080] text-[12px]">About this app</Text>
+        </Pressable>
+
         {/* Footer */}
         <Text className="text-[#2A4060] text-[11px] text-center">© 2026 Instaclone</Text>
       </View>
