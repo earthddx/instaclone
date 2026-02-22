@@ -1,22 +1,39 @@
-import { View, Text, FlatList, RefreshControl, KeyboardAvoidingView, Platform, TouchableOpacity, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  RefreshControl,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MediaCard from "../../components/MediaCard";
 import { SkeletonMediaCard } from "../../components/Skeleton";
 import ErrorBoundary, { CardErrorFallback } from "../../components/ErrorBoundary";
-import { getAllPosts } from "../../lib/appwrite";
+import { getPostsPage } from "../../lib/appwrite";
 import React from "react";
 import { UserContext } from "../../context/UserContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import { useScrollToTop } from "@react-navigation/native";
 
+const PAGE_SIZE = 10;
+
 export default function Home() {
   const { user } = React.useContext(UserContext);
   const flatListRef = React.useRef(null);
   useScrollToTop(flatListRef);
+
   const [posts, setPosts] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [refreshing, setRefreshing] = React.useState(false);
+  const [loadingMore, setLoadingMore] = React.useState(false);
+  const [hasMore, setHasMore] = React.useState(true);
+  const cursorRef = React.useRef(null);
+
   const [visibleItems, setVisibleItems] = React.useState([]);
   const [isFocused, setIsFocused] = React.useState(true);
 
@@ -27,29 +44,56 @@ export default function Home() {
     }, [])
   );
 
-  const fetchPosts = async () => {
-    const allPosts = await getAllPosts();
-    setPosts(allPosts);
-    setLoading(false);
-  };
-
-  React.useEffect(() => {
-    fetchPosts();
+  // ── Fetch first page, reset cursor ────────────────────────────────
+  const fetchFirstPage = React.useCallback(async () => {
+    cursorRef.current = null;
+    const { documents, hasMore: more } = await getPostsPage(PAGE_SIZE, null);
+    setPosts(documents);
+    setHasMore(more);
+    if (documents.length > 0) {
+      cursorRef.current = documents[documents.length - 1].$id;
+    }
   }, []);
 
+  React.useEffect(() => {
+    fetchFirstPage().finally(() => setLoading(false));
+  }, []);
+
+  // ── Append next page ───────────────────────────────────────────────
+  const fetchNextPage = React.useCallback(async () => {
+    if (!hasMore || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const { documents, hasMore: more } = await getPostsPage(
+        PAGE_SIZE,
+        cursorRef.current
+      );
+      setPosts((prev) => {
+        const seen = new Set(prev.map((p) => p.$id));
+        const fresh = documents.filter((p) => !seen.has(p.$id));
+        return [...prev, ...fresh];
+      });
+      setHasMore(more);
+      if (documents.length > 0) {
+        cursorRef.current = documents[documents.length - 1].$id;
+      }
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [hasMore, loadingMore]);
+
+  // ── Pull-to-refresh ────────────────────────────────────────────────
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchFirstPage();
+    setRefreshing(false);
+  };
+
   const onViewableItemsChanged = ({ viewableItems }) => {
-    // Update the list of visible items based on their index
-    // console.log(viewableItems);
     setVisibleItems(viewableItems.map((item) => item.item.$id));
   };
   const viewConfigRef = {
-    viewAreaCoveragePercentThreshold: 90, // How much of the item must be visible in %
-  };
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await fetchPosts();
-    setRefreshing(false);
+    viewAreaCoveragePercentThreshold: 90,
   };
 
   return (
@@ -60,7 +104,9 @@ export default function Home() {
       {/* Header */}
       <TouchableOpacity
         activeOpacity={1}
-        onPress={() => flatListRef.current?.scrollToOffset({ offset: 0, animated: true })}
+        onPress={() =>
+          flatListRef.current?.scrollToOffset({ offset: 0, animated: true })
+        }
         className="px-4 py-3 border-b border-primary-300 flex-row items-center"
       >
         <View className="w-8 h-8 rounded-full bg-secondary-100 border border-secondary-300 justify-center items-center mr-3">
@@ -69,6 +115,7 @@ export default function Home() {
         <Text className="text-white text-lg font-bold">Feed</Text>
         <View className="flex-1" />
       </TouchableOpacity>
+
       {loading ? (
         <ScrollView>
           <SkeletonMediaCard />
@@ -87,6 +134,8 @@ export default function Home() {
             keyboardShouldPersistTaps="handled"
             onViewableItemsChanged={onViewableItemsChanged}
             viewabilityConfig={viewConfigRef}
+            onEndReached={fetchNextPage}
+            onEndReachedThreshold={0.4}
             renderItem={({ item }) => (
               <ErrorBoundary key={item.$id} fallback={<CardErrorFallback />}>
                 <MediaCard
@@ -105,6 +154,14 @@ export default function Home() {
                 />
               </ErrorBoundary>
             )}
+            ListFooterComponent={
+              loadingMore ? (
+                <ActivityIndicator
+                  color="#4DA6FF"
+                  style={{ paddingVertical: 24 }}
+                />
+              ) : null
+            }
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
