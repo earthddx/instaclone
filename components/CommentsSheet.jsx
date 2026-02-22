@@ -25,44 +25,105 @@ const DISMISS_THRESHOLD = 120;
 
 const avatarLetter = (name) => name?.[0]?.toUpperCase() ?? "?";
 
-const CommentItem = ({ item, onAvatarPress }) => {
+const CommentItem = ({ item, onAvatarPress, onReplyPress, replyCount, isExpanded, onToggleReplies }) => {
   return (
-  <View style={{ flexDirection: "row", marginBottom: 18, alignItems: "flex-start" }}>
-    <TouchableOpacity
-      onPress={() => onAvatarPress(item.userId)}
-      activeOpacity={0.7}
-      style={{
-        width: 36,
-        height: 36,
-        borderRadius: 18,
-        backgroundColor: "#2a3a4a",
-        justifyContent: "center",
-        alignItems: "center",
-        marginRight: 10,
-        overflow: "hidden",
-      }}
-    >
-      {item.avatar ? (
-        <Image source={{ uri: item.avatar }} style={{ width: 36, height: 36 }} />
-      ) : (
-        <Text style={{ color: "#4DA6FF", fontWeight: "bold", fontSize: 14 }}>
-          {avatarLetter(item.username)}
-        </Text>
-      )}
-    </TouchableOpacity>
-    <View style={{ flex: 1 }}>
-      <Text style={{ color: "white", fontSize: 13, lineHeight: 19 }}>
-        <Text style={{ fontWeight: "700" }}>@{item.username}{" "}</Text>
-        {item.text}
-      </Text>
-      <Text style={{ color: "#4A6080", fontSize: 11, marginTop: 3 }}>
-        {new Date(item.$createdAt).toLocaleDateString(undefined, {
-          month: "short",
-          day: "numeric",
-        })}
-      </Text>
+    <View>
+      <View style={{ flexDirection: "row", marginBottom: 6, alignItems: "flex-start" }}>
+        <TouchableOpacity
+          onPress={() => onAvatarPress(item.userId)}
+          activeOpacity={0.7}
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: 18,
+            backgroundColor: "#2a3a4a",
+            justifyContent: "center",
+            alignItems: "center",
+            marginRight: 10,
+            overflow: "hidden",
+          }}
+        >
+          {item.avatar ? (
+            <Image source={{ uri: item.avatar }} style={{ width: 36, height: 36 }} />
+          ) : (
+            <Text style={{ color: "#4DA6FF", fontWeight: "bold", fontSize: 14 }}>
+              {avatarLetter(item.username)}
+            </Text>
+          )}
+        </TouchableOpacity>
+        <View style={{ flex: 1 }}>
+          <Text style={{ color: "white", fontSize: 13, lineHeight: 19 }}>
+            <Text style={{ fontWeight: "700" }}>@{item.username}{" "}</Text>
+            {item.text}
+          </Text>
+          <View style={{ flexDirection: "row", alignItems: "center", marginTop: 3, gap: 12 }}>
+            <Text style={{ color: "#4A6080", fontSize: 11 }}>
+              {new Date(item.$createdAt).toLocaleDateString(undefined, {
+                month: "short",
+                day: "numeric",
+              })}
+            </Text>
+            <TouchableOpacity onPress={() => onReplyPress(item.$id, item.username)}>
+              <Text style={{ color: "#4A6080", fontSize: 11, fontWeight: "600" }}>Reply</Text>
+            </TouchableOpacity>
+          </View>
+          {replyCount > 0 && (
+            <TouchableOpacity
+              onPress={onToggleReplies}
+              style={{ marginTop: 6, flexDirection: "row", alignItems: "center", gap: 6 }}
+            >
+              <View style={{ width: 20, height: 1, backgroundColor: "#4A6080" }} />
+              <Text style={{ color: "#4A6080", fontSize: 12 }}>
+                {isExpanded
+                  ? "Hide replies"
+                  : `View ${replyCount} ${replyCount === 1 ? "reply" : "replies"}`}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
     </View>
-  </View>
+  );
+};
+
+const ReplyItem = ({ item, onAvatarPress }) => {
+  return (
+    <View style={{ flexDirection: "row", marginBottom: 12, alignItems: "flex-start", marginLeft: 46 }}>
+      <TouchableOpacity
+        onPress={() => onAvatarPress(item.userId)}
+        activeOpacity={0.7}
+        style={{
+          width: 28,
+          height: 28,
+          borderRadius: 14,
+          backgroundColor: "#2a3a4a",
+          justifyContent: "center",
+          alignItems: "center",
+          marginRight: 8,
+          overflow: "hidden",
+        }}
+      >
+        {item.avatar ? (
+          <Image source={{ uri: item.avatar }} style={{ width: 28, height: 28 }} />
+        ) : (
+          <Text style={{ color: "#4DA6FF", fontWeight: "bold", fontSize: 11 }}>
+            {avatarLetter(item.username)}
+          </Text>
+        )}
+      </TouchableOpacity>
+      <View style={{ flex: 1 }}>
+        <Text style={{ color: "white", fontSize: 12, lineHeight: 17 }}>
+          <Text style={{ fontWeight: "700" }}>@{item.username}{" "}</Text>
+          {item.text}
+        </Text>
+        <Text style={{ color: "#4A6080", fontSize: 10, marginTop: 2 }}>
+          {new Date(item.$createdAt).toLocaleDateString(undefined, {
+            month: "short",
+            day: "numeric",
+          })}
+        </Text>
+      </View>
+    </View>
   );
 };
 
@@ -80,7 +141,19 @@ export default function CommentsSheet({
   const [comment, setComment] = React.useState("");
   const [comments, setComments] = React.useState([]);
   const [loadingComments, setLoadingComments] = React.useState(false);
+  const [replyingTo, setReplyingTo] = React.useState(null); // { id, username }
+  const [expandedComments, setExpandedComments] = React.useState(new Set());
   const commentToastOpacity = React.useRef(new Animated.Value(0)).current;
+
+  const topLevelComments = React.useMemo(
+    () => comments.filter((c) => !c.parentId),
+    [comments]
+  );
+
+  const repliesFor = React.useCallback(
+    (commentId) => comments.filter((c) => c.parentId === commentId),
+    [comments]
+  );
 
   const showCommentToast = () => {
     Animated.sequence([
@@ -133,6 +206,8 @@ export default function CommentsSheet({
       useNativeDriver: true,
     }).start(() => {
       setComment("");
+      setReplyingTo(null);
+      setExpandedComments(new Set());
       onCloseRef.current();
       callback?.();
     });
@@ -146,6 +221,22 @@ export default function CommentsSheet({
       } else {
         router.push(`/user/${userId}`);
       }
+    });
+  };
+
+  const handleReplyPress = (commentId, username) => {
+    setReplyingTo({ id: commentId, username });
+  };
+
+  const toggleReplies = (commentId) => {
+    setExpandedComments((prev) => {
+      const next = new Set(prev);
+      if (next.has(commentId)) {
+        next.delete(commentId);
+      } else {
+        next.add(commentId);
+      }
+      return next;
     });
   };
 
@@ -168,6 +259,8 @@ export default function CommentsSheet({
   React.useEffect(() => {
     if (!visible) return;
     openSheet();
+    setReplyingTo(null);
+    setExpandedComments(new Set());
     setLoadingComments(true);
     getComments(postId)
       .then((fetched) => {
@@ -181,7 +274,9 @@ export default function CommentsSheet({
   const handleSubmitComment = async () => {
     if (!comment.trim() || !currentUserId) return;
     const text = comment.trim();
+    const parentId = replyingTo?.id ?? null;
     setComment("");
+    setReplyingTo(null);
     try {
       const newComment = await addComment({
         postId,
@@ -189,14 +284,39 @@ export default function CommentsSheet({
         username: currentUsername,
         avatar: currentUserAvatar,
         text,
+        parentId,
       });
       setComments((prev) => {
         const next = [...prev, newComment];
         onCommentCountChange?.(next.length);
         return next;
       });
+      // Auto-expand the parent thread so the new reply is visible
+      if (parentId) {
+        setExpandedComments((prev) => new Set([...prev, parentId]));
+      }
       showCommentToast();
     } catch {}
+  };
+
+  const renderTopLevelComment = ({ item }) => {
+    const replies = repliesFor(item.$id);
+    const isExpanded = expandedComments.has(item.$id);
+    return (
+      <View style={{ marginBottom: 14 }}>
+        <CommentItem
+          item={item}
+          onAvatarPress={handleNavigateToUser}
+          onReplyPress={handleReplyPress}
+          replyCount={replies.length}
+          isExpanded={isExpanded}
+          onToggleReplies={() => toggleReplies(item.$id)}
+        />
+        {isExpanded && replies.map((reply) => (
+          <ReplyItem key={reply.$id} item={reply} onAvatarPress={handleNavigateToUser} />
+        ))}
+      </View>
+    );
   };
 
   return (
@@ -275,7 +395,7 @@ export default function CommentsSheet({
               <ActivityIndicator color="#4DA6FF" style={{ flex: 1, alignSelf: "center" }} />
             ) : (
               <FlatList
-                data={comments}
+                data={topLevelComments}
                 keyExtractor={(item) => item.$id}
                 style={{ flex: 1 }}
                 contentContainerStyle={{ padding: 16, paddingBottom: 8 }}
@@ -292,7 +412,7 @@ export default function CommentsSheet({
                     No comments yet. Be the first!
                   </Text>
                 }
-                renderItem={({ item }) => <CommentItem item={item} onAvatarPress={handleNavigateToUser} />}
+                renderItem={renderTopLevelComment}
               />
             )}
 
@@ -321,67 +441,87 @@ export default function CommentsSheet({
             </Animated.View>
 
             {/* Input bar */}
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                borderTopWidth: 1,
-                borderTopColor: "#2a3a4a",
-                paddingHorizontal: 14,
-                paddingVertical: 10,
-              }}
-            >
+            <View style={{ borderTopWidth: 1, borderTopColor: "#2a3a4a" }}>
+              {/* Replying-to banner */}
+              {replyingTo && (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    paddingHorizontal: 14,
+                    paddingTop: 8,
+                  }}
+                >
+                  <Text style={{ color: "#4A6080", fontSize: 12 }}>
+                    Replying to{" "}
+                    <Text style={{ color: "#4DA6FF", fontWeight: "600" }}>@{replyingTo.username}</Text>
+                  </Text>
+                  <TouchableOpacity onPress={() => setReplyingTo(null)}>
+                    <Ionicons name="close" size={16} color="#4A6080" />
+                  </TouchableOpacity>
+                </View>
+              )}
               <View
                 style={{
-                  width: 34,
-                  height: 34,
-                  borderRadius: 17,
-                  backgroundColor: "#2a3a4a",
-                  justifyContent: "center",
+                  flexDirection: "row",
                   alignItems: "center",
-                  marginRight: 10,
-                  overflow: "hidden",
+                  paddingHorizontal: 14,
+                  paddingVertical: 10,
                 }}
               >
-                {currentUserAvatar ? (
-                  <Image
-                    source={{ uri: currentUserAvatar }}
-                    style={{ width: 34, height: 34 }}
+                <View
+                  style={{
+                    width: 34,
+                    height: 34,
+                    borderRadius: 17,
+                    backgroundColor: "#2a3a4a",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginRight: 10,
+                    overflow: "hidden",
+                  }}
+                >
+                  {currentUserAvatar ? (
+                    <Image
+                      source={{ uri: currentUserAvatar }}
+                      style={{ width: 34, height: 34 }}
+                    />
+                  ) : (
+                    <Text style={{ color: "#4DA6FF", fontWeight: "bold", fontSize: 13 }}>
+                      {avatarLetter(currentUsername)}
+                    </Text>
+                  )}
+                </View>
+                <View
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#263545",
+                    borderWidth: 1,
+                    borderColor: "#3a4f63",
+                    borderRadius: 20,
+                    paddingHorizontal: 14,
+                    paddingVertical: 8,
+                    marginRight: comment.trim().length > 0 ? 10 : 0,
+                  }}
+                >
+                  <TextInput
+                    value={comment}
+                    onChangeText={setComment}
+                    placeholder={replyingTo ? `Reply to @${replyingTo.username}...` : "Add a comment..."}
+                    placeholderTextColor="#4A6080"
+                    style={{ color: "white", fontSize: 14, maxHeight: 100 }}
+                    multiline
                   />
-                ) : (
-                  <Text style={{ color: "#4DA6FF", fontWeight: "bold", fontSize: 13 }}>
-                    {avatarLetter(currentUsername)}
-                  </Text>
+                </View>
+                {comment.trim().length > 0 && (
+                  <TouchableOpacity onPress={handleSubmitComment} style={{ marginLeft: 10 }}>
+                    <Text style={{ color: "#4DA6FF", fontWeight: "700", fontSize: 14 }}>
+                      Post
+                    </Text>
+                  </TouchableOpacity>
                 )}
               </View>
-              <View
-                style={{
-                  flex: 1,
-                  backgroundColor: "#263545",
-                  borderWidth: 1,
-                  borderColor: "#3a4f63",
-                  borderRadius: 20,
-                  paddingHorizontal: 14,
-                  paddingVertical: 8,
-                  marginRight: comment.trim().length > 0 ? 10 : 0,
-                }}
-              >
-                <TextInput
-                  value={comment}
-                  onChangeText={setComment}
-                  placeholder="Add a comment..."
-                  placeholderTextColor="#4A6080"
-                  style={{ color: "white", fontSize: 14, maxHeight: 100 }}
-                  multiline
-                />
-              </View>
-              {comment.trim().length > 0 && (
-                <TouchableOpacity onPress={handleSubmitComment} style={{ marginLeft: 10 }}>
-                  <Text style={{ color: "#4DA6FF", fontWeight: "700", fontSize: 14 }}>
-                    Post
-                  </Text>
-                </TouchableOpacity>
-              )}
             </View>
           </Animated.View>
         </Animated.View>
