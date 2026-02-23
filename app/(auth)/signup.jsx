@@ -15,6 +15,7 @@ import ComponentButton from "../../components/ComponentButton";
 import Colors from "../../constants/colors";
 import ComponentInput from "../../components/ComponentInput";
 import { signUp } from "../../lib/appwrite";
+import { UserContext } from "../../context/UserContext";
 
 export default () => {
   const [state, setState] = React.useState({
@@ -22,6 +23,7 @@ export default () => {
     email: "",
     password: "",
   });
+  const { handleSaveUser } = React.useContext(UserContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const { email, password, username } = state;
@@ -33,7 +35,8 @@ export default () => {
     }
     setIsLoading(true);
     try {
-      await signUp({ email, password, username });
+      const newUser = await signUp({ email, password, username });
+      handleSaveUser(newUser);
       router.replace("/home");
     } catch (e) {
       Alert.alert("Sign Up Error", e.message);
