@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { UserContext } from "../context/UserContext";
 import ComponentButton from "../components/ComponentButton";
+import Colors from "../constants/colors";
 
 export default function App() {
   const { user } = React.useContext(UserContext);
@@ -14,18 +15,18 @@ export default function App() {
 
   return (
     <SafeAreaView className="flex-1 bg-primary-100">
-      <StatusBar backgroundColor="#0C1929" style="light" />
+      <StatusBar backgroundColor={Colors.primary[100]} style="light" />
 
       {/* Decorative orbs */}
-      <View className="absolute top-[-100px] right-[-70px] w-[290px] h-[290px] rounded-[145px] bg-[rgba(77,166,255,0.07)]" />
-      <View className="absolute bottom-[-70px] left-[-90px] w-[250px] h-[250px] rounded-[125px] bg-[rgba(26,110,235,0.07)]" />
-      <View className="absolute top-[30%] self-center w-[220px] h-[220px] rounded-[110px] bg-[rgba(77,166,255,0.04)]" />
+      <View className="absolute top-[-100px] right-[-70px] w-[290px] h-[290px] rounded-[145px] bg-secondary-100" />
+      <View className="absolute bottom-[-70px] left-[-90px] w-[250px] h-[250px] rounded-[125px] bg-secondary-50" />
+      <View className="absolute top-[30%] self-center w-[220px] h-[220px] rounded-[110px] bg-secondary-50" />
 
       <View className="flex-1 px-7 justify-center gap-10">
         {/* Hero */}
         <View className="items-center">
-          <View className="w-[100px] h-[100px] rounded-full bg-[rgba(77,166,255,0.12)] border-[1.5px] border-[rgba(77,166,255,0.35)] items-center justify-center mb-[22px]">
-            <Ionicons name="camera" size={46} color="#4DA6FF" />
+          <View className="w-[100px] h-[100px] rounded-full bg-secondary-200 border-[1.5px] border-secondary-400 items-center justify-center mb-[22px]">
+            <Ionicons name="camera" size={46} color={Colors.secondary.DEFAULT} />
           </View>
           <Text className="text-white text-[30px] font-extrabold tracking-[7px] mb-[10px]">INSTACLONE</Text>
           <Text className="text-secondary text-[15px] tracking-[0.4px]">Share your world</Text>
@@ -33,18 +34,18 @@ export default function App() {
 
         {/* Feature pills */}
         <View className="flex-row justify-center items-center gap-[10px]">
-          <View className="flex-row items-center gap-[5px] py-[7px] px-[13px] bg-[rgba(77,166,255,0.08)] rounded-[20px] border border-[rgba(77,166,255,0.15)]">
-            <Ionicons name="image-outline" size={15} color="#4DA6FF" />
+          <View className="flex-row items-center gap-[5px] py-[7px] px-[13px] bg-secondary-100 rounded-[20px] border border-secondary-100">
+            <Ionicons name="image-outline" size={15} color={Colors.secondary.DEFAULT} />
             <Text className="text-secondary text-xs font-medium">Photos</Text>
           </View>
           <View className="w-[3px] h-[3px] rounded-[2px] bg-primary-300" />
-          <View className="flex-row items-center gap-[5px] py-[7px] px-[13px] bg-[rgba(77,166,255,0.08)] rounded-[20px] border border-[rgba(77,166,255,0.15)]">
-            <Ionicons name="videocam-outline" size={15} color="#4DA6FF" />
+          <View className="flex-row items-center gap-[5px] py-[7px] px-[13px] bg-secondary-100 rounded-[20px] border border-secondary-100">
+            <Ionicons name="videocam-outline" size={15} color={Colors.secondary.DEFAULT} />
             <Text className="text-secondary text-xs font-medium">Videos</Text>
           </View>
           <View className="w-[3px] h-[3px] rounded-[2px] bg-primary-300" />
-          <View className="flex-row items-center gap-[5px] py-[7px] px-[13px] bg-[rgba(77,166,255,0.08)] rounded-[20px] border border-[rgba(77,166,255,0.15)]">
-            <Ionicons name="people-outline" size={15} color="#4DA6FF" />
+          <View className="flex-row items-center gap-[5px] py-[7px] px-[13px] bg-secondary-100 rounded-[20px] border border-secondary-100">
+            <Ionicons name="people-outline" size={15} color={Colors.secondary.DEFAULT} />
             <Text className="text-secondary text-xs font-medium">Connect</Text>
           </View>
         </View>
@@ -71,11 +72,11 @@ export default function App() {
           onPress={() => router.push("/about")}
           className="items-center"
         >
-          <Text className="text-[#4A6080] text-[12px]">About this app</Text>
+          <Text className="text-muted text-[12px]">About this app</Text>
         </Pressable>
 
         {/* Footer */}
-        <Text className="text-[#2A4060] text-[11px] text-center">© 2026 Instaclone</Text>
+        <Text className="text-muted-100 text-[11px] text-center">© 2026 Instaclone</Text>
       </View>
     </SafeAreaView>
   );

@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import Colors from '../../../constants/colors';
 
 export default function Settings() {
   const navigation = useNavigation();
@@ -11,12 +12,12 @@ export default function Settings() {
       {/* Header */}
       <View className="flex-row items-center px-4 py-3 border-b border-primary-300">
         <View className="w-8 h-8 rounded-full bg-secondary-100 border border-secondary-300 justify-center items-center mr-3">
-          <Ionicons name="settings" size={16} color="#4DA6FF" />
+          <Ionicons name="settings" size={16} color={Colors.secondary.DEFAULT} />
         </View>
         <Text className="text-lg font-bold text-white">Settings</Text>
         <View className="flex-1" />
         <TouchableOpacity onPress={() => navigation.openDrawer()} activeOpacity={0.7}>
-          <Ionicons name="menu" size={24} color="#4DA6FF" />
+          <Ionicons name="menu" size={24} color={Colors.secondary.DEFAULT} />
         </TouchableOpacity>
       </View>
 

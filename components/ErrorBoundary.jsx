@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import Colors from "../constants/colors";
 
 /**
  * General-purpose error boundary.
@@ -45,13 +46,13 @@ function DefaultFallback({ onReset }) {
     <View
       style={{
         flex: 1,
-        backgroundColor: "#0C1929",
+        backgroundColor: Colors.primary[100],
         justifyContent: "center",
         alignItems: "center",
         padding: 36,
       }}
     >
-      <Ionicons name="warning-outline" size={60} color="#4A6080" />
+      <Ionicons name="warning-outline" size={60} color={Colors.muted.DEFAULT} />
       <Text
         style={{
           color: "#fff",
@@ -66,7 +67,7 @@ function DefaultFallback({ onReset }) {
       </Text>
       <Text
         style={{
-          color: "#4A6080",
+          color: Colors.muted.DEFAULT,
           fontSize: 14,
           textAlign: "center",
           lineHeight: 21,
@@ -78,7 +79,7 @@ function DefaultFallback({ onReset }) {
       <TouchableOpacity
         onPress={onReset}
         style={{
-          backgroundColor: "#1A6EEB",
+          backgroundColor: Colors.highlight,
           paddingHorizontal: 30,
           paddingVertical: 13,
           borderRadius: 10,
@@ -99,20 +100,20 @@ export function CardErrorFallback() {
   return (
     <View
       style={{
-        backgroundColor: "#132040",
+        backgroundColor: Colors.primary[200],
         borderRadius: 16,
         marginTop: 16,
         marginBottom: 8,
         marginHorizontal: 16,
         borderWidth: 1,
-        borderColor: "#1A3060",
+        borderColor: Colors.primary[300],
         paddingVertical: 36,
         alignItems: "center",
         gap: 8,
       }}
     >
-      <Ionicons name="alert-circle-outline" size={38} color="#4A6080" />
-      <Text style={{ color: "#4A6080", fontSize: 13 }}>
+      <Ionicons name="alert-circle-outline" size={38} color={Colors.muted.DEFAULT} />
+      <Text style={{ color: Colors.muted.DEFAULT, fontSize: 13 }}>
         This post couldn't be loaded
       </Text>
     </View>

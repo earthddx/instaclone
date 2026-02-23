@@ -1,6 +1,7 @@
 import { View, Text, TextInput, Pressable } from "react-native";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
+import Colors from "../constants/colors";
 
 export default ({
   title,
@@ -30,7 +31,7 @@ export default ({
           <Ionicons
             name={leftIcon}
             size={18}
-            color={isFocused ? "#4DA6FF" : "#4A6080"}
+            color={isFocused ? Colors.secondary.DEFAULT : Colors.muted.DEFAULT}
             style={{ marginRight: 10 }}
           />
         )}
@@ -39,7 +40,7 @@ export default ({
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
-          placeholderTextColor="#4A6080"
+          placeholderTextColor={Colors.muted.DEFAULT}
           secureTextEntry={secureTextEntry}
           textContentType={textContentType}
           keyboardType={keyboardType}
@@ -52,7 +53,7 @@ export default ({
             <Ionicons
               name={showPassword ? "eye-outline" : "eye-off-outline"}
               size={20}
-              color={isFocused ? "#4DA6FF" : "#4A6080"}
+              color={isFocused ? Colors.secondary.DEFAULT : Colors.muted.DEFAULT}
             />
           </Pressable>
         )}

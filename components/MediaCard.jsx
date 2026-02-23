@@ -23,6 +23,7 @@ import ComponentImage from "./ComponentImage";
 import CommentsSheet from "./CommentsSheet";
 import EllipsisMenu from "./EllipsisMenu";
 import { likePost, unlikePost, getCommentCount } from "../lib/appwrite";
+import Colors from "../constants/colors";
 
 const WINDOW_WIDTH = Dimensions.get("window").width;
 const avatarLetter = (name) => name?.[0]?.toUpperCase() ?? "?";
@@ -198,7 +199,7 @@ export default (props) => {
               heartAnimStyle,
             ]}
           >
-            <Ionicons name="heart" size={96} color="rgba(255,255,255,0.92)" />
+            <Ionicons name="heart" size={96} color={Colors.overlay} />
           </Animated.View>
         </View>
 
@@ -212,13 +213,13 @@ export default (props) => {
               <Ionicons
                 name={liked ? "heart" : "heart-outline"}
                 size={24}
-                color={liked ? "#FF4D6D" : "#8899AA"}
+                color={liked ? Colors.danger : Colors.muted[300]}
               />
             </Animated.View>
             {likeCount > 0 && (
               <Text
                 className="text-sm"
-                style={{ color: liked ? "#FF4D6D" : "#8899AA" }}
+                style={{ color: liked ? Colors.danger : Colors.muted[300] }}
               >
                 {likeCount}
               </Text>
@@ -228,9 +229,9 @@ export default (props) => {
             onPress={() => setCommentsVisible(true)}
             className="flex-row items-center gap-1.5"
           >
-            <Ionicons name="chatbubble-outline" size={22} color="#8899AA" />
+            <Ionicons name="chatbubble-outline" size={22} color={Colors.muted[300]} />
             {commentCount > 0 && (
-              <Text className="text-sm" style={{ color: "#8899AA" }}>
+              <Text className="text-sm" style={{ color: Colors.muted[300] }}>
                 {commentCount}
               </Text>
             )}
@@ -243,7 +244,7 @@ export default (props) => {
             <Text className="text-white text-sm font-semibold">{title}</Text>
           ) : null}
           {description ? (
-            <Text className="text-gray-400 text-sm mt-0.5">{description}</Text>
+            <Text className="text-muted-300 text-sm mt-0.5">{description}</Text>
           ) : null}
         </View>
 
@@ -262,7 +263,7 @@ export default (props) => {
               alignItems: "center",
             }}
           >
-            <Ionicons name="eye-off" size={90} color="rgba(255,255,255,0.75)" />
+            <Ionicons name="eye-off" size={90} color={Colors.overlay} />
           </BlurView>
         )}
       </View>
@@ -331,7 +332,7 @@ const ComponentHeader = ({
         <View className="flex-1">
           <Text className="text-white font-semibold text-sm">@{creator}</Text>
           {formattedDate && (
-            <Text className="text-gray-500 text-xs">{formattedDate}</Text>
+            <Text className="text-muted text-xs">{formattedDate}</Text>
           )}
         </View>
       </TouchableOpacity>
@@ -340,7 +341,7 @@ const ComponentHeader = ({
         onPress={openMenu}
         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       >
-        <Ionicons name="ellipsis-horizontal" size={18} color="#4A6080" />
+        <Ionicons name="ellipsis-horizontal" size={18} color={Colors.muted.DEFAULT} />
       </TouchableOpacity>
     </View>
   );

@@ -14,6 +14,7 @@ import { UserContext } from "../../context/UserContext";
 import ProfileBioSection from "../../components/ProfileBioSection";
 import ProfileGridItem from "../../components/ProfileGridItem";
 import { SkeletonProfileBio, SkeletonGrid } from "../../components/Skeleton";
+import Colors from "../../constants/colors";
 
 export default function UserProfile() {
   const { userId } = useLocalSearchParams();
@@ -64,8 +65,8 @@ export default function UserProfile() {
       <SafeAreaView className="flex-1 bg-primary-100" edges={["top"]}>
         <Header onBack={() => router.back()} username="" />
         <View className="flex-1 justify-center items-center gap-3">
-          <Ionicons name="alert-circle-outline" size={48} color="#4A6080" />
-          <Text className="text-[#4A6080] text-[15px]">{error ?? "User not found."}</Text>
+          <Ionicons name="alert-circle-outline" size={48} color={Colors.muted.DEFAULT} />
+          <Text className="text-muted text-[15px]">{error ?? "User not found."}</Text>
         </View>
       </SafeAreaView>
     );
@@ -99,8 +100,8 @@ export default function UserProfile() {
           )}
           ListEmptyComponent={
             <View className="items-center pt-[60px] gap-3">
-              <Ionicons name="images-outline" size={48} color="#1A3060" />
-              <Text className="text-[#4A6080] text-[15px]">No posts yet</Text>
+              <Ionicons name="images-outline" size={48} color={Colors.primary[300]} />
+              <Text className="text-muted text-[15px]">No posts yet</Text>
             </View>
           }
         />
@@ -119,7 +120,7 @@ function Header({ onBack, username }) {
         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         activeOpacity={0.7}
       >
-        <Ionicons name="chevron-back" size={24} color="#4DA6FF" />
+        <Ionicons name="chevron-back" size={24} color={Colors.secondary.DEFAULT} />
       </TouchableOpacity>
       <Text className="text-white text-base font-bold flex-1 text-center mx-2" numberOfLines={1}>
         {username ? `@${username}` : ""}

@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Modal } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import Colors from "../constants/colors";
 
 export default function EllipsisMenu({ visible, top, right, hidden, onToggleHidden, onClose, onDelete }) {
   return (
@@ -16,10 +17,10 @@ export default function EllipsisMenu({ visible, top, right, hidden, onToggleHidd
             position: "absolute",
             top,
             right,
-            backgroundColor: "#1E2D3D",
+            backgroundColor: Colors.surface.DEFAULT,
             borderRadius: 10,
             borderWidth: 1,
-            borderColor: "#2a3a4a",
+            borderColor: Colors.surface[300],
             minWidth: 152,
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 4 },
@@ -42,7 +43,7 @@ export default function EllipsisMenu({ visible, top, right, hidden, onToggleHidd
             <Ionicons
               name={hidden ? "eye-outline" : "eye-off-outline"}
               size={18}
-              color="#8899AA"
+              color={Colors.muted[300]}
             />
             <Text style={{ color: "white", fontSize: 14 }}>
               {hidden ? "Show post" : "Hide post"}
@@ -51,7 +52,7 @@ export default function EllipsisMenu({ visible, top, right, hidden, onToggleHidd
 
           {onDelete && (
             <>
-              <View style={{ height: 0.5, backgroundColor: "#2a3a4a" }} />
+              <View style={{ height: 0.5, backgroundColor: Colors.surface[300] }} />
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => { onClose(); onDelete(); }}
@@ -63,8 +64,8 @@ export default function EllipsisMenu({ visible, top, right, hidden, onToggleHidd
                   gap: 10,
                 }}
               >
-                <Ionicons name="trash-outline" size={18} color="#FF4D6D" />
-                <Text style={{ color: "#FF4D6D", fontSize: 14 }}>Delete post</Text>
+                <Ionicons name="trash-outline" size={18} color={Colors.danger} />
+                <Text style={{ color: Colors.danger, fontSize: 14 }}>Delete post</Text>
               </TouchableOpacity>
             </>
           )}

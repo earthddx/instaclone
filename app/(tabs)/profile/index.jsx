@@ -18,6 +18,7 @@ import ComponentEmpty from "../../../components/ComponentEmpty";
 import ProfileBioSection from "../../../components/ProfileBioSection";
 import ProfileGridItem from "../../../components/ProfileGridItem";
 import { SkeletonGrid } from "../../../components/Skeleton";
+import Colors from "../../../constants/colors";
 
 const ProfileContext = React.createContext(null);
 
@@ -67,12 +68,12 @@ export default function Profile() {
         {/* Header */}
         <View className="px-4 py-3 border-b border-primary-300 flex-row items-center">
           <View className="w-8 h-8 rounded-full bg-secondary-100 border border-secondary-300 justify-center items-center mr-3">
-            <Ionicons name="person" size={16} color="#4DA6FF" />
+            <Ionicons name="person" size={16} color={Colors.secondary.DEFAULT} />
           </View>
           <Text className="text-white text-lg font-bold">Profile</Text>
           <View className="flex-1" />
           <TouchableOpacity onPress={() => navigation.openDrawer()} activeOpacity={0.7}>
-            <Ionicons name="menu" size={24} color="#4DA6FF" />
+            <Ionicons name="menu" size={24} color={Colors.secondary.DEFAULT} />
           </TouchableOpacity>
         </View>
 
@@ -83,21 +84,21 @@ export default function Profile() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={() => fetchAll(true)}
-              tintColor="#4DA6FF"
-              colors={["#4DA6FF"]}
+              tintColor={Colors.secondary.DEFAULT}
+              colors={[Colors.secondary.DEFAULT]}
             />
           }
         >
           <ProfileBioSection profile={user} postsCount={userPosts.length}>
             <View className="flex-row gap-2 mt-[10px]">
               <TouchableOpacity
-                className="flex-1 bg-primary-200 rounded-lg py-[7px] items-center border-[0.5px] border-[#2A4080]"
+                className="flex-1 bg-primary-200 rounded-lg py-[7px] items-center border-[0.5px] border-primary-300"
                 onPress={() => router.push("/(tabs)/profile/edit")}
               >
                 <Text className="text-white text-[13px] font-semibold">Edit profile</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                className="flex-1 bg-primary-200 rounded-lg py-[7px] items-center border-[0.5px] border-[#2A4080]"
+                className="flex-1 bg-primary-200 rounded-lg py-[7px] items-center border-[0.5px] border-primary-300"
                 onPress={() => {
                   const message = user?.bio
                     ? `Check out @${user.username} on InstaClone!\n\n"${user.bio}"`
@@ -120,7 +121,7 @@ export default function Profile() {
               <Ionicons
                 name={activeTab === 0 ? "grid" : "grid-outline"}
                 size={22}
-                color={activeTab === 0 ? "#fff" : "#555"}
+                color={activeTab === 0 ? "#fff" : Colors.muted.DEFAULT}
               />
             </TouchableOpacity>
             <TouchableOpacity

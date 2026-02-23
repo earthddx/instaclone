@@ -11,6 +11,7 @@ import { router } from "expo-router";
 import React from "react";
 import { signOut } from "../../../lib/appwrite";
 import { ScrollView } from "react-native-gesture-handler";
+import Colors from "../../../constants/colors";
 
 export default function ProfileLayout() {
   const { user, handleSaveUser } = React.useContext(UserContext);
@@ -31,21 +32,21 @@ export default function ProfileLayout() {
         drawerPosition: "right",
         drawerStyle: {
           width: "75%",
-          backgroundColor: "#050D1A",
+          backgroundColor: Colors.primary.DEFAULT,
         },
-        drawerActiveTintColor: "#4DA6FF",
-        drawerInactiveTintColor: "#4A6080",
-        drawerActiveBackgroundColor: "#132040",
-        drawerInactiveBackgroundColor: "#0C1929",
+        drawerActiveTintColor: Colors.secondary.DEFAULT,
+        drawerInactiveTintColor: Colors.muted.DEFAULT,
+        drawerActiveBackgroundColor: Colors.primary[200],
+        drawerInactiveBackgroundColor: Colors.primary[100],
         drawerLabelStyle: {
           fontSize: 16,
           fontWeight: "bold",
         },
         headerStyle: {
-          backgroundColor: "#0C1929",
+          backgroundColor: Colors.primary[100],
         },
         headerTitleStyle: {
-          color: "#4DA6FF",
+          color: Colors.secondary.DEFAULT,
           fontWeight: "bold",
           fontSize: 18,
         },
@@ -106,7 +107,7 @@ function CustomDrawerContent({ navigation, state, onLogout }) {
             <Image source={{ uri: user.avatar }} className="w-full h-full" />
           ) : (
             <View className="flex-1 bg-primary-200 items-center justify-center">
-              <Ionicons name="person" size={28} color="#4DA6FF" />
+              <Ionicons name="person" size={28} color={Colors.secondary.DEFAULT} />
             </View>
           )}
         </View>
@@ -114,7 +115,7 @@ function CustomDrawerContent({ navigation, state, onLogout }) {
           {user?.username ?? ""}
         </Text>
         {!!user?.bio && (
-          <Text className="text-[13px] text-[#6B8CAE] text-center leading-[18px]" numberOfLines={2}>
+          <Text className="text-[13px] text-muted-300 text-center leading-[18px]" numberOfLines={2}>
             {user.bio}
           </Text>
         )}
@@ -133,10 +134,10 @@ function CustomDrawerContent({ navigation, state, onLogout }) {
                   <Ionicons
                     name={isActive ? iconActive : icon}
                     size={20}
-                    color={isActive ? "#4DA6FF" : "#8AAAC8"}
+                    color={isActive ? Colors.secondary.DEFAULT : Colors.muted[300]}
                   />
                 </View>
-                <Text className={`flex-1 text-[15px] font-medium ${isActive ? 'text-secondary font-semibold' : 'text-[#8AAAC8]'}`}>
+                <Text className={`flex-1 text-[15px] font-medium ${isActive ? 'text-secondary font-semibold' : 'text-muted-300'}`}>
                   {label}
                 </Text>
               </View>
@@ -149,11 +150,11 @@ function CustomDrawerContent({ navigation, state, onLogout }) {
       <View className="px-3 mt-auto">
         <View className="h-px bg-primary-300 mx-5 my-3" />
         <Pressable onPress={onLogout}>
-          <View className="flex-row items-center p-3.5 rounded-[10px] bg-[#1A0A0A] border border-[#4A1010]">
+          <View className="flex-row items-center p-3.5 rounded-[10px] bg-danger-surface border border-danger-border">
             <View className="w-6 items-center mr-3">
-              <Ionicons name="log-out-outline" size={20} color="#EF4444" />
+              <Ionicons name="log-out-outline" size={20} color={Colors.error} />
             </View>
-            <Text className="text-[15px] text-red-500 font-semibold">Log Out</Text>
+            <Text className="text-[15px] text-error font-semibold">Log Out</Text>
           </View>
         </Pressable>
       </View>

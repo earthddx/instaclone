@@ -1,17 +1,17 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Tabs } from "expo-router";
+import Colors from "../../constants/colors";
 
-//TODO: use constants/Colors instead since nativewind does not work here
 export default function TabLayout() {
   return (
     <Tabs
       backBehavior="history"
       screenOptions={{
-        tabBarActiveTintColor: "#4DA6FF",
-        tabBarInactiveTintColor: "#3A5070",
+        tabBarActiveTintColor: Colors.secondary.DEFAULT,
+        tabBarInactiveTintColor: Colors.muted[200],
         tabBarStyle: {
-          backgroundColor: "#050D1A",
-          borderTopColor: "#1A3060",
+          backgroundColor: Colors.primary.DEFAULT,
+          borderTopColor: Colors.primary[300],
           height: 85,
           paddingBottom: 28,
         },

@@ -18,6 +18,7 @@ import { uploadFile, createPost } from "../../lib/appwrite";
 import { UserContext } from "../../context/UserContext";
 import { router } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Colors from "../../constants/colors";
 
 const TITLE_MAX = 60;
 const DESC_MAX = 300;
@@ -126,7 +127,7 @@ export default function Create() {
       <View className="px-4 py-3 border-b border-primary-300 flex-row items-center">
         <View className="flex-row items-center">
           <View className="w-8 h-8 rounded-full bg-secondary-100 border border-secondary-300 justify-center items-center mr-3">
-            <MaterialIcons name="post-add" size={16} color="#4DA6FF" />
+            <MaterialIcons name="post-add" size={16} color={Colors.secondary.DEFAULT} />
           </View>
           <Text className="text-white text-lg font-bold">New Post</Text>
         </View>
@@ -184,10 +185,10 @@ export default function Create() {
             <Pressable
               onPress={openMediaPicker}
               className="mx-4 mt-5 bg-primary-200 rounded-2xl items-center justify-center py-14"
-              style={{ borderWidth: 2, borderStyle: "dashed", borderColor: "#1A3060" }}
+              style={{ borderWidth: 2, borderStyle: "dashed", borderColor: Colors.primary[300] }}
             >
               <View className="bg-primary-300 rounded-full p-4 mb-3">
-                <MaterialIcons name="add-photo-alternate" size={40} color="#1A6EEB" />
+                <MaterialIcons name="add-photo-alternate" size={40} color={Colors.highlight} />
               </View>
               <Text className="text-white font-semibold text-base">Add Photo or Video</Text>
               <Text className="text-gray-500 text-sm mt-1">
@@ -219,7 +220,7 @@ export default function Create() {
                     if (v.length <= TITLE_MAX) setInput((s) => ({ ...s, title: v }));
                   }}
                   placeholder="Give your post a title…"
-                  placeholderTextColor="#4A6080"
+                  placeholderTextColor={Colors.muted.DEFAULT}
                   returnKeyType="next"
                 />
               </View>
@@ -243,7 +244,7 @@ export default function Create() {
                     if (v.length <= DESC_MAX) setInput((s) => ({ ...s, description: v }));
                   }}
                   placeholder="Write a caption…"
-                  placeholderTextColor="#4A6080"
+                  placeholderTextColor={Colors.muted.DEFAULT}
                   multiline
                   textAlignVertical="top"
                   style={{ minHeight: 100 }}
@@ -255,7 +256,7 @@ export default function Create() {
           {/* ── Info tip (only when no media yet) ── */}
           {!media ? (
             <View className="mx-4 mt-4 bg-primary-200 rounded-xl p-3 flex-row items-start">
-              <MaterialIcons name="info-outline" size={15} color="#4DA6FF" />
+              <MaterialIcons name="info-outline" size={15} color={Colors.secondary.DEFAULT} />
               <Text className="text-gray-400 text-xs ml-2 flex-1">
                 A title and at least one photo or video are required before publishing.
               </Text>

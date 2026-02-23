@@ -17,6 +17,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { UserContext } from "../../../context/UserContext";
 import { uploadFile, updateUser } from "../../../lib/appwrite";
+import Colors from "../../../constants/colors";
 
 export default function EditProfile() {
   const router = useRouter();
@@ -81,12 +82,12 @@ export default function EditProfile() {
       {/* Header */}
       <View className="flex-row items-center justify-between px-4 py-3 border-b-[0.5px] border-primary-300">
         <TouchableOpacity onPress={() => router.back()} hitSlop={8}>
-          <Ionicons name="chevron-back" size={24} color="#4DA6FF" />
+          <Ionicons name="chevron-back" size={24} color={Colors.secondary.DEFAULT} />
         </TouchableOpacity>
         <Text className="text-white text-[17px] font-bold">Edit Profile</Text>
         <TouchableOpacity onPress={handleSave} disabled={saving} hitSlop={8}>
           {saving ? (
-            <ActivityIndicator size="small" color="#4DA6FF" />
+            <ActivityIndicator size="small" color={Colors.secondary.DEFAULT} />
           ) : (
             <Text className="text-secondary text-[15px] font-bold">Save</Text>
           )}
@@ -111,7 +112,7 @@ export default function EditProfile() {
               <Image source={{ uri: avatarUri }} className="w-[100px] h-[100px] rounded-full" />
             ) : (
               <View className="w-[100px] h-[100px] rounded-full bg-primary-200 items-center justify-center">
-                <Ionicons name="person" size={40} color="#4DA6FF" />
+                <Ionicons name="person" size={40} color={Colors.secondary.DEFAULT} />
               </View>
             )}
             <View className="absolute bottom-0 right-0 bg-secondary rounded-xl w-7 h-7 items-center justify-center border-2 border-primary-100">
@@ -122,18 +123,18 @@ export default function EditProfile() {
 
           {/* Bio input */}
           <View className="w-full">
-            <Text className="text-[#8AAAC8] text-[13px] font-semibold mb-2 uppercase tracking-[0.5px]">Bio</Text>
+            <Text className="text-muted-300 text-[13px] font-semibold mb-2 uppercase tracking-[0.5px]">Bio</Text>
             <TextInput
-              className="bg-primary-200 border border-[#2A4080] rounded-[10px] text-white text-sm p-3 min-h-[100px] leading-5"
+              className="bg-primary-200 border border-primary-300 rounded-[10px] text-white text-sm p-3 min-h-[100px] leading-5"
               value={bio}
               onChangeText={setBio}
               placeholder="Write something about yourself…"
-              placeholderTextColor="#4A6080"
+              placeholderTextColor={Colors.muted.DEFAULT}
               multiline
               maxLength={250}
               textAlignVertical="top"
             />
-            <Text className="text-[#4A6080] text-xs text-right mt-1">{bio.length}/250</Text>
+            <Text className="text-muted text-xs text-right mt-1">{bio.length}/250</Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

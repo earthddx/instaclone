@@ -19,6 +19,7 @@ import { UserContext } from "../../context/UserContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import { useScrollToTop } from "@react-navigation/native";
+import Colors from "../../constants/colors";
 
 const PAGE_SIZE = 10;
 
@@ -110,7 +111,7 @@ export default function Home() {
         className="px-4 py-3 border-b border-primary-300 flex-row items-center"
       >
         <View className="w-8 h-8 rounded-full bg-secondary-100 border border-secondary-300 justify-center items-center mr-3">
-          <Ionicons name="newspaper" size={16} color="#4DA6FF" />
+          <Ionicons name="newspaper" size={16} color={Colors.secondary.DEFAULT} />
         </View>
         <Text className="text-white text-lg font-bold">Feed</Text>
         <View className="flex-1" />
@@ -157,7 +158,7 @@ export default function Home() {
             ListFooterComponent={
               loadingMore ? (
                 <ActivityIndicator
-                  color="#4DA6FF"
+                  color={Colors.secondary.DEFAULT}
                   style={{ paddingVertical: 24 }}
                 />
               ) : null
@@ -166,8 +167,8 @@ export default function Home() {
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={onRefresh}
-                tintColor="#4DA6FF"
-                colors={["#4DA6FF"]}
+                tintColor={Colors.secondary.DEFAULT}
+                colors={[Colors.secondary.DEFAULT]}
               />
             }
           />

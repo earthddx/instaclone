@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Image, TouchableOpacity, Dimensions } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import Colors from "../constants/colors";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 export const GRID_ITEM_SIZE = (SCREEN_WIDTH - 2) / 3; // 2px total for 2 gaps between 3 columns
@@ -32,8 +33,8 @@ export default function ProfileGridItem({ item, index, onPress }) {
             resizeMode="cover"
           />
         ) : (
-          <View className="w-full h-full bg-[#0A1628] justify-center items-center">
-            <Ionicons name="play-circle" size={40} color="rgba(77,166,255,0.85)" />
+          <View className="w-full h-full bg-primary-100 justify-center items-center">
+            <Ionicons name="play-circle" size={40} color={Colors.secondary.DEFAULT} />
           </View>
         )
       ) : (
@@ -41,7 +42,7 @@ export default function ProfileGridItem({ item, index, onPress }) {
       )}
       {isVideo && (
         <View className="absolute top-[6px] right-[6px]">
-          <Ionicons name="play-circle" size={18} color="rgba(255,255,255,0.85)" />
+          <Ionicons name="play-circle" size={18} color={Colors.overlay} />
         </View>
       )}
     </TouchableOpacity>

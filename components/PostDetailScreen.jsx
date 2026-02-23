@@ -12,6 +12,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { UserContext } from "../context/UserContext";
 import { getPost } from "../lib/appwrite";
 import MediaCard from "./MediaCard";
+import Colors from "../constants/colors";
 
 export default function PostDetailScreen({ postId, creatorId: paramCreatorId, onDelete }) {
   const { user } = React.useContext(UserContext);
@@ -39,7 +40,7 @@ export default function PostDetailScreen({ postId, creatorId: paramCreatorId, on
   }, [postId]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#0C1929" }} edges={["top"]}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.primary[100] }} edges={["top"]}>
       <View
         style={{
           flexDirection: "row",
@@ -47,14 +48,14 @@ export default function PostDetailScreen({ postId, creatorId: paramCreatorId, on
           paddingHorizontal: 16,
           paddingVertical: 12,
           borderBottomWidth: 0.5,
-          borderBottomColor: "#1A3060",
+          borderBottomColor: Colors.primary[300],
         }}
       >
         <TouchableOpacity
           onPress={() => router.back()}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Ionicons name="chevron-back" size={24} color="#4DA6FF" />
+          <Ionicons name="chevron-back" size={24} color={Colors.secondary.DEFAULT} />
         </TouchableOpacity>
         <Text style={{ color: "#fff", fontSize: 17, fontWeight: "700", marginLeft: 12 }}>
           Post
@@ -63,11 +64,11 @@ export default function PostDetailScreen({ postId, creatorId: paramCreatorId, on
 
       {loading ? (
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator color="#4DA6FF" size="large" />
+          <ActivityIndicator color={Colors.secondary.DEFAULT} size="large" />
         </View>
       ) : !post ? (
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <Text style={{ color: "#888" }}>Post not found.</Text>
+          <Text style={{ color: Colors.muted.DEFAULT }}>Post not found.</Text>
         </View>
       ) : (
         <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>

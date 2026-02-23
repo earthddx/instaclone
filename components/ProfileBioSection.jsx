@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, Image } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import Colors from "../constants/colors";
 
 const StatItem = ({ value, label }) => (
   <View className="items-center">
@@ -27,7 +28,7 @@ export default function ProfileBioSection({ profile, postsCount, children }) {
             <Image source={{ uri: profile.avatar }} className="w-full h-full" />
           ) : (
             <View className="flex-1 bg-primary-200 items-center justify-center">
-              <Ionicons name="person" size={34} color="#4DA6FF" />
+              <Ionicons name="person" size={34} color={Colors.secondary.DEFAULT} />
             </View>
           )}
         </View>

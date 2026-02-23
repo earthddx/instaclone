@@ -9,6 +9,7 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { GRID_ITEM_SIZE } from "./ProfileGridItem";
+import Colors from "../constants/colors";
 
 // ─── Base pulsing block ───────────────────────────────────────────────────────
 
@@ -31,7 +32,7 @@ function Pulse({ style }) {
   return (
     <Animated.View
       style={[
-        { backgroundColor: "#1F3870", borderRadius: 6 },
+        { backgroundColor: Colors.skeleton, borderRadius: 6 },
         animStyle,
         style,
       ]}
@@ -45,14 +46,14 @@ export function SkeletonMediaCard() {
   return (
     <View
       style={{
-        backgroundColor: "#132040",
+        backgroundColor: Colors.primary[200],
         borderRadius: 16,
         marginTop: 16,
         marginBottom: 8,
         marginHorizontal: 16,
         overflow: "hidden",
         borderWidth: 1,
-        borderColor: "#1A3060",
+        borderColor: Colors.primary[300],
       }}
     >
       {/* Header row */}
@@ -113,7 +114,7 @@ export function SkeletonProfileBio({ showButtons = false }) {
         paddingHorizontal: 16,
         paddingTop: 14,
         paddingBottom: 12,
-        backgroundColor: "#0C1929",
+        backgroundColor: Colors.primary[100],
       }}
     >
       {/* Avatar + stats row */}

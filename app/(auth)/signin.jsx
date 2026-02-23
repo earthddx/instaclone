@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import ComponentButton from "../../components/ComponentButton";
+import Colors from "../../constants/colors";
 import ComponentInput from "../../components/ComponentInput";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { signIn, getLoggedInUser } from "../../lib/appwrite";
@@ -44,16 +45,16 @@ export default () => {
   return (
     <SafeAreaView className="flex-1 bg-primary-100">
       {/* Decorative background orbs */}
-      <View className="absolute top-[-90px] right-[-70px] w-[260px] h-[260px] rounded-full bg-[rgba(77,166,255,0.08)]" />
-      <View className="absolute bottom-[80px] left-[-90px] w-[220px] h-[220px] rounded-full bg-[rgba(26,110,235,0.07)]" />
+      <View className="absolute top-[-90px] right-[-70px] w-[260px] h-[260px] rounded-full bg-secondary-100" />
+      <View className="absolute bottom-[80px] left-[-90px] w-[220px] h-[220px] rounded-full bg-secondary-50" />
 
       {/* Back button */}
       <TouchableOpacity
         onPress={() => router.back()}
         activeOpacity={0.7}
-        className="absolute top-14 left-5 z-10 w-9 h-9 rounded-full bg-[rgba(77,166,255,0.08)] border border-primary-300 items-center justify-center"
+        className="absolute top-14 left-5 z-10 w-9 h-9 rounded-full bg-secondary-100 border border-primary-300 items-center justify-center"
       >
-        <Ionicons name="arrow-back" size={18} color="#4DA6FF" />
+        <Ionicons name="arrow-back" size={18} color={Colors.secondary.DEFAULT} />
       </TouchableOpacity>
 
       <KeyboardAvoidingView
@@ -68,8 +69,8 @@ export default () => {
           <View className="flex-1 px-6 justify-center">
             {/* Logo */}
             <View className="items-center mb-10">
-              <View className="w-[76px] h-[76px] rounded-full bg-[rgba(77,166,255,0.12)] border-[1.5px] border-[rgba(77,166,255,0.35)] items-center justify-center mb-3">
-                <Ionicons name="camera" size={34} color="#4DA6FF" />
+              <View className="w-[76px] h-[76px] rounded-full bg-secondary-200 border-[1.5px] border-secondary-400 items-center justify-center mb-3">
+                <Ionicons name="camera" size={34} color={Colors.secondary.DEFAULT} />
               </View>
               <Text className="text-white text-[15px] font-bold tracking-[4px]">INSTACLONE</Text>
             </View>
@@ -114,13 +115,13 @@ export default () => {
             {/* Divider */}
             <View className="flex-row items-center mt-6 mb-2 gap-[10px]">
               <View className="flex-1 h-px bg-primary-300" />
-              <Text className="text-[#4A6080] text-[13px]">or</Text>
+              <Text className="text-muted text-[13px]">or</Text>
               <View className="flex-1 h-px bg-primary-300" />
             </View>
 
             {/* Sign up link */}
             <View className="justify-center flex-row gap-2 mt-2">
-              <Text className="text-base text-gray-400">
+              <Text className="text-base text-muted-300">
                 Don't have an account?
               </Text>
               <Link
@@ -134,7 +135,7 @@ export default () => {
 
           {/* Footer */}
           <View className="justify-center flex-row pb-8 pt-4">
-            <Text className="text-xs text-gray-600">© 2026 Instaclone</Text>
+            <Text className="text-xs text-muted">© 2026 Instaclone</Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

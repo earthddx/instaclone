@@ -18,6 +18,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { getComments, addComment } from "../lib/appwrite";
+import Colors from "../constants/colors";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const SHEET_HEIGHT = SCREEN_HEIGHT * 0.78;
@@ -36,7 +37,7 @@ const CommentItem = ({ item, onAvatarPress, onReplyPress, replyCount, isExpanded
             width: 36,
             height: 36,
             borderRadius: 18,
-            backgroundColor: "#2a3a4a",
+            backgroundColor: Colors.surface[300],
             justifyContent: "center",
             alignItems: "center",
             marginRight: 10,
@@ -46,7 +47,7 @@ const CommentItem = ({ item, onAvatarPress, onReplyPress, replyCount, isExpanded
           {item.avatar ? (
             <Image source={{ uri: item.avatar }} style={{ width: 36, height: 36 }} />
           ) : (
-            <Text style={{ color: "#4DA6FF", fontWeight: "bold", fontSize: 14 }}>
+            <Text style={{ color: Colors.secondary.DEFAULT, fontWeight: "bold", fontSize: 14 }}>
               {avatarLetter(item.username)}
             </Text>
           )}
@@ -57,14 +58,14 @@ const CommentItem = ({ item, onAvatarPress, onReplyPress, replyCount, isExpanded
             {item.text}
           </Text>
           <View style={{ flexDirection: "row", alignItems: "center", marginTop: 3, gap: 12 }}>
-            <Text style={{ color: "#4A6080", fontSize: 11 }}>
+            <Text style={{ color: Colors.muted.DEFAULT, fontSize: 11 }}>
               {new Date(item.$createdAt).toLocaleDateString(undefined, {
                 month: "short",
                 day: "numeric",
               })}
             </Text>
             <TouchableOpacity onPress={() => onReplyPress(item.$id, item.username)}>
-              <Text style={{ color: "#4A6080", fontSize: 11, fontWeight: "600" }}>Reply</Text>
+              <Text style={{ color: Colors.muted.DEFAULT, fontSize: 11, fontWeight: "600" }}>Reply</Text>
             </TouchableOpacity>
           </View>
           {replyCount > 0 && (
@@ -72,8 +73,8 @@ const CommentItem = ({ item, onAvatarPress, onReplyPress, replyCount, isExpanded
               onPress={onToggleReplies}
               style={{ marginTop: 6, flexDirection: "row", alignItems: "center", gap: 6 }}
             >
-              <View style={{ width: 20, height: 1, backgroundColor: "#4A6080" }} />
-              <Text style={{ color: "#4A6080", fontSize: 12 }}>
+              <View style={{ width: 20, height: 1, backgroundColor: Colors.muted.DEFAULT }} />
+              <Text style={{ color: Colors.muted.DEFAULT, fontSize: 12 }}>
                 {isExpanded
                   ? "Hide replies"
                   : `View ${replyCount} ${replyCount === 1 ? "reply" : "replies"}`}
@@ -96,7 +97,7 @@ const ReplyItem = ({ item, onAvatarPress }) => {
           width: 28,
           height: 28,
           borderRadius: 14,
-          backgroundColor: "#2a3a4a",
+          backgroundColor: Colors.surface[300],
           justifyContent: "center",
           alignItems: "center",
           marginRight: 8,
@@ -106,7 +107,7 @@ const ReplyItem = ({ item, onAvatarPress }) => {
         {item.avatar ? (
           <Image source={{ uri: item.avatar }} style={{ width: 28, height: 28 }} />
         ) : (
-          <Text style={{ color: "#4DA6FF", fontWeight: "bold", fontSize: 11 }}>
+          <Text style={{ color: Colors.secondary.DEFAULT, fontWeight: "bold", fontSize: 11 }}>
             {avatarLetter(item.username)}
           </Text>
         )}
@@ -116,7 +117,7 @@ const ReplyItem = ({ item, onAvatarPress }) => {
           <Text style={{ fontWeight: "700" }}>@{item.username}{" "}</Text>
           {item.text}
         </Text>
-        <Text style={{ color: "#4A6080", fontSize: 10, marginTop: 2 }}>
+        <Text style={{ color: Colors.muted.DEFAULT, fontSize: 10, marginTop: 2 }}>
           {new Date(item.$createdAt).toLocaleDateString(undefined, {
             month: "short",
             day: "numeric",
@@ -349,7 +350,7 @@ export default function CommentsSheet({
             left: 0,
             right: 0,
             height: SHEET_HEIGHT,
-            backgroundColor: "#1E2D3D",
+            backgroundColor: Colors.surface.DEFAULT,
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             transform: [{ translateY }],
@@ -362,7 +363,7 @@ export default function CommentsSheet({
               style={{ alignItems: "center", paddingVertical: 12 }}
             >
               <View
-                style={{ width: 40, height: 4, borderRadius: 2, backgroundColor: "#4A6080" }}
+                style={{ width: 40, height: 4, borderRadius: 2, backgroundColor: Colors.muted.DEFAULT }}
               />
             </View>
 
@@ -374,7 +375,7 @@ export default function CommentsSheet({
                 paddingHorizontal: 16,
                 paddingVertical: 12,
                 borderBottomWidth: 1,
-                borderBottomColor: "#2a3a4a",
+                borderBottomColor: Colors.surface[300],
               }}
             >
               <Text
@@ -392,7 +393,7 @@ export default function CommentsSheet({
 
             {/* Comment list */}
             {loadingComments ? (
-              <ActivityIndicator color="#4DA6FF" style={{ flex: 1, alignSelf: "center" }} />
+              <ActivityIndicator color={Colors.secondary.DEFAULT} style={{ flex: 1, alignSelf: "center" }} />
             ) : (
               <FlatList
                 data={topLevelComments}
@@ -403,7 +404,7 @@ export default function CommentsSheet({
                 ListEmptyComponent={
                   <Text
                     style={{
-                      color: "#4A6080",
+                      color: Colors.muted.DEFAULT,
                       textAlign: "center",
                       paddingVertical: 32,
                       fontSize: 14,
@@ -425,23 +426,23 @@ export default function CommentsSheet({
                 bottom: 70,
                 left: 16,
                 right: 16,
-                backgroundColor: "#152030",
+                backgroundColor: Colors.surface[100],
                 borderRadius: 10,
                 paddingHorizontal: 14,
                 paddingVertical: 10,
                 flexDirection: "row",
                 alignItems: "center",
                 borderLeftWidth: 3,
-                borderLeftColor: "#22C55E",
+                borderLeftColor: Colors.success,
                 zIndex: 10,
               }}
             >
-              <Ionicons name="checkmark-circle" size={18} color="#22C55E" style={{ marginRight: 8 }} />
+              <Ionicons name="checkmark-circle" size={18} color={Colors.success} style={{ marginRight: 8 }} />
               <Text style={{ color: "#fff", fontSize: 13 }}>Comment added</Text>
             </Animated.View>
 
             {/* Input bar */}
-            <View style={{ borderTopWidth: 1, borderTopColor: "#2a3a4a" }}>
+            <View style={{ borderTopWidth: 1, borderTopColor: Colors.surface[300] }}>
               {/* Replying-to banner */}
               {replyingTo && (
                 <View
@@ -453,12 +454,12 @@ export default function CommentsSheet({
                     paddingTop: 8,
                   }}
                 >
-                  <Text style={{ color: "#4A6080", fontSize: 12 }}>
+                  <Text style={{ color: Colors.muted.DEFAULT, fontSize: 12 }}>
                     Replying to{" "}
-                    <Text style={{ color: "#4DA6FF", fontWeight: "600" }}>@{replyingTo.username}</Text>
+                    <Text style={{ color: Colors.secondary.DEFAULT, fontWeight: "600" }}>@{replyingTo.username}</Text>
                   </Text>
                   <TouchableOpacity onPress={() => setReplyingTo(null)}>
-                    <Ionicons name="close" size={16} color="#4A6080" />
+                    <Ionicons name="close" size={16} color={Colors.muted.DEFAULT} />
                   </TouchableOpacity>
                 </View>
               )}
@@ -475,7 +476,7 @@ export default function CommentsSheet({
                     width: 34,
                     height: 34,
                     borderRadius: 17,
-                    backgroundColor: "#2a3a4a",
+                    backgroundColor: Colors.surface[300],
                     justifyContent: "center",
                     alignItems: "center",
                     marginRight: 10,
@@ -488,7 +489,7 @@ export default function CommentsSheet({
                       style={{ width: 34, height: 34 }}
                     />
                   ) : (
-                    <Text style={{ color: "#4DA6FF", fontWeight: "bold", fontSize: 13 }}>
+                    <Text style={{ color: Colors.secondary.DEFAULT, fontWeight: "bold", fontSize: 13 }}>
                       {avatarLetter(currentUsername)}
                     </Text>
                   )}
@@ -496,9 +497,9 @@ export default function CommentsSheet({
                 <View
                   style={{
                     flex: 1,
-                    backgroundColor: "#263545",
+                    backgroundColor: Colors.surface[200],
                     borderWidth: 1,
-                    borderColor: "#3a4f63",
+                    borderColor: Colors.surface[400],
                     borderRadius: 20,
                     paddingHorizontal: 14,
                     paddingVertical: 8,
@@ -509,14 +510,14 @@ export default function CommentsSheet({
                     value={comment}
                     onChangeText={setComment}
                     placeholder={replyingTo ? `Reply to @${replyingTo.username}...` : "Add a comment..."}
-                    placeholderTextColor="#4A6080"
+                    placeholderTextColor={Colors.muted.DEFAULT}
                     style={{ color: "white", fontSize: 14, maxHeight: 100 }}
                     multiline
                   />
                 </View>
                 {comment.trim().length > 0 && (
                   <TouchableOpacity onPress={handleSubmitComment} style={{ marginLeft: 10 }}>
-                    <Text style={{ color: "#4DA6FF", fontWeight: "700", fontSize: 14 }}>
+                    <Text style={{ color: Colors.secondary.DEFAULT, fontWeight: "700", fontSize: 14 }}>
                       Post
                     </Text>
                   </TouchableOpacity>

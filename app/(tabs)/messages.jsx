@@ -17,6 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { UserContext } from "../../context/UserContext";
+import Colors from "../../constants/colors";
 import {
   client,
   config as appwriteConfig,
@@ -106,7 +107,7 @@ const Messages = () => {
       {/* Header */}
       <View className="px-4 py-3 border-b border-primary-300 flex-row items-center">
         <View className="w-8 h-8 rounded-full bg-secondary-100 border border-secondary-300 justify-center items-center mr-3">
-          <Ionicons name="chatbubbles" size={16} color="#4DA6FF" />
+          <Ionicons name="chatbubbles" size={16} color={Colors.secondary.DEFAULT} />
         </View>
         <Text className="text-white text-lg font-bold">Messages</Text>
         <View className="flex-1" />
@@ -120,11 +121,11 @@ const Messages = () => {
       >
         {loading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#4DA6FF" />
+            <ActivityIndicator size="large" color={Colors.secondary.DEFAULT} />
           </View>
         ) : fetchError ? (
           <View className="flex-1 items-center justify-center px-8">
-            <Ionicons name="alert-circle-outline" size={48} color="#FF4444" />
+            <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
             <Text className="text-red-400 text-base font-semibold mt-4 text-center">
               Could not load messages
             </Text>
@@ -146,7 +147,7 @@ const Messages = () => {
           ListFooterComponent={
             loadingMore ? (
               <View style={{ paddingVertical: 12, alignItems: "center" }}>
-                <ActivityIndicator size="small" color="#4DA6FF" />
+                <ActivityIndicator size="small" color={Colors.secondary.DEFAULT} />
               </View>
             ) : null
           }
@@ -175,7 +176,7 @@ const Messages = () => {
           }}
           ListEmptyComponent={
             <View className="flex-1 items-center justify-center py-24">
-              <Ionicons name="chatbubbles-outline" size={52} color="#1A3060" />
+              <Ionicons name="chatbubbles-outline" size={52} color={Colors.primary[300]} />
               <Text className="text-primary-300 text-base font-semibold mt-4">
                 No messages yet
               </Text>
@@ -197,14 +198,14 @@ const Messages = () => {
               width: 36,
               height: 36,
               borderRadius: 18,
-              backgroundColor: "#0D1F3C",
+              backgroundColor: Colors.primary[200],
               borderWidth: 1,
-              borderColor: "#1A3060",
+              borderColor: Colors.primary[300],
               justifyContent: "center",
               alignItems: "center",
             }}
           >
-            <Ionicons name="chevron-down" size={20} color="#4DA6FF" />
+            <Ionicons name="chevron-down" size={20} color={Colors.secondary.DEFAULT} />
           </TouchableOpacity>
         )}
         </View>
@@ -248,7 +249,7 @@ const InputArea = () => {
           className="text-base text-white flex-1 py-0"
           onChangeText={(text) => setMessage(text.slice(0, 250))}
           placeholder="Message..."
-          placeholderTextColor="#4A6080"
+          placeholderTextColor={Colors.muted.DEFAULT}
           value={message}
           multiline
           maxLength={250}
@@ -257,7 +258,7 @@ const InputArea = () => {
         {isNearLimit && (
           <Text
             className="text-xs text-right mt-0.5"
-            style={{ color: charsLeft <= 10 ? "#FF4444" : "#4A6080" }}
+            style={{ color: charsLeft <= 10 ? Colors.error : Colors.muted.DEFAULT }}
           >
             {charsLeft}
           </Text>
@@ -273,7 +274,7 @@ const InputArea = () => {
         <Ionicons
           name="send"
           size={18}
-          color={hasText ? "#fff" : "#4A6080"}
+          color={hasText ? "#fff" : Colors.muted.DEFAULT}
           style={{ marginLeft: 2 }}
         />
       </TouchableOpacity>
@@ -365,12 +366,12 @@ const ComponentMessage = ({
                   width: 30,
                   height: 30,
                   borderRadius: 15,
-                  backgroundColor: "#1A3060",
+                  backgroundColor: Colors.primary[300],
                   justifyContent: "center",
                   alignItems: "center",
                 }}
               >
-                <Text style={{ color: "#4DA6FF", fontSize: 12, fontWeight: "bold" }}>
+                <Text style={{ color: Colors.secondary.DEFAULT, fontSize: 12, fontWeight: "bold" }}>
                   {item.username?.[0]?.toUpperCase() ?? "?"}
                 </Text>
               </View>
@@ -399,9 +400,9 @@ const ComponentMessage = ({
                 maxWidth: 280,
                 paddingHorizontal: 14,
                 paddingVertical: 9,
-                backgroundColor: isOwner ? "#1A6EEB" : "#132040",
+                backgroundColor: isOwner ? Colors.highlight : Colors.primary[200],
                 borderWidth: isOwner ? 0 : 1,
-                borderColor: "#1A3060",
+                borderColor: Colors.primary[300],
               },
             ]}
           >

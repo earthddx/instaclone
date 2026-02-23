@@ -9,11 +9,12 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import ToastContext from "../context/ToastContext";
+import Colors from "../constants/colors";
 
 const TYPE_CONFIG = {
-  success: { color: "#22C55E", icon: "checkmark-circle" },
-  error: { color: "#EF4444", icon: "alert-circle" },
-  info: { color: "#4DA6FF", icon: "information-circle" },
+  success: { color: Colors.success,          icon: "checkmark-circle" },
+  error:   { color: Colors.error,            icon: "alert-circle" },
+  info:    { color: Colors.secondary.DEFAULT, icon: "information-circle" },
 };
 
 export default function Toast() {
@@ -49,7 +50,7 @@ export default function Toast() {
           bottom: insets.bottom + 72,
           left: 16,
           right: 16,
-          backgroundColor: "#1E2D3D",
+          backgroundColor: Colors.surface.DEFAULT,
           borderRadius: 12,
           paddingHorizontal: 14,
           paddingVertical: 11,
