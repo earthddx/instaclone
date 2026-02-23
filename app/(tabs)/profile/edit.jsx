@@ -103,22 +103,24 @@ export default function EditProfile() {
           keyboardShouldPersistTaps="handled"
         >
           {/* Avatar picker */}
-          <TouchableOpacity
-            className="w-[100px] h-[100px] rounded-full border-2 border-secondary overflow-visible"
-            onPress={pickAvatar}
-            activeOpacity={0.8}
-          >
-            {avatarUri ? (
-              <Image source={{ uri: avatarUri }} className="w-[100px] h-[100px] rounded-full" />
-            ) : (
-              <View className="w-[100px] h-[100px] rounded-full bg-primary-200 items-center justify-center">
-                <Ionicons name="person" size={40} color={Colors.secondary.DEFAULT} />
-              </View>
-            )}
+          <View className="relative">
+            <TouchableOpacity
+              className="w-[100px] h-[100px] rounded-full border-2 border-secondary overflow-hidden"
+              onPress={pickAvatar}
+              activeOpacity={0.8}
+            >
+              {avatarUri ? (
+                <Image source={{ uri: avatarUri }} className="w-full h-full" />
+              ) : (
+                <View className="flex-1 bg-primary-200 items-center justify-center">
+                  <Ionicons name="person" size={40} color={Colors.secondary.DEFAULT} />
+                </View>
+              )}
+            </TouchableOpacity>
             <View className="absolute bottom-0 right-0 bg-secondary rounded-xl w-7 h-7 items-center justify-center border-2 border-primary-100">
               <Ionicons name="camera" size={16} color="#fff" />
             </View>
-          </TouchableOpacity>
+          </View>
           <Text className="text-secondary text-[13px] mt-2.5 mb-8">Change photo</Text>
 
           {/* Bio input */}
