@@ -13,7 +13,7 @@ import Colors from "../constants/colors";
 
 // ─── Base pulsing block ───────────────────────────────────────────────────────
 
-function Pulse({ style }) {
+export function Pulse({ style }) {
   const opacity = useSharedValue(1);
 
   React.useEffect(() => {

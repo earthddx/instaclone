@@ -2,17 +2,25 @@ import React from "react";
 import {
   View,
   Text,
-  FlatList,
   ScrollView,
   TouchableOpacity,
+  Share,
+  RefreshControl,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { getUserById, getUserPosts } from "../../lib/appwrite";
+import {
+  getUserById,
+  getUserPosts,
+  getFollowCounts,
+  checkIsFollowing,
+  followUser,
+  unfollowUser,
+} from "../../lib/appwrite";
 import { UserContext } from "../../context/UserContext";
 import ProfileBioSection from "../../components/ProfileBioSection";
-import ProfileGridItem from "../../components/ProfileGridItem";
+import ProfilePostsGrid from "../../components/ProfilePostsGrid";
 import { SkeletonProfileBio, SkeletonGrid } from "../../components/Skeleton";
 import Colors from "../../constants/colors";
 
@@ -25,27 +33,68 @@ export default function UserProfile() {
   const [posts, setPosts] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
+  const [followDocId, setFollowDocId] = React.useState(null);
+  const [followLoading, setFollowLoading] = React.useState(false);
+  const [followCounts, setFollowCounts] = React.useState({ followers: 0, following: 0 });
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const isFollowing = followDocId !== null;
+
+  const fetchAll = React.useCallback(async (isPullRefresh = false) => {
+    if (isPullRefresh) setRefreshing(true);
+    try {
+      const [profileData, userPosts, counts] = await Promise.all([
+        getUserById(userId),
+        getUserPosts(userId),
+        getFollowCounts(userId),
+      ]);
+      setProfile(profileData);
+      setPosts(userPosts);
+      setFollowCounts(counts);
+      if (currentUser?.$id) {
+        const docId = await checkIsFollowing(currentUser.$id, userId);
+        setFollowDocId(docId);
+      }
+    } catch (e) {
+      setError("Could not load profile.");
+    } finally {
+      setLoading(false);
+      if (isPullRefresh) setRefreshing(false);
+    }
+  }, [userId, currentUser?.$id]);
 
   React.useEffect(() => {
     if (userId === currentUser?.$id) {
       router.replace("/(tabs)/profile");
       return;
     }
-    (async () => {
-      try {
-        const [profileData, userPosts] = await Promise.all([
-          getUserById(userId),
-          getUserPosts(userId),
-        ]);
-        setProfile(profileData);
-        setPosts(userPosts);
-      } catch (e) {
-        setError("Could not load profile.");
-      } finally {
-        setLoading(false);
-      }
-    })();
+    fetchAll(false);
   }, [userId]);
+
+  const handleFollowToggle = async () => {
+    if (!currentUser?.$id || followLoading) return;
+    setFollowLoading(true);
+    try {
+      if (isFollowing) {
+        await unfollowUser(followDocId);
+        setFollowDocId(null);
+        setFollowCounts((c) => ({ ...c, followers: Math.max(0, c.followers - 1) }));
+      } else {
+        const newDocId = await followUser(currentUser.$id, userId);
+        setFollowDocId(newDocId);
+        setFollowCounts((c) => ({ ...c, followers: c.followers + 1 }));
+      }
+    } finally {
+      setFollowLoading(false);
+    }
+  };
+
+  const handleShareProfile = () => {
+    const message = profile?.bio
+      ? `Check out @${profile.username} on InstaClone!\n\n"${profile.bio}"`
+      : `Check out @${profile.username} on InstaClone!`;
+    Share.share({ message });
+  };
 
   if (loading) {
     return (
@@ -76,33 +125,50 @@ export default function UserProfile() {
     <SafeAreaView className="flex-1 bg-primary-100" edges={["top"]}>
       <Header onBack={() => router.back()} username={profile.username} />
 
-      <ScrollView className="flex-1">
-        <ProfileBioSection profile={profile} postsCount={posts.length}>
-          <View className="h-px bg-primary-300 mt-3 -mx-4" />
+      <ScrollView
+        className="flex-1"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => fetchAll(true)}
+            tintColor={Colors.secondary.DEFAULT}
+            colors={[Colors.secondary.DEFAULT]}
+          />
+        }
+      >
+        <ProfileBioSection profile={profile} postsCount={posts.length} followersCount={followCounts.followers} followingCount={followCounts.following}>
+          <View className="flex-row gap-2 mt-[10px]">
+            <TouchableOpacity
+              className={`flex-1 rounded-lg py-[7px] items-center border-[0.5px] ${
+                isFollowing
+                  ? "bg-primary-200 border-primary-300"
+                  : "bg-highlight border-highlight"
+              }`}
+              onPress={handleFollowToggle}
+              disabled={followLoading}
+              activeOpacity={0.7}
+            >
+              <Text className="text-white text-[13px] font-semibold">
+                {followLoading ? "..." : isFollowing ? "Unfollow" : "Follow"}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="flex-1 bg-primary-200 rounded-lg py-[7px] items-center border-[0.5px] border-primary-300"
+              onPress={handleShareProfile}
+              activeOpacity={0.7}
+            >
+              <Text className="text-white text-[13px] font-semibold">Share profile</Text>
+            </TouchableOpacity>
+          </View>
         </ProfileBioSection>
 
-        <FlatList
-          data={posts}
-          keyExtractor={(item) => item.$id}
-          numColumns={3}
-          scrollEnabled={false}
-          renderItem={({ item, index }) => (
-            <ProfileGridItem
-              item={item}
-              index={index}
-              onPress={(p) =>
-                router.push({
-                  pathname: `/user/post/${p.$id}`,
-                  params: { creatorId: userId },
-                })
-              }
-            />
-          )}
-          ListEmptyComponent={
-            <View className="items-center pt-[60px] gap-3">
-              <Ionicons name="images-outline" size={48} color={Colors.primary[300]} />
-              <Text className="text-muted text-[15px]">No posts yet</Text>
-            </View>
+        <ProfilePostsGrid
+          posts={posts}
+          onPressPost={(p) =>
+            router.push({
+              pathname: `/user/post/${p.$id}`,
+              params: { creatorId: userId },
+            })
           }
         />
       </ScrollView>

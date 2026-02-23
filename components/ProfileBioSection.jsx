@@ -1,12 +1,16 @@
 import React from "react";
 import { View, Text, Image } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { Pulse } from "./Skeleton";
 import Colors from "../constants/colors";
 
 const StatItem = ({ value, label }) => (
   <View className="items-center">
-    <Text className="text-white text-[17px] font-bold">{value ?? "–"}</Text>
-    <Text className="text-[#999] text-xs mt-0.5">{label}</Text>
+    {value == null
+      ? <Pulse style={{ width: 28, height: 16, borderRadius: 4, marginBottom: 4 }} />
+      : <Text className="text-white text-[17px] font-bold">{value}</Text>
+    }
+    <Text className="text-muted-100 text-xs mt-0.5">{label}</Text>
   </View>
 );
 
@@ -18,7 +22,7 @@ const StatItem = ({ value, label }) => (
  *   postsCount  – number shown in the Posts stat
  *   children    – optional JSX rendered below the bio text (e.g. action buttons, divider)
  */
-export default function ProfileBioSection({ profile, postsCount, children }) {
+export default function ProfileBioSection({ profile, postsCount, followersCount, followingCount, children }) {
   return (
     <View className="px-4 pt-[14px] pb-3 bg-primary-100">
       {/* Avatar + stats */}
@@ -34,8 +38,8 @@ export default function ProfileBioSection({ profile, postsCount, children }) {
         </View>
         <View className="flex-1 flex-row justify-around">
           <StatItem value={postsCount} label="Posts" />
-          <StatItem value={0} label="Followers" />
-          <StatItem value={0} label="Following" />
+          <StatItem value={followersCount ?? 0} label="Followers" />
+          <StatItem value={followingCount ?? 0} label="Following" />
         </View>
       </View>
 

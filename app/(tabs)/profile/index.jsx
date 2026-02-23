@@ -3,7 +3,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import {
   View,
   Text,
-  FlatList,
   TouchableOpacity,
   RefreshControl,
   ScrollView,
@@ -13,11 +12,10 @@ import {
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
 import { UserContext } from "../../../context/UserContext";
-import { getUserPosts, getUserLikedPosts } from "../../../lib/appwrite";
-import ComponentEmpty from "../../../components/ComponentEmpty";
+import { getUserPosts, getUserLikedPosts, getFollowCounts } from "../../../lib/appwrite";
 import ProfileBioSection from "../../../components/ProfileBioSection";
-import ProfileGridItem from "../../../components/ProfileGridItem";
-import { SkeletonGrid } from "../../../components/Skeleton";
+import ProfilePostsGrid from "../../../components/ProfilePostsGrid";
+import { SkeletonProfileBio } from "../../../components/Skeleton";
 import Colors from "../../../constants/colors";
 
 const ProfileContext = React.createContext(null);
@@ -28,6 +26,7 @@ export default function Profile() {
   const { user } = React.useContext(UserContext);
   const [userPosts, setUserPosts] = React.useState([]);
   const [likedPosts, setLikedPosts] = React.useState([]);
+  const [followCounts, setFollowCounts] = React.useState(null);
   const [refreshing, setRefreshing] = React.useState(false);
   const [postsLoading, setPostsLoading] = React.useState(true);
   const [activeTab, setActiveTab] = React.useState(0);
@@ -48,12 +47,14 @@ export default function Profile() {
     if (!user?.$id) return;
     if (isPullRefresh) setRefreshing(true);
     try {
-      const [posts, liked] = await Promise.all([
+      const [posts, liked, counts] = await Promise.all([
         getUserPosts(user.$id),
         getUserLikedPosts(user.$id),
+        getFollowCounts(user.$id),
       ]);
       setUserPosts(posts);
       setLikedPosts(liked);
+      setFollowCounts(counts);
     } finally {
       if (isPullRefresh) setRefreshing(false);
       setPostsLoading(false);
@@ -89,27 +90,36 @@ export default function Profile() {
             />
           }
         >
-          <ProfileBioSection profile={user} postsCount={userPosts.length}>
-            <View className="flex-row gap-2 mt-[10px]">
-              <TouchableOpacity
-                className="flex-1 bg-primary-200 rounded-lg py-[7px] items-center border-[0.5px] border-primary-300"
-                onPress={() => router.push("/(tabs)/profile/edit")}
-              >
-                <Text className="text-white text-[13px] font-semibold">Edit profile</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                className="flex-1 bg-primary-200 rounded-lg py-[7px] items-center border-[0.5px] border-primary-300"
-                onPress={() => {
-                  const message = user?.bio
-                    ? `Check out @${user.username} on InstaClone!\n\n"${user.bio}"`
-                    : `Check out @${user.username} on InstaClone!`;
-                  Share.share({ message });
-                }}
-              >
-                <Text className="text-white text-[13px] font-semibold">Share profile</Text>
-              </TouchableOpacity>
-            </View>
-          </ProfileBioSection>
+          {postsLoading ? (
+            <SkeletonProfileBio showButtons />
+          ) : (
+            <ProfileBioSection
+              profile={user}
+              postsCount={userPosts.length}
+              followersCount={followCounts?.followers}
+              followingCount={followCounts?.following}
+            >
+              <View className="flex-row gap-2 mt-[10px]">
+                <TouchableOpacity
+                  className="flex-1 bg-primary-200 rounded-lg py-[7px] items-center border-[0.5px] border-primary-300"
+                  onPress={() => router.push("/(tabs)/profile/edit")}
+                >
+                  <Text className="text-white text-[13px] font-semibold">Edit profile</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  className="flex-1 bg-primary-200 rounded-lg py-[7px] items-center border-[0.5px] border-primary-300"
+                  onPress={() => {
+                    const message = user?.bio
+                      ? `Check out @${user.username} on InstaClone!\n\n"${user.bio}"`
+                      : `Check out @${user.username} on InstaClone!`;
+                    Share.share({ message });
+                  }}
+                >
+                  <Text className="text-white text-[13px] font-semibold">Share profile</Text>
+                </TouchableOpacity>
+              </View>
+            </ProfileBioSection>
+          )}
 
           {/* Tab Bar */}
           <View className="flex-row bg-primary-100 border-t-[0.5px] border-primary-300 h-11">
@@ -159,26 +169,16 @@ export default function Profile() {
 const PostsGrid = () => {
   const { userPosts, postsLoading } = React.useContext(ProfileContext);
   const router = useRouter();
-  if (postsLoading) return <SkeletonGrid count={9} />;
   return (
-    <FlatList
-      data={userPosts}
-      keyExtractor={(item) => item.$id}
-      numColumns={3}
-      scrollEnabled={false}
-      ListEmptyComponent={<ComponentEmpty />}
-      renderItem={({ item, index }) => (
-        <ProfileGridItem
-          item={item}
-          index={index}
-          onPress={(p) =>
-            router.push({
-              pathname: `/post/${p.$id}`,
-              params: { creatorId: p.creator?.$id ?? p.creator },
-            })
-          }
-        />
-      )}
+    <ProfilePostsGrid
+      posts={userPosts}
+      loading={postsLoading}
+      onPressPost={(p) =>
+        router.push({
+          pathname: `/post/${p.$id}`,
+          params: { creatorId: p.creator?.$id ?? p.creator },
+        })
+      }
     />
   );
 };
@@ -187,26 +187,17 @@ const PostsGrid = () => {
 const LikedVideos = () => {
   const { likedPosts, postsLoading } = React.useContext(ProfileContext);
   const router = useRouter();
-  if (postsLoading) return <SkeletonGrid count={9} />;
   return (
-    <FlatList
-      data={likedPosts}
-      keyExtractor={(item) => item.$id}
-      numColumns={3}
-      scrollEnabled={false}
-      ListEmptyComponent={<ComponentEmpty message="No Liked Posts Found" />}
-      renderItem={({ item, index }) => (
-        <ProfileGridItem
-          item={item}
-          index={index}
-          onPress={(p) =>
-            router.push({
-              pathname: `/post/${p.$id}`,
-              params: { creatorId: p.creator?.$id ?? p.creator },
-            })
-          }
-        />
-      )}
+    <ProfilePostsGrid
+      posts={likedPosts}
+      loading={postsLoading}
+      onPressPost={(p) =>
+        router.push({
+          pathname: `/post/${p.$id}`,
+          params: { creatorId: p.creator?.$id ?? p.creator },
+        })
+      }
+      emptyMessage="No Liked Posts Found"
     />
   );
 };
