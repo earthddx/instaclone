@@ -2,7 +2,9 @@
 
 A full-featured Instagram-inspired social media app built with React Native and Expo. Includes photo/video sharing, a dual-feed home screen, real-time global chat, follower system, threaded comments, and animated interactions — all backed by Appwrite.
 
-> ⚠️ **Work in Progress.** APK / Expo Go link and demo video coming soon.
+▶️ **[Watch demo on YouTube](https://youtu.be/NxLgEyBww34?si=jJ3GW2vww0c0fOA6)**
+
+> ⚠️ **Work in Progress.** APK / Expo Go link coming soon.
 
 ---
 
