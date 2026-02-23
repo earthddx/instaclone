@@ -1,42 +1,46 @@
 import {
   View,
-  Text,
-  FlatList,
-  RefreshControl,
+  ScrollView,
   KeyboardAvoidingView,
   Platform,
-  TouchableOpacity,
-  ScrollView,
-  ActivityIndicator,
+  useWindowDimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import React from "react";
+import { UserContext } from "../../context/UserContext";
+import { useFocusEffect } from "expo-router";
+import { useScrollToTop } from "@react-navigation/native";
+import { useHomeFeed } from "../../hooks/useHomeFeed";
+import HomeHeader from "../../components/HomeHeader";
+import PostFeed from "../../components/PostFeed";
 import MediaCard from "../../components/MediaCard";
 import { SkeletonMediaCard } from "../../components/Skeleton";
 import ErrorBoundary, { CardErrorFallback } from "../../components/ErrorBoundary";
-import { getPostsPage } from "../../lib/appwrite";
-import React from "react";
-import { UserContext } from "../../context/UserContext";
-import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect } from "expo-router";
-import { useScrollToTop } from "@react-navigation/native";
-import Colors from "../../constants/colors";
-
-const PAGE_SIZE = 10;
 
 export default function Home() {
   const { user } = React.useContext(UserContext);
-  const flatListRef = React.useRef(null);
-  useScrollToTop(flatListRef);
-
-  const [posts, setPosts] = React.useState([]);
-  const [loading, setLoading] = React.useState(true);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [loadingMore, setLoadingMore] = React.useState(false);
-  const [hasMore, setHasMore] = React.useState(true);
-  const cursorRef = React.useRef(null);
-
+  const { width } = useWindowDimensions();
+  const pagerRef = React.useRef(null);
+  const [activeTab, setActiveTab] = React.useState(0);
   const [visibleItems, setVisibleItems] = React.useState([]);
   const [isFocused, setIsFocused] = React.useState(true);
+
+  const {
+    allPosts, allLoadingMore, allFeedRef,
+    followingPosts, followingLoadingMore, followingFeedRef, followingIdsRef,
+    loading, refreshing,
+    fetchAllNextPage, fetchFollowingNextPage, onRefresh,
+  } = useHomeFeed(user?.$id);
+
+  // ── Scroll-to-top: delegate to active FlatList ────────────────────
+  const scrollableRef = React.useRef({ scrollToOffset: () => {} });
+  useScrollToTop(scrollableRef);
+  React.useEffect(() => {
+    scrollableRef.current = {
+      scrollToOffset: (opts) =>
+        (activeTab === 0 ? allFeedRef : followingFeedRef).current?.scrollToOffset(opts),
+    };
+  }, [activeTab]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -45,77 +49,46 @@ export default function Home() {
     }, [])
   );
 
-  // ── Fetch first page, reset cursor ────────────────────────────────
-  const fetchFirstPage = React.useCallback(async () => {
-    cursorRef.current = null;
-    const { documents, hasMore: more } = await getPostsPage(PAGE_SIZE, null);
-    setPosts(documents);
-    setHasMore(more);
-    if (documents.length > 0) {
-      cursorRef.current = documents[documents.length - 1].$id;
-    }
-  }, []);
+  // ── Tab navigation ─────────────────────────────────────────────────
+  const goToTab = React.useCallback((index) => {
+    setActiveTab(index);
+    pagerRef.current?.scrollTo({ x: index * width, animated: true });
+  }, [width]);
 
-  React.useEffect(() => {
-    fetchFirstPage().finally(() => setLoading(false));
-  }, []);
+  const onScrollEnd = React.useCallback((e) => {
+    const index = Math.round(e.nativeEvent.contentOffset.x / width);
+    setActiveTab(index);
+  }, [width]);
 
-  // ── Append next page ───────────────────────────────────────────────
-  const fetchNextPage = React.useCallback(async () => {
-    if (!hasMore || loadingMore) return;
-    setLoadingMore(true);
-    try {
-      const { documents, hasMore: more } = await getPostsPage(
-        PAGE_SIZE,
-        cursorRef.current
-      );
-      setPosts((prev) => {
-        const seen = new Set(prev.map((p) => p.$id));
-        const fresh = documents.filter((p) => !seen.has(p.$id));
-        return [...prev, ...fresh];
-      });
-      setHasMore(more);
-      if (documents.length > 0) {
-        cursorRef.current = documents[documents.length - 1].$id;
-      }
-    } finally {
-      setLoadingMore(false);
-    }
-  }, [hasMore, loadingMore]);
-
-  // ── Pull-to-refresh ────────────────────────────────────────────────
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await fetchFirstPage();
-    setRefreshing(false);
-  };
-
-  const onViewableItemsChanged = ({ viewableItems }) => {
+  // ── Viewability ────────────────────────────────────────────────────
+  const onViewableItemsChanged = React.useCallback(({ viewableItems }) => {
     setVisibleItems(viewableItems.map((item) => item.item.$id));
-  };
-  const viewConfigRef = {
-    viewAreaCoveragePercentThreshold: 90,
-  };
+  }, []);
+  const viewConfigRef = React.useRef({ viewAreaCoveragePercentThreshold: 90 });
+
+  // ── Render item ────────────────────────────────────────────────────
+  const renderPost = ({ item }) => (
+    <ErrorBoundary key={item.$id} fallback={<CardErrorFallback />}>
+      <MediaCard
+        {...item}
+        creator={item.creator.username}
+        creatorAvatar={item.creator?.avatar}
+        creatorId={item.creator?.$id}
+        description={item.description}
+        source={item.source}
+        title={item.title}
+        type={item.type}
+        isVisible={isFocused && visibleItems.includes(item.$id)}
+        currentUserId={user?.$id}
+        currentUsername={user?.username}
+        currentUserAvatar={user?.avatar}
+      />
+    </ErrorBoundary>
+  );
 
   return (
-    <SafeAreaView
-      className="bg-primary-100 h-full"
-      edges={["right", "top", "left"]}
-    >
-      {/* Header */}
-      <TouchableOpacity
-        activeOpacity={1}
-        onPress={() =>
-          flatListRef.current?.scrollToOffset({ offset: 0, animated: true })
-        }
-        className="px-4 py-3 border-b border-primary-300 flex-row items-center"
-      >
-        <View className="w-8 h-8 rounded-full bg-secondary-100 border border-secondary-300 justify-center items-center mr-3">
-          <Ionicons name="newspaper" size={16} color={Colors.secondary.DEFAULT} />
-        </View>
-        <Text className="text-white text-lg font-bold">Feed</Text>
-        <View className="flex-1" />
-      </TouchableOpacity>
+    <SafeAreaView className="bg-primary-100 flex-1" edges={["right", "top", "left"]}>
+      <HomeHeader activeTab={activeTab} onTabPress={goToTab} />
 
       {loading ? (
         <ScrollView>
@@ -128,50 +101,51 @@ export default function Home() {
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={{ flex: 1 }}
         >
-          <FlatList
-            ref={flatListRef}
-            keyExtractor={(item) => item.$id}
-            data={posts}
-            keyboardShouldPersistTaps="handled"
-            onViewableItemsChanged={onViewableItemsChanged}
-            viewabilityConfig={viewConfigRef}
-            onEndReached={fetchNextPage}
-            onEndReachedThreshold={0.4}
-            renderItem={({ item }) => (
-              <ErrorBoundary key={item.$id} fallback={<CardErrorFallback />}>
-                <MediaCard
-                  {...item}
-                  creator={item.creator.username}
-                  creatorAvatar={item.creator?.avatar}
-                  creatorId={item.creator?.$id}
-                  description={item.description}
-                  source={item.source}
-                  title={item.title}
-                  type={item.type}
-                  isVisible={isFocused && visibleItems.includes(item.$id)}
-                  currentUserId={user?.$id}
-                  currentUsername={user?.username}
-                  currentUserAvatar={user?.avatar}
-                />
-              </ErrorBoundary>
-            )}
-            ListFooterComponent={
-              loadingMore ? (
-                <ActivityIndicator
-                  color={Colors.secondary.DEFAULT}
-                  style={{ paddingVertical: 24 }}
-                />
-              ) : null
-            }
-            refreshControl={
-              <RefreshControl
+          <ScrollView
+            ref={pagerRef}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            scrollEventThrottle={16}
+            onMomentumScrollEnd={onScrollEnd}
+            style={{ flex: 1 }}
+          >
+            <View style={{ width }}>
+              <PostFeed
+                feedRef={allFeedRef}
+                data={allPosts}
+                renderPost={renderPost}
+                onEndReached={fetchAllNextPage}
+                loadingMore={allLoadingMore}
                 refreshing={refreshing}
                 onRefresh={onRefresh}
-                tintColor={Colors.secondary.DEFAULT}
-                colors={[Colors.secondary.DEFAULT]}
+                onViewableItemsChanged={onViewableItemsChanged}
+                viewabilityConfig={viewConfigRef.current}
+                emptyIcon="newspaper-outline"
+                emptyText="No posts yet"
               />
-            }
-          />
+            </View>
+
+            <View style={{ width }}>
+              <PostFeed
+                feedRef={followingFeedRef}
+                data={followingPosts}
+                renderPost={renderPost}
+                onEndReached={fetchFollowingNextPage}
+                loadingMore={followingLoadingMore}
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                onViewableItemsChanged={onViewableItemsChanged}
+                viewabilityConfig={viewConfigRef.current}
+                emptyIcon="people-outline"
+                emptyText={
+                  followingIdsRef.current.length === 0
+                    ? "Follow people to see their posts here"
+                    : "No posts from people you follow yet"
+                }
+              />
+            </View>
+          </ScrollView>
         </KeyboardAvoidingView>
       )}
     </SafeAreaView>
