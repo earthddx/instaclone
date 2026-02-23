@@ -32,11 +32,11 @@ const Colors = {
 
   // Elevated surfaces: sheets, modals, toasts, menus
   surface: {
-    DEFAULT: "#1E2D3D",          // sheet / modal / toast / menu background
-    100: "#152030",              // subtle toast background (comment-added)
-    200: "#263545",              // input field background
-    300: "#2a3a4a",              // avatar placeholder, dividers, menu borders
-    400: "#3a4f63",              // input field border
+    DEFAULT: "#1E2D3D",              // sheet / modal / toast / menu background
+    100: "#152030",                  // subtle toast background (comment-added)
+    200: "#263545",                  // input field background
+    300: "#2a3a4a",                  // avatar placeholder, dividers, menu borders
+    400: "#3a4f63",                  // input field border
     card: "rgba(26, 48, 96, 0.18)", // translucent section card overlay
   },
 
