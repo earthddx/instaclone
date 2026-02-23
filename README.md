@@ -8,6 +8,23 @@ A full-featured Instagram-inspired social media app built with React Native and 
 
 ---
 
+## Screenshots
+
+<p align="center">
+  <img src="assets/images/post.png" width="200" alt="Home Feed" />
+  <img src="assets/images/new_post.png" width="200" alt="Create Post" />
+  <img src="assets/images/messages.png" width="200" alt="Messages" />
+  <img src="assets/images/comments.png" width="200" alt="Comments" />
+</p>
+<p align="center">
+  <img src="assets/images/profile.png" width="200" alt="Profile" />
+  <img src="assets/images/user.png" width="200" alt="User Profile" />
+  <img src="assets/images/about_1.png" width="200" alt="About" />
+  <img src="assets/images/about_2.png" width="200" alt="About – Tech Stack" />
+</p>
+
+---
+
 ## Features
 
 ### Auth & Profiles
