@@ -9,8 +9,9 @@ import ComponentButton from "../components/ComponentButton";
 import Colors from "../constants/colors";
 
 export default function App() {
-  const { user } = React.useContext(UserContext);
+  const { user, loading } = React.useContext(UserContext);
 
+  if (loading) return null;
   if (user) return <Redirect href="/home" />;
 
   return (
