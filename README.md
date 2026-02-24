@@ -53,6 +53,12 @@ A full-featured Instagram-inspired social media app built with React Native and 
 - Tap a username or avatar to navigate to their profile
 - Scroll-to-latest button when scrolled up in history
 
+### Notifications
+- Local notifications for real-time in-app events (new like, comment, follow)
+- Powered by Appwrite Realtime — no server required
+- Tap a notification to deep-link directly to the relevant post or profile
+- Android notification channel configured; permission requested on first launch
+
 ### UX & Polish
 - Skeleton shimmer loaders for feed, profiles, and grids
 - Toast notifications for async action feedback
@@ -72,6 +78,7 @@ A full-featured Instagram-inspired social media app built with React Native and 
 | Backend | Appwrite (auth, DB, storage, realtime) | Cloud |
 | Video | expo-video + expo-video-thumbnails | — |
 | Images | expo-image + expo-image-picker | — |
+| Notifications | expo-notifications | ~0.32 |
 
 ---
 
@@ -87,7 +94,7 @@ app/
 
 components/          # Reusable UI components
 lib/appwrite.js      # All Appwrite API calls
-hooks/               # Custom hooks (e.g. useHomeFeed)
+hooks/               # useHomeFeed, useLocalNotifications, useRealtimeNotifications
 context/             # UserContext, ToastContext
 constants/colors.js  # Single source of truth for the color system
 ```
