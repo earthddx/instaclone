@@ -17,6 +17,9 @@ import ProfileBioSection from "../../../components/ProfileBioSection";
 import ProfilePostsGrid from "../../../components/ProfilePostsGrid";
 import { SkeletonProfileBio } from "../../../components/Skeleton";
 import Colors from "../../../constants/colors";
+import { scheduleLocalNotification } from "../../../hooks/useLocalNotifications";
+
+
 
 const ProfileContext = React.createContext(null);
 
@@ -32,6 +35,23 @@ export default function Profile() {
   const [activeTab, setActiveTab] = React.useState(0);
   const { width } = useWindowDimensions();
   const pagerRef = React.useRef(null);
+
+  React.useEffect(() => {
+    //Test notifications:
+    const firedNotification = async () => {
+      await scheduleLocalNotification({ title: "New like!", body: "Someone just liked your post" });
+
+      await scheduleLocalNotification({ title: "Reminder", body: "Check your feed", seconds: 5 });
+
+      await scheduleLocalNotification({
+        title: "New comment",
+        body: "Elusive Joe commented on your post",
+        data: { route: "/post/699ca730000d9f393a14" },
+      });
+    }
+    firedNotification();
+  }, [])
+
 
   const goToTab = React.useCallback((index) => {
     setActiveTab(index);
