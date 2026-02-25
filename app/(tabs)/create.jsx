@@ -4,7 +4,6 @@ import {
   Text,
   Alert,
   ScrollView,
-  TextInput,
   TouchableOpacity,
   Pressable,
   ActivityIndicator,
@@ -14,6 +13,7 @@ import * as ImagePicker from "expo-image-picker";
 import * as VideoThumbnails from "expo-video-thumbnails";
 import ComponentVideo from "../../components/ComponentVideo";
 import ComponentImage from "../../components/ComponentImage";
+import ComponentInput from "../../components/ComponentInput";
 import { uploadFile, createPost } from "../../lib/appwrite";
 import { UserContext } from "../../context/UserContext";
 import { router } from "expo-router";
@@ -39,35 +39,33 @@ export default function Create() {
     }
   };
 
+  const openLibrary = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images", "videos"],
+      allowsEditing: true,
+      videoExportPreset: ImagePicker.VideoExportPreset.H264_1920x1080,
+    });
+    handleMediaResult(result);
+  };
+
+  const openCamera = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Permission required", "Camera access is needed to use this feature.");
+      return;
+    }
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ["images", "videos"],
+      allowsEditing: true,
+      videoExportPreset: ImagePicker.VideoExportPreset.H264_1920x1080,
+    });
+    handleMediaResult(result);
+  };
+
   const openMediaPicker = () => {
-    Alert.alert("Add Media", "Choose a source", [
-      {
-        text: "Photo / Video Library",
-        onPress: async () => {
-          const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ["images", "videos"],
-            allowsEditing: true,
-            videoExportPreset: ImagePicker.VideoExportPreset.H264_1920x1080,
-          });
-          handleMediaResult(result);
-        },
-      },
-      {
-        text: "Camera",
-        onPress: async () => {
-          const { status } = await ImagePicker.requestCameraPermissionsAsync();
-          if (status !== "granted") {
-            Alert.alert("Permission required", "Camera access is needed to use this feature.");
-            return;
-          }
-          const result = await ImagePicker.launchCameraAsync({
-            mediaTypes: ["images", "videos"],
-            allowsEditing: true,
-            videoExportPreset: ImagePicker.VideoExportPreset.H264_1920x1080,
-          });
-          handleMediaResult(result);
-        },
-      },
+    Alert.alert("Change Media", "Choose a source", [
+      { text: "Photo / Video Library", onPress: openLibrary },
+      { text: "Camera", onPress: openCamera },
       { text: "Cancel", style: "cancel" },
     ]);
   };
@@ -123,6 +121,7 @@ export default function Create() {
 
   return (
     <SafeAreaView className="bg-primary-100 flex-1" edges={["right", "top", "left"]}>
+
       {/* ── Header ── */}
       <View className="px-4 py-3 border-b border-primary-300 flex-row items-center">
         <View className="flex-row items-center">
@@ -140,7 +139,7 @@ export default function Create() {
           {uploading ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (
-            <Text className={`font-semibold text-sm ${canSubmit ? "text-white" : "text-gray-500"}`}>
+            <Text className={`font-semibold text-sm ${canSubmit ? "text-white" : "text-muted-DEFAULT"}`}>
               Post
             </Text>
           )}
@@ -148,121 +147,187 @@ export default function Create() {
       </View>
 
       {/* ── Body ── */}
-        <ScrollView
-          className="flex-1"
-          contentContainerStyle={{ paddingBottom: 40 }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          automaticallyAdjustKeyboardInsets={true}
-        >
-          {/* ── Media zone ── */}
-          {media ? (
-            <View>
-              {media.type === "image" ? (
-                <ComponentImage source={media.uri} />
-              ) : (
-                <ComponentVideo source={media.uri} isVisible />
-              )}
-              {/* Overlay: swap / remove */}
-              <View
-                style={{ position: "absolute", top: 12, right: 12, flexDirection: "row", gap: 8 }}
-              >
-                <TouchableOpacity
-                  onPress={openMediaPicker}
-                  className="bg-black/60 rounded-full p-2"
-                >
-                  <MaterialIcons name="swap-horiz" size={20} color="#fff" />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={removeMedia}
-                  className="bg-black/60 rounded-full p-2"
-                >
-                  <MaterialIcons name="close" size={20} color="#fff" />
-                </TouchableOpacity>
-              </View>
-            </View>
-          ) : (
-            <Pressable
-              onPress={openMediaPicker}
-              className="mx-4 mt-5 bg-primary-200 rounded-2xl items-center justify-center py-14"
-              style={{ borderWidth: 2, borderStyle: "dashed", borderColor: Colors.primary[300] }}
-            >
-              <View className="bg-primary-300 rounded-full p-4 mb-3">
-                <MaterialIcons name="add-photo-alternate" size={40} color={Colors.highlight} />
-              </View>
-              <Text className="text-white font-semibold text-base">Add Photo or Video</Text>
-              <Text className="text-gray-500 text-sm mt-1">
-                Tap to choose from library or camera
-              </Text>
-              <Text className="text-gray-600 text-xs mt-3">Max 50MB · JPEG, PNG, MP4, MOV</Text>
-            </Pressable>
-          )}
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ paddingBottom: 40 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        automaticallyAdjustKeyboardInsets={true}
+      >
 
-          {/* ── Form ── */}
+        {/* ── Media zone ── */}
+        {media ? (
+          <View>
+            {media.type === "image" ? (
+              <ComponentImage source={media.uri} />
+            ) : (
+              <ComponentVideo source={media.uri} isVisible />
+            )}
+            {/* Overlay: swap / remove */}
+            <View style={{ position: "absolute", top: 12, right: 12, flexDirection: "row", gap: 8 }}>
+              <TouchableOpacity
+                onPress={openMediaPicker}
+                className="bg-black/60 rounded-full p-2"
+              >
+                <MaterialIcons name="swap-horiz" size={20} color="#fff" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={removeMedia}
+                className="bg-black/60 rounded-full p-2"
+              >
+                <MaterialIcons name="close" size={20} color="#fff" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : (
+          /* ── Two-card media picker ── */
           <View className="px-4 mt-5">
-            {/* Title */}
-            <View className="mb-4">
-              <View className="flex-row justify-between items-baseline mb-1">
-                <Text className="text-gray-300 text-sm font-medium">
-                  Title <Text className="text-red-400">*</Text>
-                </Text>
+            <Text
+              className="text-muted-300 text-xs font-bold uppercase tracking-widest mb-3"
+              style={{ letterSpacing: 1.5 }}
+            >
+              Add Media
+            </Text>
+            <View className="flex-row" style={{ gap: 12 }}>
+              {/* Library card */}
+              <Pressable
+                onPress={openLibrary}
+                className="flex-1 rounded-2xl items-center justify-center py-8"
+                style={{ backgroundColor: Colors.surface.DEFAULT, borderWidth: 1, borderColor: Colors.surface[400] }}
+              >
+                <View
+                  className="rounded-full p-4 mb-3"
+                  style={{
+                    backgroundColor: Colors.secondary[100],
+                    borderWidth: 1,
+                    borderColor: Colors.secondary[300],
+                  }}
+                >
+                  <MaterialIcons name="photo-library" size={32} color={Colors.secondary.DEFAULT} />
+                </View>
+                <Text className="text-white font-semibold text-sm">Library</Text>
+                <Text className="text-muted-300 text-xs mt-1">Photo or Video</Text>
+              </Pressable>
+
+              {/* Camera card */}
+              <Pressable
+                onPress={openCamera}
+                className="flex-1 rounded-2xl items-center justify-center py-8"
+                style={{ backgroundColor: Colors.surface.DEFAULT, borderWidth: 1, borderColor: Colors.surface[400] }}
+              >
+                <View
+                  className="rounded-full p-4 mb-3"
+                  style={{
+                    backgroundColor: Colors.secondary[100],
+                    borderWidth: 1,
+                    borderColor: Colors.secondary[300],
+                  }}
+                >
+                  <MaterialIcons name="photo-camera" size={32} color={Colors.secondary.DEFAULT} />
+                </View>
+                <Text className="text-white font-semibold text-sm">Camera</Text>
+                <Text className="text-muted-300 text-xs mt-1">Take a shot</Text>
+              </Pressable>
+            </View>
+            <Text className="text-muted-100 text-xs text-center mt-3">
+              Max 50MB · JPEG, PNG, MP4, MOV
+            </Text>
+          </View>
+        )}
+
+        {/* ── Post Details section ── */}
+        <View className="px-4 mt-6">
+          {/* Section header with left-bar accent */}
+          <View className="flex-row items-center mb-4" style={{ gap: 8 }}>
+            <View
+              style={{
+                width: 3,
+                height: 16,
+                backgroundColor: Colors.secondary.DEFAULT,
+                borderRadius: 2,
+              }}
+            />
+            <Text
+              className="text-muted-300 text-xs font-bold uppercase"
+              style={{ letterSpacing: 1.5 }}
+            >
+              Post Details
+            </Text>
+          </View>
+
+          {/* Title */}
+          <View className="mb-4">
+            <View className="flex-row justify-between items-center mb-1.5">
+              <Text className="text-white text-sm font-semibold">
+                Title <Text className="text-error">*</Text>
+              </Text>
+              <View
+                className={`px-2 py-0.5 rounded-full ${title.length > TITLE_MAX * 0.85 ? "bg-danger-surface" : "bg-primary-200"}`}
+              >
                 <Text
-                  className={`text-xs ${title.length > TITLE_MAX * 0.85 ? "text-red-400" : "text-gray-600"}`}
+                  className={`text-xs font-medium ${title.length > TITLE_MAX * 0.85 ? "text-danger" : "text-muted-300"}`}
                 >
                   {title.length}/{TITLE_MAX}
                 </Text>
               </View>
-              <View className="border border-primary-300 bg-primary-200 rounded-2xl px-4 py-3">
-                <TextInput
-                  className="text-white text-base"
-                  value={title}
-                  onChangeText={(v) => {
-                    if (v.length <= TITLE_MAX) setInput((s) => ({ ...s, title: v }));
-                  }}
-                  placeholder="Give your post a title…"
-                  placeholderTextColor={Colors.muted.DEFAULT}
-                  returnKeyType="next"
-                />
-              </View>
             </View>
+            <ComponentInput
+              value={title}
+              onChangeText={(v) => {
+                if (v.length <= TITLE_MAX) setInput((s) => ({ ...s, title: v }));
+              }}
+              placeholder="Give your post a title…"
+              returnKeyType="next"
+              autoCapitalize="sentences"
+            />
+          </View>
 
-            {/* Description */}
-            <View>
-              <View className="flex-row justify-between items-baseline mb-1">
-                <Text className="text-gray-300 text-sm font-medium">Description</Text>
+          {/* Description */}
+          <View>
+            <View className="flex-row justify-between items-center mb-1.5">
+              <Text className="text-white text-sm font-semibold">Caption</Text>
+              <View
+                className={`px-2 py-0.5 rounded-full ${description.length > DESC_MAX * 0.85 ? "bg-danger-surface" : "bg-primary-200"}`}
+              >
                 <Text
-                  className={`text-xs ${description.length > DESC_MAX * 0.85 ? "text-red-400" : "text-gray-600"}`}
+                  className={`text-xs font-medium ${description.length > DESC_MAX * 0.85 ? "text-danger" : "text-muted-300"}`}
                 >
                   {description.length}/{DESC_MAX}
                 </Text>
               </View>
-              <View className="border border-primary-300 bg-primary-200 rounded-2xl px-4 py-3">
-                <TextInput
-                  className="text-white text-base"
-                  value={description}
-                  onChangeText={(v) => {
-                    if (v.length <= DESC_MAX) setInput((s) => ({ ...s, description: v }));
-                  }}
-                  placeholder="Write a caption…"
-                  placeholderTextColor={Colors.muted.DEFAULT}
-                  multiline
-                  textAlignVertical="top"
-                  style={{ minHeight: 100 }}
-                />
-              </View>
             </View>
+            <ComponentInput
+              value={description}
+              onChangeText={(v) => {
+                if (v.length <= DESC_MAX) setInput((s) => ({ ...s, description: v }));
+              }}
+              placeholder="Write a caption…"
+              multiline
+              minHeight={100}
+              scrollable
+              autoCapitalize="sentences"
+            />
           </View>
+        </View>
 
-          {/* ── Info tip (only when no media yet) ── */}
-          {!media ? (
-            <View className="mx-4 mt-4 bg-primary-200 rounded-xl p-3 flex-row items-start">
-              <MaterialIcons name="info-outline" size={15} color={Colors.secondary.DEFAULT} />
-              <Text className="text-gray-400 text-xs ml-2 flex-1">
-                A title and at least one photo or video are required before publishing.
-              </Text>
-            </View>
-          ) : null}
-        </ScrollView>
+        {/* ── Requirement hint (only when no media) ── */}
+        {!media && (
+          <View
+            className="mx-4 mt-4 rounded-xl p-3 flex-row items-center"
+            style={{
+              backgroundColor: Colors.secondary[50],
+              borderWidth: 1,
+              borderColor: Colors.secondary[300],
+              gap: 8,
+            }}
+          >
+            <MaterialIcons name="info-outline" size={15} color={Colors.secondary.DEFAULT} />
+            <Text className="text-muted-300 text-xs flex-1">
+              A title and at least one photo or video are required before publishing.
+            </Text>
+          </View>
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 }
