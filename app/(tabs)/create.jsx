@@ -149,7 +149,7 @@ export default function Create() {
       {/* ── Body ── */}
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingBottom: 40 }}
+        contentContainerClassName="pb-10"
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
         automaticallyAdjustKeyboardInsets={true}
@@ -164,7 +164,7 @@ export default function Create() {
               <ComponentVideo source={media.uri} isVisible />
             )}
             {/* Overlay: swap / remove */}
-            <View style={{ position: "absolute", top: 12, right: 12, flexDirection: "row", gap: 8 }}>
+            <View className="absolute top-3 right-3 flex-row gap-2">
               <TouchableOpacity
                 onPress={openMediaPicker}
                 className="bg-black/60 rounded-full p-2"
@@ -182,27 +182,16 @@ export default function Create() {
         ) : (
           /* ── Two-card media picker ── */
           <View className="px-4 mt-5">
-            <Text
-              className="text-muted-300 text-xs font-bold uppercase tracking-widest mb-3"
-              style={{ letterSpacing: 1.5 }}
-            >
+            <Text className="text-muted-300 text-xs font-bold uppercase tracking-[1.5px] mb-3">
               Add Media
             </Text>
-            <View className="flex-row" style={{ gap: 12 }}>
+            <View className="flex-row gap-3">
               {/* Library card */}
               <Pressable
                 onPress={openLibrary}
-                className="flex-1 rounded-2xl items-center justify-center py-8"
-                style={{ backgroundColor: Colors.surface.DEFAULT, borderWidth: 1, borderColor: Colors.surface[400] }}
+                className="flex-1 rounded-2xl items-center justify-center py-8 bg-surface border border-surface-400"
               >
-                <View
-                  className="rounded-full p-4 mb-3"
-                  style={{
-                    backgroundColor: Colors.secondary[100],
-                    borderWidth: 1,
-                    borderColor: Colors.secondary[300],
-                  }}
-                >
+                <View className="rounded-full p-4 mb-3 bg-secondary-100 border border-secondary-300">
                   <MaterialIcons name="photo-library" size={32} color={Colors.secondary.DEFAULT} />
                 </View>
                 <Text className="text-white font-semibold text-sm">Library</Text>
@@ -212,17 +201,9 @@ export default function Create() {
               {/* Camera card */}
               <Pressable
                 onPress={openCamera}
-                className="flex-1 rounded-2xl items-center justify-center py-8"
-                style={{ backgroundColor: Colors.surface.DEFAULT, borderWidth: 1, borderColor: Colors.surface[400] }}
+                className="flex-1 rounded-2xl items-center justify-center py-8 bg-surface border border-surface-400"
               >
-                <View
-                  className="rounded-full p-4 mb-3"
-                  style={{
-                    backgroundColor: Colors.secondary[100],
-                    borderWidth: 1,
-                    borderColor: Colors.secondary[300],
-                  }}
-                >
+                <View className="rounded-full p-4 mb-3 bg-secondary-100 border border-secondary-300">
                   <MaterialIcons name="photo-camera" size={32} color={Colors.secondary.DEFAULT} />
                 </View>
                 <Text className="text-white font-semibold text-sm">Camera</Text>
@@ -238,19 +219,9 @@ export default function Create() {
         {/* ── Post Details section ── */}
         <View className="px-4 mt-6">
           {/* Section header with left-bar accent */}
-          <View className="flex-row items-center mb-4" style={{ gap: 8 }}>
-            <View
-              style={{
-                width: 3,
-                height: 16,
-                backgroundColor: Colors.secondary.DEFAULT,
-                borderRadius: 2,
-              }}
-            />
-            <Text
-              className="text-muted-300 text-xs font-bold uppercase"
-              style={{ letterSpacing: 1.5 }}
-            >
+          <View className="flex-row items-center mb-4 gap-2">
+            <View className="w-[3px] h-4 bg-secondary rounded-sm" />
+            <Text className="text-muted-300 text-xs font-bold uppercase tracking-[1.5px]">
               Post Details
             </Text>
           </View>
@@ -312,15 +283,7 @@ export default function Create() {
 
         {/* ── Requirement hint (only when no media) ── */}
         {!media && (
-          <View
-            className="mx-4 mt-4 rounded-xl p-3 flex-row items-center"
-            style={{
-              backgroundColor: Colors.secondary[50],
-              borderWidth: 1,
-              borderColor: Colors.secondary[300],
-              gap: 8,
-            }}
-          >
+          <View className="mx-4 mt-4 rounded-xl p-3 flex-row items-center bg-secondary-50 border border-secondary-300 gap-2">
             <MaterialIcons name="info-outline" size={15} color={Colors.secondary.DEFAULT} />
             <Text className="text-muted-300 text-xs flex-1">
               A title and at least one photo or video are required before publishing.
