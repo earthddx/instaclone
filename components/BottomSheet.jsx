@@ -11,7 +11,6 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Colors from "../constants/colors";
 
 const DISMISS_THRESHOLD = 120;
 
@@ -144,88 +143,41 @@ const BottomSheet = React.forwardRef(function BottomSheet(
       transparent
       onRequestClose={() => closeSheetRef.current()}
     >
-      <View style={{ flex: 1 }}>
+      <View className="flex-1">
         {/* Dim backdrop */}
         <TouchableOpacity
-          style={{
-            position: "absolute",
-            top: 0, left: 0, right: 0, bottom: 0,
-            backgroundColor: "rgba(0,0,0,0.5)",
-          }}
+          className="absolute inset-0 bg-dim"
           activeOpacity={1}
           onPress={() => closeSheetRef.current()}
         />
 
         {/* Animated sheet */}
         <Animated.View
-          style={{
-            position: "absolute",
-            bottom: 0, left: 0, right: 0,
-            height: SHEET_HEIGHT,
-            backgroundColor: Colors.surface.DEFAULT,
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-            overflow: "hidden",
-            transform: [{ translateY }],
-          }}
+          className="absolute bottom-0 left-0 right-0 bg-surface rounded-t-[20px] overflow-hidden"
+          style={{ height: SHEET_HEIGHT, transform: [{ translateY }] }}
         >
           <Animated.View
-            style={[
-              { flex: 1 },
-              keyboardAware && { paddingBottom: keyboardPadding },
-            ]}
+            className="flex-1"
+            style={keyboardAware ? { paddingBottom: keyboardPadding } : undefined}
           >
             {/* Drag handle */}
             <View
               {...panResponder.panHandlers}
-              style={{ alignItems: "center", paddingVertical: 12 }}
+              className="items-center py-3"
             >
-              <View
-                style={{
-                  width: 40,
-                  height: 4,
-                  borderRadius: 2,
-                  backgroundColor: Colors.muted.DEFAULT,
-                }}
-              />
+              <View className="w-10 h-1 rounded-sm bg-muted" />
             </View>
 
             {/* Header */}
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                paddingHorizontal: 16,
-                paddingBottom: 12,
-                borderBottomWidth: 1,
-                borderBottomColor: Colors.surface[300],
-              }}
-            >
+            <View className="flex-row items-center px-4 pb-3 border-b border-surface-300">
               {centerTitle ? (
-                <Text
-                  style={{
-                    flex: 1,
-                    textAlign: "center",
-                    color: "white",
-                    fontWeight: "bold",
-                    fontSize: 15,
-                  }}
-                >
+                <Text className="flex-1 text-center text-white font-bold text-[15px]">
                   {title}
                 </Text>
               ) : (
-                <>
-                  <Text
-                    style={{
-                      flex: 1,
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: 15,
-                    }}
-                  >
-                    {title}
-                  </Text>
-                </>
+                <Text className="flex-1 text-white font-bold text-[15px]">
+                  {title}
+                </Text>
               )}
             </View>
             {/* Consumer content */}

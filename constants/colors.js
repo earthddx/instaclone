@@ -53,6 +53,7 @@ const Colors = {
   danger: "#FF4D6D",           // destructive actions (delete, unlike)
   skeleton: "#1F3870",         // skeleton pulse block color
   overlay: "rgba(255, 255, 255, 0.85)", // semi-transparent white (video icons, overlays)
+  dim: "rgba(0, 0, 0, 0.5)",           // modal / bottom-sheet backdrop
 
   // Logout / destructive row styling
   "danger-surface": "#1A0A0A", // bg-danger-surface

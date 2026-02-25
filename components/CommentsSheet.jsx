@@ -20,52 +20,43 @@ const avatarLetter = (name) => name?.[0]?.toUpperCase() ?? "?";
 const CommentItem = ({ item, onAvatarPress, onReplyPress, replyCount, isExpanded, onToggleReplies }) => {
   return (
     <View>
-      <View style={{ flexDirection: "row", marginBottom: 6, alignItems: "flex-start" }}>
+      <View className="flex-row mb-1.5 items-start">
         <TouchableOpacity
           onPress={() => onAvatarPress(item.creator?.$id)}
           activeOpacity={0.7}
-          style={{
-            width: 36,
-            height: 36,
-            borderRadius: 18,
-            backgroundColor: Colors.surface[300],
-            justifyContent: "center",
-            alignItems: "center",
-            marginRight: 10,
-            overflow: "hidden",
-          }}
+          className="w-9 h-9 rounded-full bg-surface-300 justify-center items-center mr-2.5 overflow-hidden"
         >
           {item.creator?.avatar ? (
-            <Image source={{ uri: item.creator.avatar }} style={{ width: 36, height: 36 }} />
+            <Image source={{ uri: item.creator.avatar }} className="w-9 h-9" />
           ) : (
-            <Text style={{ color: Colors.secondary.DEFAULT, fontWeight: "bold", fontSize: 14 }}>
+            <Text className="text-secondary font-bold text-[14px]">
               {avatarLetter(item.creator?.username)}
             </Text>
           )}
         </TouchableOpacity>
-        <View style={{ flex: 1 }}>
-          <Text style={{ color: "white", fontSize: 13, lineHeight: 19 }}>
-            <Text style={{ fontWeight: "700" }}>@{item.creator?.username}{" "}</Text>
+        <View className="flex-1">
+          <Text className="text-white text-[13px] leading-[19px]">
+            <Text className="font-bold">@{item.creator?.username}{" "}</Text>
             {item.text}
           </Text>
-          <View style={{ flexDirection: "row", alignItems: "center", marginTop: 3, gap: 12 }}>
-            <Text style={{ color: Colors.muted.DEFAULT, fontSize: 11 }}>
+          <View className="flex-row items-center mt-[3px] gap-3">
+            <Text className="text-muted text-[11px]">
               {new Date(item.$createdAt).toLocaleDateString(undefined, {
                 month: "short",
                 day: "numeric",
               })}
             </Text>
             <TouchableOpacity onPress={() => onReplyPress(item.$id, item.creator?.username)}>
-              <Text style={{ color: Colors.muted.DEFAULT, fontSize: 11, fontWeight: "600" }}>Reply</Text>
+              <Text className="text-muted text-[11px] font-semibold">Reply</Text>
             </TouchableOpacity>
           </View>
           {replyCount > 0 && (
             <TouchableOpacity
               onPress={onToggleReplies}
-              style={{ marginTop: 6, flexDirection: "row", alignItems: "center", gap: 6 }}
+              className="mt-1.5 flex-row items-center gap-1.5"
             >
-              <View style={{ width: 20, height: 1, backgroundColor: Colors.muted.DEFAULT }} />
-              <Text style={{ color: Colors.muted.DEFAULT, fontSize: 12 }}>
+              <View className="w-5 h-px bg-muted" />
+              <Text className="text-muted text-[12px]">
                 {isExpanded
                   ? "Hide replies"
                   : `View ${replyCount} ${replyCount === 1 ? "reply" : "replies"}`}
@@ -80,35 +71,26 @@ const CommentItem = ({ item, onAvatarPress, onReplyPress, replyCount, isExpanded
 
 const ReplyItem = ({ item, onAvatarPress }) => {
   return (
-    <View style={{ flexDirection: "row", marginBottom: 12, alignItems: "flex-start", marginLeft: 46 }}>
+    <View className="flex-row mb-3 items-start ml-[46px]">
       <TouchableOpacity
         onPress={() => onAvatarPress(item.creator?.$id)}
         activeOpacity={0.7}
-        style={{
-          width: 28,
-          height: 28,
-          borderRadius: 14,
-          backgroundColor: Colors.surface[300],
-          justifyContent: "center",
-          alignItems: "center",
-          marginRight: 8,
-          overflow: "hidden",
-        }}
+        className="w-7 h-7 rounded-full bg-surface-300 justify-center items-center mr-2 overflow-hidden"
       >
         {item.creator?.avatar ? (
-          <Image source={{ uri: item.creator.avatar }} style={{ width: 28, height: 28 }} />
+          <Image source={{ uri: item.creator.avatar }} className="w-7 h-7" />
         ) : (
-          <Text style={{ color: Colors.secondary.DEFAULT, fontWeight: "bold", fontSize: 11 }}>
+          <Text className="text-secondary font-bold text-[11px]">
             {avatarLetter(item.creator?.username)}
           </Text>
         )}
       </TouchableOpacity>
-      <View style={{ flex: 1 }}>
-        <Text style={{ color: "white", fontSize: 12, lineHeight: 17 }}>
-          <Text style={{ fontWeight: "700" }}>@{item.creator?.username}{" "}</Text>
+      <View className="flex-1">
+        <Text className="text-white text-[12px] leading-[17px]">
+          <Text className="font-bold">@{item.creator?.username}{" "}</Text>
           {item.text}
         </Text>
-        <Text style={{ color: Colors.muted.DEFAULT, fontSize: 10, marginTop: 2 }}>
+        <Text className="text-muted text-[10px] mt-0.5">
           {new Date(item.$createdAt).toLocaleDateString(undefined, {
             month: "short",
             day: "numeric",
@@ -234,7 +216,7 @@ export default function CommentsSheet({
     const replies = repliesFor(item.$id);
     const isExpanded = expandedComments.has(item.$id);
     return (
-      <View style={{ marginBottom: 14 }}>
+      <View className="mb-[14px]">
         <CommentItem
           item={item}
           onAvatarPress={handleNavigateToUser}
@@ -263,24 +245,17 @@ export default function CommentsSheet({
       {loadingComments ? (
         <ActivityIndicator
           color={Colors.secondary.DEFAULT}
-          style={{ flex: 1, alignSelf: "center" }}
+          className="flex-1 self-center"
         />
       ) : (
         <FlatList
           data={topLevelComments}
           keyExtractor={(item) => item.$id}
-          style={{ flex: 1 }}
+          className="flex-1"
           contentContainerStyle={{ padding: 16, paddingBottom: 8 }}
           keyboardShouldPersistTaps="handled"
           ListEmptyComponent={
-            <Text
-              style={{
-                color: Colors.muted.DEFAULT,
-                textAlign: "center",
-                paddingVertical: 32,
-                fontSize: 14,
-              }}
-            >
+            <Text className="text-muted text-center py-8 text-sm">
               No comments yet. Be the first!
             </Text>
           }
@@ -291,43 +266,21 @@ export default function CommentsSheet({
       {/* Comment-added toast (above the input bar) */}
       <Animated.View
         pointerEvents="none"
-        style={{
-          opacity: commentToastOpacity,
-          position: "absolute",
-          bottom: 70,
-          left: 16,
-          right: 16,
-          backgroundColor: Colors.surface[100],
-          borderRadius: 10,
-          paddingHorizontal: 14,
-          paddingVertical: 10,
-          flexDirection: "row",
-          alignItems: "center",
-          borderLeftWidth: 3,
-          borderLeftColor: Colors.success,
-          zIndex: 10,
-        }}
+        className="absolute bottom-[70px] left-4 right-4 bg-surface-100 rounded-[10px] px-[14px] py-[10px] flex-row items-center border-l-[3px] border-l-success z-10"
+        style={{ opacity: commentToastOpacity }}
       >
         <Ionicons name="checkmark-circle" size={18} color={Colors.success} style={{ marginRight: 8 }} />
-        <Text style={{ color: "#fff", fontSize: 13 }}>Comment added</Text>
+        <Text className="text-white text-[13px]">Comment added</Text>
       </Animated.View>
 
       {/* Input bar */}
-      <View style={{ borderTopWidth: 1, borderTopColor: Colors.surface[300] }}>
+      <View className="border-t border-surface-300">
         {/* Replying-to banner */}
         {replyingTo && (
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingHorizontal: 14,
-              paddingTop: 8,
-            }}
-          >
-            <Text style={{ color: Colors.muted.DEFAULT, fontSize: 12 }}>
+          <View className="flex-row items-center justify-between px-[14px] pt-2">
+            <Text className="text-muted text-[12px]">
               Replying to{" "}
-              <Text style={{ color: Colors.secondary.DEFAULT, fontWeight: "600" }}>
+              <Text className="text-secondary font-semibold">
                 @{replyingTo.username}
               </Text>
             </Text>
@@ -337,31 +290,13 @@ export default function CommentsSheet({
           </View>
         )}
 
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            paddingHorizontal: 14,
-            paddingVertical: 10,
-          }}
-        >
+        <View className="flex-row items-center px-[14px] py-[10px]">
           {/* Current-user avatar */}
-          <View
-            style={{
-              width: 34,
-              height: 34,
-              borderRadius: 17,
-              backgroundColor: Colors.surface[300],
-              justifyContent: "center",
-              alignItems: "center",
-              marginRight: 10,
-              overflow: "hidden",
-            }}
-          >
+          <View className="w-[34px] h-[34px] rounded-full bg-surface-300 justify-center items-center mr-2.5 overflow-hidden">
             {currentUserAvatar ? (
-              <Image source={{ uri: currentUserAvatar }} style={{ width: 34, height: 34 }} />
+              <Image source={{ uri: currentUserAvatar }} className="w-[34px] h-[34px]" />
             ) : (
-              <Text style={{ color: Colors.secondary.DEFAULT, fontWeight: "bold", fontSize: 13 }}>
+              <Text className="text-secondary font-bold text-[13px]">
                 {avatarLetter(currentUsername)}
               </Text>
             )}
@@ -369,30 +304,22 @@ export default function CommentsSheet({
 
           {/* Text input */}
           <View
-            style={{
-              flex: 1,
-              backgroundColor: Colors.surface[200],
-              borderWidth: 1,
-              borderColor: Colors.surface[400],
-              borderRadius: 20,
-              paddingHorizontal: 14,
-              paddingVertical: 8,
-              marginRight: comment.trim().length > 0 ? 10 : 0,
-            }}
+            className="flex-1 bg-surface-200 border border-surface-400 rounded-[20px] px-[14px] py-2"
+            style={{ marginRight: comment.trim().length > 0 ? 10 : 0 }}
           >
             <TextInput
               value={comment}
               onChangeText={setComment}
               placeholder={replyingTo ? `Reply to @${replyingTo.username}...` : "Add a comment..."}
               placeholderTextColor={Colors.muted.DEFAULT}
-              style={{ color: "white", fontSize: 14, maxHeight: 100 }}
+              className="text-white text-[14px] max-h-[100px]"
               multiline
             />
           </View>
 
           {comment.trim().length > 0 && (
             <TouchableOpacity onPress={handleSubmitComment}>
-              <Text style={{ color: Colors.secondary.DEFAULT, fontWeight: "700", fontSize: 14 }}>
+              <Text className="text-secondary font-bold text-[14px]">
                 Post
               </Text>
             </TouchableOpacity>
