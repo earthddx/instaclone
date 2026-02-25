@@ -2,6 +2,7 @@ import React from "react";
 import {
   View,
   Text,
+  Alert,
   Image,
   TextInput,
   TouchableOpacity,
@@ -209,7 +210,9 @@ export default function CommentsSheet({
         setExpandedComments((prev) => new Set([...prev, parentId]));
       }
       showCommentToast();
-    } catch {}
+    } catch (e) {
+      Alert.alert("Failed to post comment", e?.message ?? "Unknown error");
+    }
   };
 
   const renderTopLevelComment = ({ item }) => {

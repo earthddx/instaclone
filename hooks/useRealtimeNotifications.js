@@ -91,13 +91,16 @@ export function useRealtimeNotifications(currentUser) {
         // Only care about comments on the current user's posts
         if (!myPostIdsRef.current.has(doc.postId)) return;
         // Don't notify for your own comment
-        if (doc.userId === currentUser.$id) return;
+        if (doc.creator === currentUser.$id) return;
 
-        scheduleLocalNotification({
-          title: "New comment",
-          body: `@${doc.username}: ${doc.text.slice(0, 80)}`,
-          data: { route: `/post/${doc.postId}` },
-        });
+        try {
+          const commenter = await getUserById(doc.creator);
+          scheduleLocalNotification({
+            title: "New comment",
+            body: `@${commenter.username}: ${doc.text.slice(0, 80)}`,
+            data: { route: `/post/${doc.postId}` },
+          });
+        } catch { }
       }
     );
 
