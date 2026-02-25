@@ -20,6 +20,7 @@ const FEATURES = [
   { icon: "person-circle-outline", text: "User profiles with post grids"              },
   { icon: "notifications-outline", text: "Live updates via Appwrite subscriptions"    },
   { icon: "search-outline",        text: "Explore feed with photo & video discovery"  },
+  { icon: "alarm-outline",         text: "Local push notifications for likes, comments & follows" },
 ];
 
 /**
