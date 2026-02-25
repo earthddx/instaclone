@@ -38,21 +38,21 @@ export default function Profile() {
   const { width } = useWindowDimensions();
   const pagerRef = React.useRef(null);
 
-  React.useEffect(() => {
-    //Test notifications:
-    const firedNotification = async () => {
-      await scheduleLocalNotification({ title: "New like!", body: "Someone just liked your post" });
+  // // FIXME: Test notifications:
+  // React.useEffect(() => {
+  //   const firedNotification = async () => {
+  //     await scheduleLocalNotification({ title: "New like!", body: "Someone just liked your post" });
 
-      await scheduleLocalNotification({ title: "Reminder", body: "Check your feed", seconds: 5 });
+  //     await scheduleLocalNotification({ title: "Reminder", body: "Check your feed", seconds: 5 });
 
-      await scheduleLocalNotification({
-        title: "New comment",
-        body: "Elusive Joe commented on your post",
-        data: { route: "/post/699ca730000d9f393a14" },
-      });
-    }
-    firedNotification();
-  }, [])
+  //     await scheduleLocalNotification({
+  //       title: "New comment",
+  //       body: "Elusive Joe commented on your post",
+  //       data: { route: "/post/699ca730000d9f393a14" },
+  //     });
+  //   }
+  //   firedNotification();
+  // }, [])
 
 
   const goToTab = React.useCallback((index) => {
