@@ -21,6 +21,7 @@ import {
 import { UserContext } from "../../context/UserContext";
 import ProfileBioSection from "../../components/ProfileBioSection";
 import ProfilePostsGrid from "../../components/ProfilePostsGrid";
+import FollowListSheet from "../../components/FollowListSheet";
 import { SkeletonProfileBio, SkeletonGrid } from "../../components/Skeleton";
 import Colors from "../../constants/colors";
 
@@ -37,6 +38,7 @@ export default function UserProfile() {
   const [followLoading, setFollowLoading] = React.useState(false);
   const [followCounts, setFollowCounts] = React.useState({ followers: 0, following: 0 });
   const [refreshing, setRefreshing] = React.useState(false);
+  const [followSheet, setFollowSheet] = React.useState(null); // "followers" | "following" | null
 
   const isFollowing = followDocId !== null;
 
@@ -136,7 +138,14 @@ export default function UserProfile() {
           />
         }
       >
-        <ProfileBioSection profile={profile} postsCount={posts.length} followersCount={followCounts.followers} followingCount={followCounts.following}>
+        <ProfileBioSection
+          profile={profile}
+          postsCount={posts.length}
+          followersCount={followCounts.followers}
+          followingCount={followCounts.following}
+          onFollowersPress={() => setFollowSheet("followers")}
+          onFollowingPress={() => setFollowSheet("following")}
+        >
           <View className="flex-row gap-2 mt-[10px]">
             <TouchableOpacity
               className={`flex-1 rounded-lg py-[7px] items-center border-[0.5px] ${
@@ -172,6 +181,14 @@ export default function UserProfile() {
           }
         />
       </ScrollView>
+
+      <FollowListSheet
+        visible={followSheet !== null}
+        onClose={() => setFollowSheet(null)}
+        type={followSheet ?? "followers"}
+        userId={userId}
+        currentUserId={currentUser?.$id}
+      />
     </SafeAreaView>
   );
 }

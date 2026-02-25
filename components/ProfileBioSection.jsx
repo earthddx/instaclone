@@ -1,28 +1,38 @@
 import React from "react";
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Pulse } from "./Skeleton";
 import Colors from "../constants/colors";
 
-const StatItem = ({ value, label }) => (
-  <View className="items-center">
-    {value == null
-      ? <Pulse style={{ width: 28, height: 16, borderRadius: 4, marginBottom: 4 }} />
-      : <Text className="text-white text-[17px] font-bold">{value}</Text>
-    }
-    <Text className="text-muted-100 text-xs mt-0.5">{label}</Text>
-  </View>
-);
+const StatItem = ({ value, label, onPress }) => {
+  const inner = (
+    <View className="items-center">
+      {value == null
+        ? <Pulse style={{ width: 28, height: 16, borderRadius: 4, marginBottom: 4 }} />
+        : <Text className="text-white text-[17px] font-bold">{value}</Text>
+      }
+      <Text className="text-muted-100 text-xs mt-0.5">{label}</Text>
+    </View>
+  );
+  if (!onPress) return inner;
+  return (
+    <TouchableOpacity onPress={onPress} activeOpacity={0.65}>
+      {inner}
+    </TouchableOpacity>
+  );
+};
 
 /**
  * Shared profile bio block: avatar ring + stats row + username + bio.
  *
  * Props:
- *   profile     – object with { avatar, username, bio }
- *   postsCount  – number shown in the Posts stat
- *   children    – optional JSX rendered below the bio text (e.g. action buttons, divider)
+ *   profile           – object with { avatar, username, bio }
+ *   postsCount        – number shown in the Posts stat
+ *   onFollowersPress  – optional () => void — makes Followers stat tappable
+ *   onFollowingPress  – optional () => void — makes Following stat tappable
+ *   children          – optional JSX rendered below the bio text (e.g. action buttons, divider)
  */
-export default function ProfileBioSection({ profile, postsCount, followersCount, followingCount, children }) {
+export default function ProfileBioSection({ profile, postsCount, followersCount, followingCount, onFollowersPress, onFollowingPress, children }) {
   return (
     <View className="px-4 pt-[14px] pb-3 bg-primary-100">
       {/* Avatar + stats */}
@@ -38,8 +48,8 @@ export default function ProfileBioSection({ profile, postsCount, followersCount,
         </View>
         <View className="flex-1 flex-row justify-around">
           <StatItem value={postsCount} label="Posts" />
-          <StatItem value={followersCount ?? 0} label="Followers" />
-          <StatItem value={followingCount ?? 0} label="Following" />
+          <StatItem value={followersCount ?? 0} label="Followers" onPress={onFollowersPress} />
+          <StatItem value={followingCount ?? 0} label="Following" onPress={onFollowingPress} />
         </View>
       </View>
 

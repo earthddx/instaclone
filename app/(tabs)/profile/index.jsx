@@ -15,6 +15,7 @@ import { UserContext } from "../../../context/UserContext";
 import { getUserPosts, getUserLikedPosts, getFollowCounts } from "../../../lib/appwrite";
 import ProfileBioSection from "../../../components/ProfileBioSection";
 import ProfilePostsGrid from "../../../components/ProfilePostsGrid";
+import FollowListSheet from "../../../components/FollowListSheet";
 import { SkeletonProfileBio } from "../../../components/Skeleton";
 import Colors from "../../../constants/colors";
 import { scheduleLocalNotification } from "../../../hooks/useLocalNotifications";
@@ -33,6 +34,7 @@ export default function Profile() {
   const [refreshing, setRefreshing] = React.useState(false);
   const [postsLoading, setPostsLoading] = React.useState(true);
   const [activeTab, setActiveTab] = React.useState(0);
+  const [followSheet, setFollowSheet] = React.useState(null); // "followers" | "following" | null
   const { width } = useWindowDimensions();
   const pagerRef = React.useRef(null);
 
@@ -118,6 +120,8 @@ export default function Profile() {
               postsCount={userPosts.length}
               followersCount={followCounts?.followers}
               followingCount={followCounts?.following}
+              onFollowersPress={() => setFollowSheet("followers")}
+              onFollowingPress={() => setFollowSheet("following")}
             >
               <View className="flex-row gap-2 mt-[10px]">
                 <TouchableOpacity
@@ -181,6 +185,13 @@ export default function Profile() {
           </ScrollView>
         </ScrollView>
       </SafeAreaView>
+      <FollowListSheet
+        visible={followSheet !== null}
+        onClose={() => setFollowSheet(null)}
+        type={followSheet ?? "followers"}
+        userId={user?.$id}
+        currentUserId={user?.$id}
+      />
     </ProfileContext.Provider>
   );
 }
