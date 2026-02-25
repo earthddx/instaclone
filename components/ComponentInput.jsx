@@ -36,7 +36,8 @@ export default ({
           />
         )}
         <TextInput
-          className="flex-1 text-white text-base"
+          className="flex-1 text-white text-[16px] py-0"
+          textAlignVertical="center"
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
