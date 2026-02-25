@@ -22,7 +22,7 @@ const CommentItem = ({ item, onAvatarPress, onReplyPress, replyCount, isExpanded
     <View>
       <View style={{ flexDirection: "row", marginBottom: 6, alignItems: "flex-start" }}>
         <TouchableOpacity
-          onPress={() => onAvatarPress(item.userId)}
+          onPress={() => onAvatarPress(item.creator?.$id)}
           activeOpacity={0.7}
           style={{
             width: 36,
@@ -35,17 +35,17 @@ const CommentItem = ({ item, onAvatarPress, onReplyPress, replyCount, isExpanded
             overflow: "hidden",
           }}
         >
-          {item.avatar ? (
-            <Image source={{ uri: item.avatar }} style={{ width: 36, height: 36 }} />
+          {item.creator?.avatar ? (
+            <Image source={{ uri: item.creator.avatar }} style={{ width: 36, height: 36 }} />
           ) : (
             <Text style={{ color: Colors.secondary.DEFAULT, fontWeight: "bold", fontSize: 14 }}>
-              {avatarLetter(item.username)}
+              {avatarLetter(item.creator?.username)}
             </Text>
           )}
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <Text style={{ color: "white", fontSize: 13, lineHeight: 19 }}>
-            <Text style={{ fontWeight: "700" }}>@{item.username}{" "}</Text>
+            <Text style={{ fontWeight: "700" }}>@{item.creator?.username}{" "}</Text>
             {item.text}
           </Text>
           <View style={{ flexDirection: "row", alignItems: "center", marginTop: 3, gap: 12 }}>
@@ -55,7 +55,7 @@ const CommentItem = ({ item, onAvatarPress, onReplyPress, replyCount, isExpanded
                 day: "numeric",
               })}
             </Text>
-            <TouchableOpacity onPress={() => onReplyPress(item.$id, item.username)}>
+            <TouchableOpacity onPress={() => onReplyPress(item.$id, item.creator?.username)}>
               <Text style={{ color: Colors.muted.DEFAULT, fontSize: 11, fontWeight: "600" }}>Reply</Text>
             </TouchableOpacity>
           </View>
@@ -82,7 +82,7 @@ const ReplyItem = ({ item, onAvatarPress }) => {
   return (
     <View style={{ flexDirection: "row", marginBottom: 12, alignItems: "flex-start", marginLeft: 46 }}>
       <TouchableOpacity
-        onPress={() => onAvatarPress(item.userId)}
+        onPress={() => onAvatarPress(item.creator?.$id)}
         activeOpacity={0.7}
         style={{
           width: 28,
@@ -95,17 +95,17 @@ const ReplyItem = ({ item, onAvatarPress }) => {
           overflow: "hidden",
         }}
       >
-        {item.avatar ? (
-          <Image source={{ uri: item.avatar }} style={{ width: 28, height: 28 }} />
+        {item.creator?.avatar ? (
+          <Image source={{ uri: item.creator.avatar }} style={{ width: 28, height: 28 }} />
         ) : (
           <Text style={{ color: Colors.secondary.DEFAULT, fontWeight: "bold", fontSize: 11 }}>
-            {avatarLetter(item.username)}
+            {avatarLetter(item.creator?.username)}
           </Text>
         )}
       </TouchableOpacity>
       <View style={{ flex: 1 }}>
         <Text style={{ color: "white", fontSize: 12, lineHeight: 17 }}>
-          <Text style={{ fontWeight: "700" }}>@{item.username}{" "}</Text>
+          <Text style={{ fontWeight: "700" }}>@{item.creator?.username}{" "}</Text>
           {item.text}
         </Text>
         <Text style={{ color: Colors.muted.DEFAULT, fontSize: 10, marginTop: 2 }}>
@@ -215,8 +215,6 @@ export default function CommentsSheet({
       const newComment = await addComment({
         postId,
         userId: currentUserId,
-        username: currentUsername,
-        avatar: currentUserAvatar,
         text,
         parentId,
       });
